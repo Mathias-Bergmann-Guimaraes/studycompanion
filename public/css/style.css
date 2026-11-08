@@ -31,7 +31,15 @@
   --good: #1a9a52;
   --bad: #d63a3a;
   --gold: #e0a100;
+  /* Study Companion's own colour, on the course picker and the login page: KIT green. Each course
+     has its own main colour below (Japanese keeps --accent). */
+  --brand: #009682;
   --radius: 16px;
+  /* Each course's main colour, on the course picker (courses.js). Japanese uses --accent. */
+  --course-len: var(--c-topic);
+  --course-robotics: var(--c-point);
+  --course-propa: var(--c-time);
+  --course-gki: var(--c-with);
   --jp: "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
   --ui: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
@@ -67,6 +75,7 @@
   --good: #3ccf7f;
   --bad: #ff6b6b;
   --gold: #ffc83d;
+  --brand: #2bb8a2;
 }
 
 /* ------------------------------------------------------------ Base */
@@ -191,7 +200,12 @@ select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
 }
-.brand { display: flex; align-items: center; gap: 10px; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; border-radius: 12px; }
+.brand:hover small { color: var(--accent); }
+.brand:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+body.on-courses .brand-mark { background: var(--brand); }
+body.on-courses .brand:hover small { color: var(--brand); }
+body.on-courses .brand:focus-visible { outline-color: var(--brand); }
 .brand-mark {
   display: grid;
   place-items: center;
@@ -294,6 +308,29 @@ select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .account-name { min-width: 0; }
   .switch { justify-content: space-between; flex-direction: row-reverse; }
   .theme-btn { align-self: stretch; }
+}
+
+/* The course picker: no tabs, no furigana switch and no Japanese footer, and the bar stays a bar on
+   wide screens too (these rules beat the sidebar ones above). */
+body.on-courses .tabs, body.on-courses .switch, body.on-courses .footer { display: none; }
+body.on-courses .brand { margin-right: auto; }
+@media (min-width: 1024px) {
+  body.on-courses { padding-left: 0; }
+  body.on-courses .topbar {
+    position: sticky;
+    inset: auto;
+    width: auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 24px;
+    overflow: visible;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  body.on-courses .brand { padding: 0; }
+  body.on-courses .account { border-top: 0; padding-top: 0; }
+  body.on-courses .theme-btn { align-self: auto; }
 }
 
 /* ------------------------------------------------------------ Layout */
@@ -1715,6 +1752,50 @@ main { max-width: 1080px; margin: 0 auto; padding: 24px; }
 .big-rows-many .small { display: none; }
 .big-row-link { border: 0; background: none; padding: 0; color: var(--text); font: inherit; text-align: left; cursor: pointer; justify-self: start; }
 .big-row-link:hover { color: var(--accent); text-decoration: underline; }
+/* Course picker: the courses you can open as wide cards, then a row of the ones still to come. */
+.courses-head { margin: 28px 0 24px; }
+.courses-head h1 { margin: 0 0 4px; }
+.courses-head p { margin: 0; }
+.course-card {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(260px, 340px); align-items: start; gap: 18px 24px;
+  padding: 26px 28px; margin-bottom: 18px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--cc) 10%, var(--surface)), var(--surface) 55%);
+  border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);
+}
+.course-card h2 { margin: 2px 0 8px; font-size: 1.5rem; }
+.course-card p { margin: 0; max-width: 52ch; line-height: 1.55; }
+.course-mark {
+  flex: none; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 16px;
+  background: var(--cc, var(--accent)); color: var(--surface); font-family: var(--jp); font-size: 2rem; font-weight: 700;
+}
+.course-stats { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 10px; }
+.course-bar { display: block; max-width: none; margin-bottom: 16px; }
+.course-bar span { background: var(--good); }
+.course-side .home-actions { margin-top: 0; }
+
+.courses-cap { margin: 32px 0 12px; font-size: .8rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.course-soon-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 14px; }
+/* A course still to come: its own colour, but nothing to open. */
+.course-soon {
+  padding: 18px 20px; border: 1px dashed var(--border); border-radius: var(--radius);
+  background: color-mix(in srgb, var(--cc) 6%, var(--surface));
+}
+.course-soon h3 { margin: 14px 0 6px; font-size: 1rem; line-height: 1.35; }
+.course-soon p { margin: 0; line-height: 1.5; }
+/* Letters, not a kanji: smaller, and as wide as the letters need. */
+.course-mark.short {
+  display: inline-grid; width: auto; min-width: 44px; height: 44px; padding: 0 10px; border-radius: 12px;
+  font-family: var(--ui); font-size: .85rem; letter-spacing: -.01em;
+}
+@media (max-width: 860px) {
+  .course-card { grid-template-columns: auto minmax(0, 1fr); }
+  .course-side { grid-column: 1 / -1; }
+}
+@media (max-width: 520px) {
+  .course-card { grid-template-columns: minmax(0, 1fr); padding: 20px; }
+  .course-mark { width: 52px; height: 52px; font-size: 1.6rem; }
+}
+
 /* Home */
 .home-hero h1 { margin-bottom: 4px; }
 .home-duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-bottom: 18px; }

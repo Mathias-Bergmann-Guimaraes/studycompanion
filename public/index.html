@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Visual Japanese Grammar</title>
+  <title>Study Companion</title>
   <meta name="robots" content="noindex">
   <link rel="stylesheet" href="fonts/fonts.css">
   <link rel="stylesheet" href="css/style.css">
@@ -20,10 +20,10 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="brand">
-      <span class="brand-mark" lang="ja">文</span>
-      <span class="brand-text">Bunpō<small>Visual Japanese Grammar</small></span>
-    </div>
+    <a class="brand" id="brand" href="#courses" title="All courses">
+      <span class="brand-mark" id="brandMark" aria-hidden="true">S</span>
+      <span class="brand-text">Study Companion<small id="brandSub">All courses</small></span>
+    </a>
     <nav class="tabs" id="tabs">
       <div class="tab-group">
         <button data-tab="home"><span class="tab-mark" lang="ja" aria-hidden="true">家</span>Home</button>
@@ -54,6 +54,7 @@
   </header>
 
   <main>
+    <section id="courses" class="panel"></section>
     <section id="home" class="panel"></section>
     <section id="lessons" class="panel"></section>
     <section id="structure" class="panel"></section>
@@ -98,5 +99,6 @@
   <script src="js/listen.js"></script>
   <script src="js/home-stats.js"></script>
   <script src="js/home.js"></script>
+  <script src="js/courses.js"></script>
 </body>
 </html>

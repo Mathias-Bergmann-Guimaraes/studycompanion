@@ -620,10 +620,11 @@ function dropVotes(memberId) {
 // The page reports a name with track("name"), and only the name: never what was typed.
 const USAGE_GROUPS = {
   Pages: {
-    "tab.home": "Home", "tab.lessons": "Lessons", "tab.structure": "Sentences", "tab.particles": "Particles", "tab.verbs": "Verbs",
+    "tab.courses": "Course picker", "tab.home": "Home", "tab.lessons": "Lessons", "tab.structure": "Sentences", "tab.particles": "Particles", "tab.verbs": "Verbs",
     "tab.adjectives": "Adjectives", "tab.patterns": "Patterns", "tab.practice": "Practice", "tab.listen": "Listen", "tab.mistakes": "Mistakes",
   },
   Listen: { "listen.open": "Videos opened", "listen.vote": "Likes and dislikes", "listen.save": "Bookmarks changed", "listen.channel": "Favourite channels changed" },
+  "Course picker": { "courses.open": "Courses opened", "courses.continue": "Continue lesson button" },
   Home: { "home.continue": "Continue button", "home.explore": "Explore tiles", "home.stats": "Weak points opened from Your progress" },
   Lessons: {
     "lesson.open": "Lessons opened", "lesson.practice": "Practice questions answered", "lesson.check": "Grammar checks started",

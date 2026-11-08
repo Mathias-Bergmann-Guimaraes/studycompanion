@@ -1,6 +1,7 @@
-# Bunpō — Visual Japanese Grammar
+# Study Companion
 
-A visual Japanese grammar site: colour-coded sentence blocks, particles, verb conjugation,
+A study site with a course picker as its front page. Its one course so far is Japanese, a visual
+Japanese grammar course: colour-coded sentence blocks, particles, verb conjugation,
 adjectives, verb patterns and a Practice tab — plus a 50-lesson course with practice
 sentences, a 5-question check (worth up to three stars) for every grammar point and a test for
 every lesson. Right answers earn XP towards levels and a daily streak. Learners can also write

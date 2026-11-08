@@ -1,7 +1,7 @@
 {
-  "name": "jp-helper",
+  "name": "studycompanion",
   "private": true,
-  "description": "Visual Japanese grammar site, locked behind access requests you approve locally.",
+  "description": "Study site with visual courses (Japanese so far), locked behind access requests you approve locally.",
   "scripts": {
     "start": "node server.js"
   },

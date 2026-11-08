@@ -1059,7 +1059,7 @@ function paintCertificate(canvas, b, name) {
   text(`${b.book} (${b.ja}), lessons ${b.from}–${b.to}`, 642, `700 42px ${CERT_UI}`);
   text(`Score ${score} / ${b.len} · ${Math.round((score / b.len) * 100)}%`, 736, `500 34px ${CERT_UI}`);
   text(certDate(day), 790, `400 30px ${CERT_UI}`, soft);
-  text("Bunpō · Visual Japanese Grammar", 880, `500 24px ${CERT_UI}`, soft);
+  text("Study Companion · Japanese", 880, `500 24px ${CERT_UI}`, soft);
 
   // The stamp.
   ctx.save();

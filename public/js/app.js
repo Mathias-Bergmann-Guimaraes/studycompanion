@@ -146,11 +146,21 @@ const partsHTML = (parts) => parts.map((p) => `<span class="vp ${p.cls}">${ruby(
 // How much of the top of the window the bar covers: nothing once it's a sidebar on a wide screen.
 const barHeight = () => (matchMedia("(min-width: 1024px)").matches ? 0 : $(".topbar").offsetHeight);
 
-const TABS = ["home", "lessons", "structure", "particles", "verbs", "adjectives", "patterns", "practice", "listen", "mistakes"];
+// "courses" is the course picker (courses.js), where the site opens; the rest are the Japanese course.
+const TABS = ["courses", "home", "lessons", "structure", "particles", "verbs", "adjectives", "patterns", "practice", "listen", "mistakes"];
 
 function showTab(id) {
-  if (!TABS.includes(id)) id = "home";
+  if (!TABS.includes(id)) id = "courses";
   if (!$("#" + id).classList.contains("active")) track("tab." + id);
+  // The picker has no tabs or furigana switch, and the top bar stays a bar on every screen.
+  const picking = id === "courses";
+  document.body.classList.toggle("on-courses", picking);
+  const course = courseOf();
+  $("#brandMark").textContent = picking ? "S" : course.mark;
+  $("#brandMark").lang = picking ? "" : course.lang;
+  $("#brandSub").textContent = picking ? "All courses" : `${course.name} · switch course`;
+  document.title = picking ? "Study Companion" : `${course.name} · Study Companion`;
+  if (picking) renderCourses();
   $$("#tabs button").forEach((b) => {
     b.classList.toggle("active", b.dataset.tab === id);
     // On a narrow screen the tabs scroll sideways: keep the open one in view.
@@ -1522,6 +1532,7 @@ function init() {
 
   $$("#tabs button").forEach((b) => (b.onclick = () => { showTab(b.dataset.tab); window.scrollTo({ top: 0 }); }));
   window.addEventListener("hashchange", () => showTab(location.hash.slice(1)));
+  $("#brand").onclick = (e) => { e.preventDefault(); showTab("courses"); window.scrollTo({ top: 0 }); };
 
   renderHome();
   renderLessons();

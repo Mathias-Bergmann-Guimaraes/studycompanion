@@ -449,6 +449,8 @@ const PROGRESS_MERGE = {
   lesson: "latest", lessonTests: "scores", pointStars: "scores", best: "max", game: "latest", sentences: "texts",
   mistakes: "notes", roulette: "latest", review: "dated", reviewDay: "latest", xpDays: "days", bigTests: "scores",
   bigWeak: "latest", certs: "latest", listenSaved: "list", listenChannels: "list",
+  // LEN: the best score of each section's check, by section ("1.4").
+  lenChecks: "scores",
 };
 const MAX_HISTORY_DAYS = 366;
 const MAX_PROGRESS_BODY = 512 * 1024;
@@ -622,9 +624,11 @@ const USAGE_GROUPS = {
   Pages: {
     "tab.courses": "Course picker", "tab.home": "Home", "tab.lessons": "Lessons", "tab.structure": "Sentences", "tab.particles": "Particles", "tab.verbs": "Verbs",
     "tab.adjectives": "Adjectives", "tab.patterns": "Patterns", "tab.practice": "Practice", "tab.listen": "Listen", "tab.mistakes": "Mistakes",
+    "tab.len-home": "LEN Home", "tab.len-basics": "LEN Basics", "tab.len-formulas": "LEN Formulas",
   },
   Listen: { "listen.open": "Videos opened", "listen.vote": "Likes and dislikes", "listen.save": "Bookmarks changed", "listen.channel": "Favourite channels changed" },
-  "Course picker": { "courses.open": "Courses opened", "courses.continue": "Continue lesson button" },
+  "Course picker": { "courses.open": "Courses opened", "courses.continue": "Continue lesson button", "courses.lenContinue": "Continue LEN section button" },
+  LEN: { "len.continue": "Continue button on LEN Home", "len.check": "Section checks started", "len.checkDone": "Section checks finished" },
   Home: { "home.continue": "Continue button", "home.explore": "Explore tiles", "home.stats": "Weak points opened from Your progress" },
   Lessons: {
     "lesson.open": "Lessons opened", "lesson.practice": "Practice questions answered", "lesson.check": "Grammar checks started",
@@ -653,7 +657,7 @@ const USAGE_GROUPS = {
     "explore.adjectives": "Adjectives switched", "explore.patterns": "Pattern verbs switched",
     "quiz.verbgroups": "Verb group questions answered", "quiz.keigo": "Polite language questions answered",
   },
-  Settings: { "setting.furigana": "Furigana switched", "setting.theme": "Theme switched" },
+  Settings: { "setting.furigana": "Furigana switched", "setting.theme": "Theme switched", "setting.lenLang": "LEN language switched" },
 };
 const USAGE_FEATURES = new Set(Object.values(USAGE_GROUPS).flatMap(Object.keys));
 const USAGE_DAYS = 90;

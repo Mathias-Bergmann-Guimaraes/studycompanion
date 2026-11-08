@@ -1,7 +1,7 @@
 # Study Companion
 
-A study site with a course picker as its front page. Its one course so far is Japanese, a visual
-Japanese grammar course: colour-coded sentence blocks, particles, verb conjugation,
+A study site with a course picker as its front page. Its courses so far are Japanese and LEN
+(electrical networks, see below). Japanese is a visual grammar course: colour-coded sentence blocks, particles, verb conjugation,
 adjectives, verb patterns and a Practice tab — plus a 50-lesson course with practice
 sentences, a 5-question check (worth up to three stars) for every grammar point and a test for
 every lesson. Right answers earn XP towards levels and a daily streak. Learners can also write
@@ -133,6 +133,15 @@ end. It starts on for the finals and off for the big tests. A test in progress i
 so a reload carries on where it was. Grammar points missed in a big test come back in the next day's
 review, a step lower, and lessons scored under 80% unlock the **Retest** roulette until they score
 better. Passing a final gives a 修了証 certificate to save or share as an image.
+
+The second course is **LEN** (Lineare Elektrische Netze), in German or English with a switch in the
+bar; in English the German term stays beside each English one. Its first chapter, *Grundlagen*
+(sections 1.1–1.7: charge, current, potential, resistors, two-terminals, networks, reference arrows,
+Kirchhoff's laws, sources), turns every sketch from the lecture notes into a drawing you can play
+with, keeps their colours (current red, voltage blue) and ends each section with a short check.
+A Formulas & terms tab collects the formulas and a German–English glossary. The text is in
+`public/js/len-basics.js`, the drawings in `public/js/len-ch1-widgets.js` and the shared parts in
+`public/js/len.js`; later chapters get files of their own and join `LEN_CHAPTERS`.
 
 The whole site is **private**. Visitors without a login only see a login page. From there they
 can pick a username and password and send an access request, which you approve by hand — or

@@ -190,6 +190,9 @@ function showTab(id) {
   // Practice keeps its task, and a mock exam under way keeps its answers, when you come back.
   if (id === "len-practice" && !$("#len-practice").innerHTML) renderLenPractice();
   if (id === "len-mock" && lmState.phase === "setup") renderLenMock();
+  if (id === "propa-home") renderPropaHome();
+  if (id === "propa-practice" && !$("#propa-practice").innerHTML) renderPropaPractice();
+  if (id === "propa-exams") renderPropaExams();
 }
 
 /* ---------------------------------------------------------------- Account */
@@ -1549,6 +1552,7 @@ function init() {
   renderLessons();
   renderPractice();
   setupLen();
+  setupPropa();
   showTab(location.hash.slice(1));
   setupAccount();
 }

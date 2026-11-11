@@ -1,8 +1,8 @@
 // The course picker, where the site opens (an address with no #page, or #courses). Each course is
-// a set of tabs (`tabs`, the first is its Home); picking one opens its Home. Japanese and LEN can be
-// opened, the rest are placeholders (`soon`). Each course has its own main colour (`color`, a token
+// a set of tabs (`tabs`, the first is its Home); picking one opens its Home. Japanese, LEN and ProPa
+// can be opened, the rest are placeholders (`soon`). Each course has its own main colour (`color`, a token
 // from style.css) and its own line under every page (`footer`). Loaded after home.js and uses its
-// helpers and game.js's; the LEN card comes from len.js.
+// helpers and game.js's; the LEN card comes from len.js, the ProPa card from propa.js.
 
 const COURSES = [
   {
@@ -26,8 +26,18 @@ const COURSES = [
     footer: `<span class="l-de" lang="de">Farben bedeuten überall dasselbe — rot ist immer ein Strom, blau immer eine Spannung.</span><span class="l-en">Colours mean the same thing everywhere — red is always a current, blue is always a voltage.</span>`,
     card: (c) => lenCourseCardHTML(c),
   },
+  {
+    id: "propa",
+    tabs: ["propa-home", "propa-l1", "propa-l2", "propa-l3", "propa-l4", "propa-l5", "propa-l6", "propa-l7", "propa-l8", "propa-cheat", "propa-exams", "propa-practice"],
+    mark: "ProPa",
+    lang: "de",
+    color: "var(--course-propa)",
+    name: "Programmierparadigmen",
+    about: "Lean and Reussner for review, with drawings that run the code step by step.",
+    footer: "Colours mean the same in every code block and drawing — blue is a type, red an effect, green what #eval prints.",
+    card: (c) => propaCourseCardHTML(c),
+  },
   { id: "robotics1", soon: true, mark: "Rob I", lang: "en", color: "var(--course-robotics)", name: "Robotics I", about: "Robot arms: kinematics, dynamics and control." },
-  { id: "propa", soon: true, mark: "ProPa", lang: "de", color: "var(--course-propa)", name: "Programmierparadigmen", about: "Functional, logic and parallel programming." },
   { id: "gki", soon: true, mark: "GKI", lang: "de", color: "var(--course-gki)", name: "Grundlagen der künstlichen Intelligenz", about: "Search, logic, probability and learning." },
 ];
 
@@ -56,6 +66,7 @@ function renderCourses() {
     window.scrollTo({ top: 0 });
   }));
   wireLenCourseCard();
+  wirePropaCourseCard();
   const go = $("#courseContinue");
   if (go) go.onclick = () => {
     track("courses.continue");

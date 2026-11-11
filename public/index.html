@@ -25,11 +25,11 @@
       <span class="brand-text">Study Companion<small id="brandSub">All courses</small></span>
     </a>
     <nav class="tabs" id="tabs">
-      <div class="tab-group">
+      <div class="tab-group" data-course-only="japanese">
         <button data-tab="home"><span class="tab-mark" lang="ja" aria-hidden="true">家</span>Home</button>
         <button data-tab="lessons"><span class="tab-mark" lang="ja" aria-hidden="true">課</span>Lessons</button>
       </div>
-      <div class="tab-group">
+      <div class="tab-group" data-course-only="japanese">
         <span class="tab-cap">Grammar</span>
         <button data-tab="structure"><span class="tab-mark" lang="ja" aria-hidden="true">文</span>Sentences</button>
         <button data-tab="particles"><span class="tab-mark" lang="ja" aria-hidden="true">は</span>Particles</button>
@@ -37,19 +37,40 @@
         <button data-tab="adjectives"><span class="tab-mark" lang="ja" aria-hidden="true">形</span>Adjectives</button>
         <button data-tab="patterns"><span class="tab-mark" lang="ja" aria-hidden="true">型</span>Patterns</button>
       </div>
-      <div class="tab-group">
+      <div class="tab-group" data-course-only="japanese">
         <span class="tab-cap">Train</span>
         <button data-tab="practice"><span class="tab-mark" lang="ja" aria-hidden="true">練</span>Practice</button>
         <button data-tab="listen"><span class="tab-mark" lang="ja" aria-hidden="true">聴</span>Listen</button>
         <button data-tab="mistakes"><span class="tab-mark" lang="ja" aria-hidden="true">直</span>Mistakes</button>
       </div>
+      <!-- LEN (len.js): every label in German and English, the language switch picks one. -->
+      <div class="tab-group" data-course-only="len">
+        <button data-tab="len-home"><span class="tab-mark" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M2 7.6 8 2.5l6 5.1"/><path d="M3.8 6.3V13.5h3V10h2.4v3.5h3V6.3"/></svg></span><span class="l-de" lang="de">Start</span><span class="l-en">Home</span></button>
+        <button data-tab="len-formulas"><span class="tab-mark" aria-hidden="true">Σ</span><span class="l-de" lang="de">Formeln &amp; Begriffe</span><span class="l-en">Formulas &amp; terms</span></button>
+      </div>
+      <div class="tab-group" data-course-only="len">
+        <span class="tab-cap"><span class="l-de" lang="de">Kapitel</span><span class="l-en">Chapters</span></span>
+        <button data-tab="len-basics"><span class="tab-mark" aria-hidden="true">1</span><span class="l-de" lang="de">Grundlagen</span><span class="l-en">Basics</span></button>
+      </div>
+      <div class="tab-group" data-course-only="len">
+        <span class="tab-cap"><span class="l-de" lang="de">Klausur</span><span class="l-en">Exam</span></span>
+        <button data-tab="len-exams"><span class="tab-mark" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 1.8h5.5L12.5 5v9.2H4z"/><path d="M9.5 1.8V5h3M6 8h4.5M6 10.8h4.5"/></svg></span><span class="l-de" lang="de">Altklausuren</span><span class="l-en">Old exams</span></button>
+        <button data-tab="len-practice"><span class="tab-mark" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M10.8 2.2l3 3-8.3 8.3-3.6.6.6-3.6z"/><path d="M9.2 3.8l3 3"/></svg></span><span class="l-de" lang="de">Übungsaufgaben</span><span class="l-en">Practice</span></button>
+        <button data-tab="len-mock"><span class="tab-mark" aria-hidden="true"><svg viewBox="0 0 16 16"><circle cx="8" cy="9" r="5.5"/><path d="M8 6v3.2l2 1.4M6.5 1.8h3"/></svg></span><span class="l-de" lang="de">Probeklausur</span><span class="l-en">Mock exam</span></button>
+      </div>
     </nav>
     <div class="account" id="account"></div>
-    <label class="switch">
+    <label class="switch" data-course-only="japanese">
       <input type="checkbox" id="furiToggle" checked>
       <span class="switch-track"><span class="switch-thumb"></span></span>
       <span>Furigana</span>
     </label>
+    <div class="switch lang-switch" data-course-only="len">
+      <span class="seg lang-seg" id="lenLang" role="group" aria-label="Sprache / Language">
+        <button type="button" data-lang="de" lang="de">DE</button><button type="button" data-lang="en">EN</button>
+      </span>
+      <span><span class="l-de" lang="de">Sprache</span><span class="l-en">Language</span></span>
+    </div>
     <button class="account-btn theme-btn" id="themeBtn" type="button"></button>
   </header>
 
@@ -65,9 +86,16 @@
     <section id="practice" class="panel"></section>
     <section id="listen" class="panel"></section>
     <section id="mistakes" class="panel"></section>
+    <section id="len-home" class="panel"></section>
+    <section id="len-basics" class="panel"></section>
+    <section id="len-formulas" class="panel"></section>
+    <section id="len-exams" class="panel"></section>
+    <section id="len-practice" class="panel"></section>
+    <section id="len-mock" class="panel"></section>
   </main>
 
-  <footer class="footer">Colours mean the same thing on every page — a green block is always the object, a blue block is always the topic.</footer>
+  <!-- Each course has its own line here (`footer` in courses.js). -->
+  <footer class="footer" id="footer"></footer>
 
   <!-- The account's lesson progress, from server.js (missing when the page is opened as a file). -->
   <script src="progress.js"></script>
@@ -100,5 +128,11 @@
   <script src="js/home-stats.js"></script>
   <script src="js/home.js"></script>
   <script src="js/courses.js"></script>
+  <script src="js/len.js"></script>
+  <script src="js/len-ch1-widgets.js"></script>
+  <script src="js/len-basics.js"></script>
+  <script src="js/len-exams.js"></script>
+  <script src="js/len-gen.js"></script>
+  <script src="js/len-practice.js"></script>
 </body>
 </html>

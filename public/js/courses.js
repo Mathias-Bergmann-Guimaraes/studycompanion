@@ -1,26 +1,38 @@
 // The course picker, where the site opens (an address with no #page, or #courses). Each course is
-// a set of tabs; picking one opens its own Home tab. Japanese is the only course so far: the other
-// tabs all belong to it, and the rest are placeholders (`soon`). Each course has its own main colour
-// (`color`, a token from style.css). Loaded after home.js and uses its helpers and game.js's.
+// a set of tabs (`tabs`, the first is its Home); picking one opens its Home. Japanese and LEN can be
+// opened, the rest are placeholders (`soon`). Each course has its own main colour (`color`, a token
+// from style.css) and its own line under every page (`footer`). Loaded after home.js and uses its
+// helpers and game.js's; the LEN card comes from len.js.
 
 const COURSES = [
   {
     id: "japanese",
-    tab: "home",
+    tabs: ["home", "lessons", "structure", "particles", "verbs", "adjectives", "patterns", "practice", "listen", "mistakes"],
     mark: "文",
     lang: "ja",
     color: "var(--accent)",
     name: "Japanese",
     about: "Grammar you can see: colour-coded sentence blocks, 50 lessons, daily practice and real Japanese to listen to.",
+    footer: "Colours mean the same thing on every page — a green block is always the object, a blue block is always the topic.",
   },
-  { id: "len", soon: true, mark: "LEN", lang: "de", color: "var(--course-len)", name: "Lineare Elektrische Netze", about: "Circuits and network analysis." },
+  {
+    id: "len",
+    tabs: ["len-home", "len-basics", "len-formulas", "len-exams", "len-practice", "len-mock"],
+    mark: "LEN",
+    lang: "de",
+    color: "var(--course-len)",
+    name: "Lineare Elektrische Netze",
+    about: "Circuits from the ground up, with drawings you can play with — in German or English.",
+    footer: `<span class="l-de" lang="de">Farben bedeuten überall dasselbe — rot ist immer ein Strom, blau immer eine Spannung.</span><span class="l-en">Colours mean the same thing everywhere — red is always a current, blue is always a voltage.</span>`,
+    card: (c) => lenCourseCardHTML(c),
+  },
   { id: "robotics1", soon: true, mark: "Rob I", lang: "en", color: "var(--course-robotics)", name: "Robotics I", about: "Robot arms: kinematics, dynamics and control." },
   { id: "propa", soon: true, mark: "ProPa", lang: "de", color: "var(--course-propa)", name: "Programmierparadigmen", about: "Functional, logic and parallel programming." },
   { id: "gki", soon: true, mark: "GKI", lang: "de", color: "var(--course-gki)", name: "Grundlagen der künstlichen Intelligenz", about: "Search, logic, probability and learning." },
 ];
 
-// The course the tabs belong to, for the brand in the top bar.
-const courseOf = () => COURSES[0];
+// The course a tab belongs to, for the top bar (the picker counts as Japanese, whose bar it hides).
+const courseOf = (tab) => COURSES.find((c) => c.tabs && c.tabs.includes(tab)) || COURSES[0];
 
 function englishGreeting() {
   const h = new Date().getHours();
@@ -33,16 +45,17 @@ function renderCourses() {
       <h1>${englishGreeting()}</h1>
       <p class="muted">Which course are you studying today?</p>
     </div>
-    ${COURSES.filter((c) => !c.soon).map(courseCardHTML).join("")}
+    ${COURSES.filter((c) => !c.soon).map((c) => (c.card ? c.card(c) : courseCardHTML(c))).join("")}
     <h2 class="courses-cap">Coming soon</h2>
     <div class="course-soon-grid">
       ${COURSES.filter((c) => c.soon).map(soonCardHTML).join("")}
     </div>`;
   $$("#courses [data-course]").forEach((b) => (b.onclick = () => {
     track("courses.open");
-    showTab(COURSES.find((c) => c.id === b.dataset.course).tab);
+    showTab(COURSES.find((c) => c.id === b.dataset.course).tabs[0]);
     window.scrollTo({ top: 0 });
   }));
+  wireLenCourseCard();
   const go = $("#courseContinue");
   if (go) go.onclick = () => {
     track("courses.continue");
@@ -54,7 +67,7 @@ function renderCourses() {
   };
 }
 
-// Only Japanese has progress to show so far.
+// Japanese's card, with its level, streak and lessons.
 function courseCardHTML(c) {
   const done = LESSONS.filter((l) => lessonPassed(l.n)).length;
   const l = lessonToContinue();

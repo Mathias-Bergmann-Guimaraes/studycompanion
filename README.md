@@ -1,7 +1,7 @@
 # Study Companion
 
-A study site with a course picker as its front page. Its one course so far is Japanese, a visual
-Japanese grammar course: colour-coded sentence blocks, particles, verb conjugation,
+A study site with a course picker as its front page. Its courses so far are Japanese and LEN
+(electrical networks, see below). Japanese is a visual grammar course: colour-coded sentence blocks, particles, verb conjugation,
 adjectives, verb patterns and a Practice tab — plus a 50-lesson course with practice
 sentences, a 5-question check (worth up to three stars) for every grammar point and a test for
 every lesson. Right answers earn XP towards levels and a daily streak. Learners can also write
@@ -133,6 +133,30 @@ end. It starts on for the finals and off for the big tests. A test in progress i
 so a reload carries on where it was. Grammar points missed in a big test come back in the next day's
 review, a step lower, and lessons scored under 80% unlock the **Retest** roulette until they score
 better. Passing a final gives a 修了証 certificate to save or share as an image.
+
+The second course is **LEN** (Lineare Elektrische Netze), in German or English with a switch in the
+bar; in English the German term stays beside each English one. Its first chapter, *Grundlagen*
+(sections 1.1–1.7: charge, current, potential, resistors, two-terminals, networks, reference arrows,
+Kirchhoff's laws, sources), turns every sketch from the lecture notes into a drawing you can play
+with, keeps their colours (current red, voltage blue) and ends each section with a short check.
+A Formulas & terms tab collects the formulas and a German–English glossary. The text is in
+`public/js/len-basics.js`, the drawings in `public/js/len-ch1-widgets.js` and the shared parts in
+`public/js/len.js`; later chapters get files of their own and join `LEN_CHAPTERS`.
+
+For the exam, LEN has three more tabs. **Altklausuren** lists the ten old exams (2018–2022) task by
+task, tagged by topic (locus, network, AC, Bode, op-amp) and method (star–delta, mesh analysis, …),
+with a filter for both, a tick for the tasks you've done, and links that open the PDF on the task's
+page or its solution's (`public/js/len-exams.js`). **Übungsaufgaben** makes tasks like the exams'
+sub-questions with new numbers each time — mesh and nodal analysis with Cramer's rule, star–delta,
+complex power, compensation, resonance and Q, loci, Bode plots, op-amp circuits and theory questions —
+checks the answers and shows the worked solution (`public/js/len-gen.js`). **Probeklausur** puts
+them together into a timed mock exam in the real exams' order, marked when you hand it in
+(`public/js/len-practice.js`).
+
+The exam PDFs are KIT's, so they are **not in git** (`public/len-exams/` is ignored). Copy them onto
+the server by hand, named by exam date: `2018-04.pdf` (WS 17/18), `2018-08.pdf` (SS 18),
+`2019-04.pdf`, `2019-07.pdf`, `2020-03.pdf`, `2020-07.pdf`, `2021-03.pdf`, `2021-09.pdf`,
+`2022-03.pdf` and `2022-09.pdf`. Like the rest of `public/`, only signed-in members can open them.
 
 The whole site is **private**. Visitors without a login only see a login page. From there they
 can pick a username and password and send an access request, which you approve by hand — or

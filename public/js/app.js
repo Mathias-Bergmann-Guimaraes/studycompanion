@@ -146,18 +146,24 @@ const partsHTML = (parts) => parts.map((p) => `<span class="vp ${p.cls}">${ruby(
 // How much of the top of the window the bar covers: nothing once it's a sidebar on a wide screen.
 const barHeight = () => (matchMedia("(min-width: 1024px)").matches ? 0 : $(".topbar").offsetHeight);
 
-// "courses" is the course picker (courses.js), where the site opens; the rest are the Japanese course.
-const TABS = ["courses", "home", "lessons", "structure", "particles", "verbs", "adjectives", "patterns", "practice", "listen", "mistakes"];
+// "courses" is the course picker (courses.js), where the site opens; each course lists its own tabs
+// there (`tabs`). courses.js loads after this file, so the list is made when it's needed.
+const tabIds = () => ["courses", ...COURSES.flatMap((c) => c.tabs || [])];
 
 function showTab(id) {
-  if (!TABS.includes(id)) id = "courses";
+  if (!tabIds().includes(id)) id = "courses";
   if (!$("#" + id).classList.contains("active")) track("tab." + id);
-  // The picker has no tabs or furigana switch, and the top bar stays a bar on every screen.
+  // The picker has no tabs or settings, and the top bar stays a bar on every screen.
   const picking = id === "courses";
   document.body.classList.toggle("on-courses", picking);
-  const course = courseOf();
+  const course = courseOf(id);
+  // Inside a course: only its own tabs and settings (data-course-only), in its own colour.
+  document.body.dataset.course = picking ? "" : course.id;
+  $$("[data-course-only]").forEach((el) => el.classList.toggle("off", el.dataset.courseOnly !== course.id));
+  $("#footer").innerHTML = course.footer;
   $("#brandMark").textContent = picking ? "S" : course.mark;
   $("#brandMark").lang = picking ? "" : course.lang;
+  $("#brandMark").classList.toggle("short", !picking && course.mark.length > 1);
   $("#brandSub").textContent = picking ? "All courses" : `${course.name} · switch course`;
   document.title = picking ? "Study Companion" : `${course.name} · Study Companion`;
   if (picking) renderCourses();
@@ -179,6 +185,11 @@ function showTab(id) {
   }
   if (id === "practice") showPractice();
   if (id === "listen") renderListen();
+  if (id === "len-home") renderLenHome();
+  if (id === "len-exams") renderLenExams();
+  // Practice keeps its task, and a mock exam under way keeps its answers, when you come back.
+  if (id === "len-practice" && !$("#len-practice").innerHTML) renderLenPractice();
+  if (id === "len-mock" && lmState.phase === "setup") renderLenMock();
 }
 
 /* ---------------------------------------------------------------- Account */
@@ -1537,6 +1548,7 @@ function init() {
   renderHome();
   renderLessons();
   renderPractice();
+  setupLen();
   showTab(location.hash.slice(1));
   setupAccount();
 }

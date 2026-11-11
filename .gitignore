@@ -2,3 +2,5 @@
 data/
 # Old LEN exams (KIT material): copied onto the server by hand, never committed.
 public/len-exams/
+# Old ProPa exams (KIT material): copied onto the server by hand, never committed.
+public/propa-exams/

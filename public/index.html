@@ -58,6 +58,30 @@
         <button data-tab="len-practice"><span class="tab-mark" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M10.8 2.2l3 3-8.3 8.3-3.6.6.6-3.6z"/><path d="M9.2 3.8l3 3"/></svg></span><span class="l-de" lang="de">Übungsaufgaben</span><span class="l-en">Practice</span></button>
         <button data-tab="len-mock"><span class="tab-mark" aria-hidden="true"><svg viewBox="0 0 16 16"><circle cx="8" cy="9" r="5.5"/><path d="M8 6v3.2l2 1.4M6.5 1.8h3"/></svg></span><span class="l-de" lang="de">Probeklausur</span><span class="l-en">Mock exam</span></button>
       </div>
+      <!-- ProPa (propa.js): the Lean part and the Reussner part, each a group of chapters. -->
+      <div class="tab-group" data-course-only="propa">
+        <button data-tab="propa-home"><span class="tab-mark" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M2 7.6 8 2.5l6 5.1"/><path d="M3.8 6.3V13.5h3V10h2.4v3.5h3V6.3"/></svg></span>Home</button>
+        <button data-tab="propa-cheat"><span class="tab-mark" aria-hidden="true">λ</span>Cheat sheet</button>
+      </div>
+      <div class="tab-group" data-course-only="propa">
+        <span class="tab-cap">Lean</span>
+        <button data-tab="propa-l1"><span class="tab-mark" aria-hidden="true">1</span>Basics</button>
+        <button data-tab="propa-l2"><span class="tab-mark" aria-hidden="true">2</span>Functions as values</button>
+        <button data-tab="propa-l3"><span class="tab-mark" aria-hidden="true">3</span>Scaling up</button>
+        <button data-tab="propa-l4"><span class="tab-mark" aria-hidden="true">4</span>Effects</button>
+      </div>
+      <div class="tab-group" data-course-only="propa">
+        <span class="tab-cap">Reussner</span>
+        <button data-tab="propa-l5"><span class="tab-mark" aria-hidden="true">5</span>Parallel basics</button>
+        <button data-tab="propa-l6"><span class="tab-mark" aria-hidden="true">6</span>C and MPI</button>
+        <button data-tab="propa-l7"><span class="tab-mark" aria-hidden="true">7</span>Java threads</button>
+        <button data-tab="propa-l8"><span class="tab-mark" aria-hidden="true">8</span>Design by Contract</button>
+      </div>
+      <div class="tab-group" data-course-only="propa">
+        <span class="tab-cap">Train</span>
+        <button data-tab="propa-exams"><span class="tab-mark" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 1.8h5.5L12.5 5v9.2H4z"/><path d="M9.5 1.8V5h3M6 8h4.5M6 10.8h4.5"/></svg></span>Old exams</button>
+        <button data-tab="propa-practice"><span class="tab-mark" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M10.8 2.2l3 3-8.3 8.3-3.6.6.6-3.6z"/><path d="M9.2 3.8l3 3"/></svg></span>Practice</button>
+      </div>
     </nav>
     <div class="account" id="account"></div>
     <label class="switch" data-course-only="japanese">
@@ -92,6 +116,18 @@
     <section id="len-exams" class="panel"></section>
     <section id="len-practice" class="panel"></section>
     <section id="len-mock" class="panel"></section>
+    <section id="propa-home" class="panel"></section>
+    <section id="propa-l1" class="panel"></section>
+    <section id="propa-l2" class="panel"></section>
+    <section id="propa-l3" class="panel"></section>
+    <section id="propa-l4" class="panel"></section>
+    <section id="propa-l5" class="panel"></section>
+    <section id="propa-l6" class="panel"></section>
+    <section id="propa-l7" class="panel"></section>
+    <section id="propa-l8" class="panel"></section>
+    <section id="propa-cheat" class="panel"></section>
+    <section id="propa-practice" class="panel"></section>
+    <section id="propa-exams" class="panel"></section>
   </main>
 
   <!-- Each course has its own line here (`footer` in courses.js). -->
@@ -134,5 +170,16 @@
   <script src="js/len-exams.js"></script>
   <script src="js/len-gen.js"></script>
   <script src="js/len-practice.js"></script>
+  <script src="js/propa.js"></script>
+  <script src="js/propa-lean1.js"></script>
+  <script src="js/propa-lean2.js"></script>
+  <script src="js/propa-lean3.js"></script>
+  <script src="js/propa-lean4.js"></script>
+  <script src="js/propa-par.js"></script>
+  <script src="js/propa-java.js"></script>
+  <script src="js/propa-dbc.js"></script>
+  <script src="js/propa-practice.js"></script>
+  <script src="js/propa-practice2.js"></script>
+  <script src="js/propa-exams.js"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 # Study Companion
 
-A study site with a course picker as its front page. Its courses so far are Japanese and LEN
-(electrical networks, see below). Japanese is a visual grammar course: colour-coded sentence blocks, particles, verb conjugation,
+A study site with a course picker as its front page. Its courses so far are Japanese, LEN
+(electrical networks) and ProPa (programming paradigms), see below. Japanese is a visual grammar course: colour-coded sentence blocks, particles, verb conjugation,
 adjectives, verb patterns and a Practice tab — plus a 50-lesson course with practice
 sentences, a 5-question check (worth up to three stars) for every grammar point and a test for
 every lesson. Right answers earn XP towards levels and a daily streak. Learners can also write
@@ -157,6 +157,35 @@ The exam PDFs are KIT's, so they are **not in git** (`public/len-exams/` is igno
 the server by hand, named by exam date: `2018-04.pdf` (WS 17/18), `2018-08.pdf` (SS 18),
 `2019-04.pdf`, `2019-07.pdf`, `2020-03.pdf`, `2020-07.pdf`, `2021-03.pdf`, `2021-09.pdf`,
 `2022-03.pdf` and `2022-09.pdf`. Like the rest of `public/`, only signed-in members can open them.
+
+The third course is **ProPa** (Programmierparadigmen), in English like the lecture material, built
+for going over both parts of the lecture again. **Lean** (functional programming): Basics
+(expressions, data types, pattern matching, recursion), Functions as values (higher-order functions,
+folds, the λ-calculus, interpreters), Scaling up (accumulators, property-based testing, type classes,
+encapsulation) and Effects (IO, monads, transformers, concurrency). **Reussner**: Parallel basics
+(memory models, Flynn, parallel sum and odd-even sort, Amdahl), C and MPI (pointers, reading
+declarations, send/receive and its deadlocks, collective operations, MapReduce), Java threads (races
+and synchronized, wait/notify and deadlocks, happens-before and volatile, atomics, executors, futures,
+streams, actors) and Design by Contract (contracts and Hoare triples, JML, Liskov, checking).
+
+Each section starts with the idea in short, shows the lecture's code (Lean, C, Java or JML, each
+coloured), has drawings that run it step by step — a λ-calculus reducer, an interpreter with dynamic
+or lexical scoping, a small plausible, a C declaration decoder, an MPI send/receive simulator that
+finds deadlocks, threads you interleave by hand, a stack that checks its JML contract — then the
+traps, and a check. A Cheat sheet tab has the syntax, running times and terms, and **Practice**
+makes exam-style tasks with new values each time, by part or mixed. The shared parts are in
+`public/js/propa.js`; Lean's chapters in `propa-lean1.js` … `propa-lean4.js`; Reussner's in
+`propa-par.js` (chapters 5–6), `propa-java.js` (7) and `propa-dbc.js` (8); the tasks in
+`propa-practice.js` and `propa-practice2.js`.
+
+ProPa's **Old exams** tab lists the exams from WS 23/24 to SS 26 task by task, each summarised and
+tagged by topic, with a grid of points per topic, done ticks, links that open the PDF on the task's
+page in the exam and in the solutions, and buttons to the matching section and practice tasks
+(`public/js/propa-exams.js`, which also adds the exam-style practice tasks: MPI trace tables,
+multiple-choice facts and Amdahl from measured times). Since WS 25/26 the whole exam applies; of the
+older ones only the Reussner tasks are listed. The PDFs are KIT's, so they are **not in git**
+(`public/propa-exams/` is ignored): copy them onto the server by hand as `2324-ws.pdf`,
+`2324-ws-solutions.pdf`, … for `2324-ws`, `2424-ss`, `2425-ws`, `2525-ss`, `2526-ws` and `2626-ss`.
 
 The whole site is **private**. Visitors without a login only see a login page. From there they
 can pick a username and password and send an access request, which you approve by hand — or

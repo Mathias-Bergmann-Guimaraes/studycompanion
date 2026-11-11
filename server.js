@@ -51,6 +51,7 @@ const TYPES = {
   ".svg": "image/svg+xml",
   ".png": "image/png",
   ".ico": "image/x-icon",
+  ".pdf": "application/pdf", // the old LEN exams in public/len-exams/ (not in git, see README)
 };
 
 /* ---------------------------------------------------------------- Store */
@@ -451,6 +452,9 @@ const PROGRESS_MERGE = {
   bigWeak: "latest", certs: "latest", listenSaved: "list", listenChannels: "list",
   // LEN: the best score of each section's check, by section ("1.4").
   lenChecks: "scores",
+  // LEN exam practice: old exam tasks ticked off ("2019-07/3"), practice tasks solved fully per
+  // kind, and the best mock exam (best %, how many).
+  lenExamDone: "list", lenSolved: "scores", lenMock: "scores",
 };
 const MAX_HISTORY_DAYS = 366;
 const MAX_PROGRESS_BODY = 512 * 1024;
@@ -625,10 +629,12 @@ const USAGE_GROUPS = {
     "tab.courses": "Course picker", "tab.home": "Home", "tab.lessons": "Lessons", "tab.structure": "Sentences", "tab.particles": "Particles", "tab.verbs": "Verbs",
     "tab.adjectives": "Adjectives", "tab.patterns": "Patterns", "tab.practice": "Practice", "tab.listen": "Listen", "tab.mistakes": "Mistakes",
     "tab.len-home": "LEN Home", "tab.len-basics": "LEN Basics", "tab.len-formulas": "LEN Formulas",
+    "tab.len-exams": "LEN Old exams", "tab.len-practice": "LEN Practice", "tab.len-mock": "LEN Mock exam",
   },
   Listen: { "listen.open": "Videos opened", "listen.vote": "Likes and dislikes", "listen.save": "Bookmarks changed", "listen.channel": "Favourite channels changed" },
   "Course picker": { "courses.open": "Courses opened", "courses.continue": "Continue lesson button", "courses.lenContinue": "Continue LEN section button" },
-  LEN: { "len.continue": "Continue button on LEN Home", "len.check": "Section checks started", "len.checkDone": "Section checks finished" },
+  LEN: { "len.continue": "Continue button on LEN Home", "len.check": "Section checks started", "len.checkDone": "Section checks finished",
+    "len.practice": "Practice tasks made", "len.mock": "Mock exams started", "len.mockDone": "Mock exams handed in" },
   Home: { "home.continue": "Continue button", "home.explore": "Explore tiles", "home.stats": "Weak points opened from Your progress" },
   Lessons: {
     "lesson.open": "Lessons opened", "lesson.practice": "Practice questions answered", "lesson.check": "Grammar checks started",

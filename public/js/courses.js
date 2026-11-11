@@ -17,7 +17,7 @@ const COURSES = [
   },
   {
     id: "len",
-    tabs: ["len-home", "len-basics", "len-formulas"],
+    tabs: ["len-home", "len-basics", "len-formulas", "len-exams", "len-practice", "len-mock"],
     mark: "LEN",
     lang: "de",
     color: "var(--course-len)",

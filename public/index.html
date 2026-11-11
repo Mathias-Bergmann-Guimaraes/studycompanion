@@ -52,6 +52,12 @@
         <span class="tab-cap"><span class="l-de" lang="de">Kapitel</span><span class="l-en">Chapters</span></span>
         <button data-tab="len-basics"><span class="tab-mark" aria-hidden="true">1</span><span class="l-de" lang="de">Grundlagen</span><span class="l-en">Basics</span></button>
       </div>
+      <div class="tab-group" data-course-only="len">
+        <span class="tab-cap"><span class="l-de" lang="de">Klausur</span><span class="l-en">Exam</span></span>
+        <button data-tab="len-exams"><span class="tab-mark" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 1.8h5.5L12.5 5v9.2H4z"/><path d="M9.5 1.8V5h3M6 8h4.5M6 10.8h4.5"/></svg></span><span class="l-de" lang="de">Altklausuren</span><span class="l-en">Old exams</span></button>
+        <button data-tab="len-practice"><span class="tab-mark" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M10.8 2.2l3 3-8.3 8.3-3.6.6.6-3.6z"/><path d="M9.2 3.8l3 3"/></svg></span><span class="l-de" lang="de">Übungsaufgaben</span><span class="l-en">Practice</span></button>
+        <button data-tab="len-mock"><span class="tab-mark" aria-hidden="true"><svg viewBox="0 0 16 16"><circle cx="8" cy="9" r="5.5"/><path d="M8 6v3.2l2 1.4M6.5 1.8h3"/></svg></span><span class="l-de" lang="de">Probeklausur</span><span class="l-en">Mock exam</span></button>
+      </div>
     </nav>
     <div class="account" id="account"></div>
     <label class="switch" data-course-only="japanese">
@@ -83,6 +89,9 @@
     <section id="len-home" class="panel"></section>
     <section id="len-basics" class="panel"></section>
     <section id="len-formulas" class="panel"></section>
+    <section id="len-exams" class="panel"></section>
+    <section id="len-practice" class="panel"></section>
+    <section id="len-mock" class="panel"></section>
   </main>
 
   <!-- Each course has its own line here (`footer` in courses.js). -->
@@ -122,5 +131,8 @@
   <script src="js/len.js"></script>
   <script src="js/len-ch1-widgets.js"></script>
   <script src="js/len-basics.js"></script>
+  <script src="js/len-exams.js"></script>
+  <script src="js/len-gen.js"></script>
+  <script src="js/len-practice.js"></script>
 </body>
 </html>

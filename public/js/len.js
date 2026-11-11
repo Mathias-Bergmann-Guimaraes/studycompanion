@@ -18,12 +18,21 @@ const lt = (de, en = de) => (lenLang === "en" ? en : de);
 const T = (de, en) => `<span class="l-de" lang="de"><b>${de}</b></span><span class="l-en"><b>${en}</b> <i class="de-term" lang="de">${de}</i></span>`;
 
 // Numbers the way each language writes them: 1,5 in German, 1.5 in English, with a real minus.
-function nf(x, d = 1) {
+function nfx(x, d, lang) {
   let s = Math.abs(x).toFixed(d);
-  if (+s === 0) return lenLang === "de" ? s.replace(".", ",") : s;
-  if (lenLang === "de") s = s.replace(".", ",");
-  return (x < 0 ? "−" : "") + s;
+  const neg = x < 0 && +s !== 0;
+  if (lang === "de") s = s.replace(".", ",");
+  return (neg ? "−" : "") + s;
 }
+const nf = (x, d = 1) => nfx(x, d, lenLang);
+// A number in both languages at once, for text that isn't redrawn on a switch: nb() in HTML,
+// nbt() inside SVG text. sig() picks the decimals for about three significant figures.
+const sigDec = (x) => (x === 0 || !isFinite(x) ? 0 : clampDec(2 - Math.floor(Math.log10(Math.abs(x)))));
+const clampDec = (d) => Math.min(6, Math.max(0, d));
+// Without d: about three significant figures, and no trailing zeros (1 not 1,00; 2,5 not 2,50).
+const nfAuto = (x, d, lang) => (d === undefined ? nfx(x, sigDec(x), lang).replace(/([.,]\d*?)0+$/, "$1").replace(/[.,]$/, "") : nfx(x, d, lang));
+const nb = (x, d) => `<span class="l-de">${nfAuto(x, d, "de")}</span><span class="l-en">${nfAuto(x, d, "en")}</span>`;
+const nbt = (x, d) => `<tspan class="l-de">${nfAuto(x, d, "de")}</tspan><tspan class="l-en">${nfAuto(x, d, "en")}</tspan>`;
 const nfs = (x, d = 1) => (x > 0 && +Math.abs(x).toFixed(d) !== 0 ? "+" : "") + nf(x, d);
 
 /* ---------------------------------------------------------------- Formulas */
@@ -144,6 +153,8 @@ function setupLen() {
   setLenLang(lenLang);
   renderLenBasics();
   renderLenFormulas();
+  // The old exams' tooltips are attributes: redraw that page on a switch.
+  lenDraws.push(() => $("#len-exams").innerHTML && renderLenExams());
 }
 
 /* ---------------------------------------------------------------- Progress */
@@ -249,6 +260,7 @@ function renderLenHome() {
       </div>
     </div>
     ${LEN_CHAPTERS.map(lenChapterCardHTML).join("")}
+    ${lenExamPrepHTML()}
     <div class="card">
       <h2>${L("Farbcode", "Colour code")}</h2>
       <p class="small muted">${L("Wie in der Vorlesung — und auf jeder LEN-Seite gleich.", "As in the lectures — and the same on every LEN page.")}</p>
@@ -263,6 +275,25 @@ function renderLenHome() {
   $("#lenGo").onclick = () => { track("len.continue"); openLenSection(next.id); };
   $("#lenFormulasGo").onclick = () => { showTab("len-formulas"); window.scrollTo({ top: 0 }); };
   $$("#len-home [data-sec]").forEach((b) => (b.onclick = () => openLenSection(b.dataset.sec)));
+  $$("#len-home [data-go]").forEach((b) => (b.onclick = () => { showTab(b.dataset.go); window.scrollTo({ top: 0 }); }));
+}
+
+// Home's way into exam practice: old exams, generated tasks and the mock exam.
+function lenExamPrepHTML() {
+  const tasks = LEN_EXAMS.flatMap((e) => e.tasks).length;
+  const done = store.get("lenExamDone", []).length;
+  const solved = Object.values(store.get("lenSolved", {})).reduce((a, b) => a + b, 0);
+  const mock = store.get("lenMock", {});
+  const tile = (go, icon, de, en, sub) => `<button class="home-tile" type="button" data-go="${go}"><span class="home-tile-ja len-tile-icon" aria-hidden="true">${icon}</span><span><b>${L(de, en)}</b><span class="small muted">${sub}</span></span></button>`;
+  return `
+    <div class="card">
+      <h2>${L("Klausurvorbereitung", "Exam preparation")}</h2>
+      <div class="home-tiles">
+        ${tile("len-exams", "📄", "Altklausuren", "Old exams", L(`${LEN_EXAMS.length} Klausuren · ${done} / ${tasks} Aufgaben erledigt`, `${LEN_EXAMS.length} exams · ${done} / ${tasks} tasks done`))}
+        ${tile("len-practice", "✎", "Übungsaufgaben", "Practice tasks", L(`${LEN_GENERATORS.length} Aufgabentypen · ${solved}× komplett richtig`, `${LEN_GENERATORS.length} kinds of task · ${solved}× fully right`))}
+        ${tile("len-mock", "⏱", "Probeklausur", "Mock exam", mock.best !== undefined ? L(`Bestes Ergebnis: ${mock.best} %`, `Best result: ${mock.best} %`) : L("120 Minuten, wie die echte", "120 minutes, like the real one"))}
+      </div>
+    </div>`;
 }
 
 function lenChapterCardHTML(ch) {

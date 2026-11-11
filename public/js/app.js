@@ -186,6 +186,10 @@ function showTab(id) {
   if (id === "practice") showPractice();
   if (id === "listen") renderListen();
   if (id === "len-home") renderLenHome();
+  if (id === "len-exams") renderLenExams();
+  // Practice keeps its task, and a mock exam under way keeps its answers, when you come back.
+  if (id === "len-practice" && !$("#len-practice").innerHTML) renderLenPractice();
+  if (id === "len-mock" && lmState.phase === "setup") renderLenMock();
 }
 
 /* ---------------------------------------------------------------- Account */

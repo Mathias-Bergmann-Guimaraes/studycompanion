@@ -181,8 +181,19 @@ makes exam-style tasks with new values each time, by part or mixed. The shared p
 ProPa's **Old exams** tab lists the exams from WS 23/24 to SS 26 task by task, each summarised and
 tagged by topic, with a grid of points per topic, done ticks, links that open the PDF on the task's
 page in the exam and in the solutions, and buttons to the matching section and practice tasks
-(`public/js/propa-exams.js`, which also adds the exam-style practice tasks: MPI trace tables,
-multiple-choice facts and Amdahl from measured times). Since WS 25/26 the whole exam applies; of the
+(`public/js/propa-exams.js`, which also adds the exam-style quick drills: MPI trace tables,
+multiple-choice facts and Amdahl from measured times).
+
+Practice has two modes. **Exam tasks** are whole tasks like the old exams', one at a time: 32 of
+them across the exams' ten topics (three or four per topic, each modelled on a named old exam task
+and linking to it), with several sub-questions and new values each time. Values and choices are
+checked by the page; code and explanations you write yourself, then mark against the model
+solution by ticking its rubric, like the exam's marking scheme (`public/js/propa-tasks.js`).
+**Quick drills** are the one-question tasks from before. The **Mock exam** tab puts one exam task
+per topic together in the real exams' order — seven Lean, then MPI, Java and Design by Contract,
+about 120 points — timed at a minute a point, marked when you hand it in, with the total updating
+as you tick the rubrics; the whole exam, only Lean, only Reussner or any topics you pick
+(`public/js/propa-mock.js`). Since WS 25/26 the whole exam applies; of the
 older ones only the Reussner tasks are listed. The PDFs are KIT's, so they are **not in git**
 (`public/propa-exams/` is ignored): copy them onto the server by hand as `2324-ws.pdf`,
 `2324-ws-solutions.pdf`, … for `2324-ws`, `2424-ss`, `2425-ws`, `2525-ss`, `2526-ws` and `2626-ss`.

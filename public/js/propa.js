@@ -266,10 +266,11 @@ function renderPropaHome() {
       <h1>Programming <span class="accent">Paradigms</span></h1>
       <p>The lecture's two parts, Lean and Reussner, for going over them again: every topic in short, the code that matters,
         drawings that run the code step by step, the traps to avoid, and a check per section.
-        Then <b>Practice</b> makes new tasks like the exam's, as many as you like.</p>
+        Then <b>Practice</b> makes new tasks like the exam's, as many as you like, and the <b>Mock exam</b> puts ten of them together against the clock.</p>
       <div class="home-actions">
         <button class="btn primary" type="button" id="ppGo">${allDone ? "Go over the Lean part again" : `Continue with ${next.id}: ${next.title}`} →</button>
         <button class="btn" type="button" data-go="propa-practice">Practice</button>
+        <button class="btn" type="button" data-go="propa-mock">Mock exam</button>
         <button class="btn" type="button" data-go="propa-cheat">Cheat sheet</button>
       </div>
     </div>
@@ -277,7 +278,8 @@ function renderPropaHome() {
     <div class="card">
       <h2>Train</h2>
       <div class="home-tiles">
-        ${tile("propa-practice", "✎", "Practice", `${PROPA_DRILLS.length} kinds of task · ${solved}× right`)}
+        ${tile("propa-practice", "✎", "Practice", `${PROPA_TASKS.length} exam tasks and ${PROPA_DRILLS.length} quick drills · ${solved + Object.values(store.get("propaTaskSolved", {})).reduce((a, b) => a + b, 0)}× right`)}
+        ${tile("propa-mock", "⏱", "Mock exam", store.get("propaMock", {}).best !== undefined ? `Best result: ${store.get("propaMock", {}).best} %` : "Ten tasks, a minute a point, like the real one")}
         ${tile("propa-cheat", "λ", "Cheat sheet", "Syntax, terms and complexities at a glance")}
         ${tile("propa-exams", "📄", "Old exams", `${PROPA_EXAMS.length} exams · ${store.get("propaExamDone", []).length} / ${PROPA_EXAMS.flatMap((e) => e.tasks).length} tasks done`)}
       </div>

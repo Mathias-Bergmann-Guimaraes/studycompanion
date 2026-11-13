@@ -157,7 +157,8 @@ function renderPropaExams() {
                 <a class="btn small-btn" href="${e.file}#page=${t.page}" target="_blank" rel="noopener">Task · p. ${t.page}</a>
                 <a class="btn small-btn" href="${e.sol}#page=${t.page}" target="_blank" rel="noopener">Solution · p. ${t.page}</a>
                 <button class="btn small-btn" type="button" data-sec="${T.secs[0]}">Review ${T.secs.join(", ")}</button>
-                ${T.drill ? `<button class="btn small-btn primary" type="button" data-drill="${T.drill}">Practise</button>` : ""}
+                <button class="btn small-btn primary" type="button" data-tasks="${t.topic}">Practise</button>
+                ${T.drill ? `<button class="btn small-btn" type="button" data-drill="${T.drill}">Quick drill</button>` : ""}
               </span>
             </div>`;
           }).join("")}
@@ -176,10 +177,12 @@ function renderPropaExams() {
   }));
   $$("#propa-exams [data-sec]").forEach((b) => (b.onclick = () => openPropaSection(b.dataset.sec)));
   $$("#propa-exams [data-drill]").forEach((b) => (b.onclick = () => openPropaDrill(b.dataset.drill)));
+  $$("#propa-exams [data-tasks]").forEach((b) => (b.onclick = () => openPropaTasks(b.dataset.tasks)));
 }
 
-// Opens the Practice tab on one kind of task.
+// Opens the Practice tab on one kind of quick drill.
 function openPropaDrill(id) {
+  ppPractice.mode = "drills";
   ppPractice.kind = id;
   showTab("propa-practice");
   renderPropaPractice();

@@ -457,8 +457,9 @@ const PROGRESS_MERGE = {
   lenExamDone: "list", lenSolved: "scores", lenMock: "scores",
   // ProPa: the best score of each section's check ("2.3"), and practice tasks answered right per kind.
   propaChecks: "scores", propaSolved: "scores",
-  // ProPa old exam tasks ticked off ("2526-ws/8").
-  propaExamDone: "list",
+  // ProPa old exam tasks ticked off ("2526-ws/8"), exam tasks fully right per kind, and the best
+  // mock exam (best %, how many).
+  propaExamDone: "list", propaTaskSolved: "scores", propaMock: "scores",
 };
 const MAX_HISTORY_DAYS = 366;
 const MAX_PROGRESS_BODY = 512 * 1024;
@@ -636,14 +637,14 @@ const USAGE_GROUPS = {
     "tab.len-exams": "LEN Old exams", "tab.len-practice": "LEN Practice", "tab.len-mock": "LEN Mock exam",
     "tab.propa-home": "ProPa Home", "tab.propa-l1": "ProPa Lean 1 Basics", "tab.propa-l2": "ProPa Lean 2 Functions",
     "tab.propa-l3": "ProPa Lean 3 Scaling up", "tab.propa-l4": "ProPa Lean 4 Effects", "tab.propa-l5": "ProPa 5 Parallel basics", "tab.propa-l6": "ProPa 6 C and MPI",
-    "tab.propa-l7": "ProPa 7 Java threads", "tab.propa-l8": "ProPa 8 Design by Contract", "tab.propa-cheat": "ProPa Cheat sheet", "tab.propa-exams": "ProPa Old exams", "tab.propa-practice": "ProPa Practice",
+    "tab.propa-l7": "ProPa 7 Java threads", "tab.propa-l8": "ProPa 8 Design by Contract", "tab.propa-cheat": "ProPa Cheat sheet", "tab.propa-exams": "ProPa Old exams", "tab.propa-practice": "ProPa Practice", "tab.propa-mock": "ProPa Mock exam",
   },
   Listen: { "listen.open": "Videos opened", "listen.vote": "Likes and dislikes", "listen.save": "Bookmarks changed", "listen.channel": "Favourite channels changed" },
   "Course picker": { "courses.open": "Courses opened", "courses.continue": "Continue lesson button", "courses.lenContinue": "Continue LEN section button", "courses.propaContinue": "Continue ProPa section button" },
   LEN: { "len.continue": "Continue button on LEN Home", "len.check": "Section checks started", "len.checkDone": "Section checks finished",
     "len.practice": "Practice tasks made", "len.mock": "Mock exams started", "len.mockDone": "Mock exams handed in" },
   ProPa: { "propa.continue": "Continue button on ProPa Home", "propa.check": "Section checks started", "propa.checkDone": "Section checks finished",
-    "propa.practice": "Practice tasks made", "propa.pbt": "Property tests run", "propa.examDone": "Old exam tasks ticked" },
+    "propa.practice": "Practice drills made", "propa.task": "Exam tasks made", "propa.mock": "Mock exams started", "propa.mockDone": "Mock exams handed in", "propa.pbt": "Property tests run", "propa.examDone": "Old exam tasks ticked" },
   Home: { "home.continue": "Continue button", "home.explore": "Explore tiles", "home.stats": "Weak points opened from Your progress" },
   Lessons: {
     "lesson.open": "Lessons opened", "lesson.practice": "Practice questions answered", "lesson.check": "Grammar checks started",

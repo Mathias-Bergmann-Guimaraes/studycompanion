@@ -193,6 +193,7 @@ function showTab(id) {
   if (id === "propa-home") renderPropaHome();
   if (id === "propa-practice" && !$("#propa-practice").innerHTML) renderPropaPractice();
   if (id === "propa-exams") renderPropaExams();
+  if (id === "propa-mock" && pmMock.phase === "setup") renderPropaMock();
 }
 
 /* ---------------------------------------------------------------- Account */

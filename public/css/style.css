@@ -2598,6 +2598,40 @@ main { max-width: 1080px; margin: 0 auto; padding: 24px; }
 .lm-row { display: grid; grid-template-columns: 110px minmax(0, 1fr) auto auto; align-items: center; gap: 10px; }
 .lm-row .lw-bar span { background: var(--good); }
 
+/* ProPa exam tasks: values, choices, and code you mark yourself */
+.pp-mode { margin-top: 12px; }
+.pm-like { margin: -2px 0 10px; }
+.pm-intro { max-width: 80ch; margin-bottom: 10px; }
+.pm-intro .pp-code { margin: 8px 0; }
+.pm-part { grid-template-columns: 1.6em minmax(0, 1fr) auto; align-items: start; }
+.pm-part > .lp-mc, .pm-part > .pm-in, .pm-part > .pm-ta, .pm-part > .pm-model, .pm-part > .pm-why, .pm-part > .lp-mark { grid-column: 2 / -1; }
+.pm-part .lp-mc { grid-column: 2 / -1; }
+.pm-in input { width: min(100%, 22em); text-align: left; font-family: var(--pp-mono); }
+.pm-ta {
+  width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; resize: vertical;
+  background: var(--surface); color: var(--text); font: .9rem/1.5 var(--pp-mono); tab-size: 2;
+}
+.pm-ta:focus { outline: none; border-color: var(--accent); }
+.pm-ta[readonly] { background: var(--surface-2); }
+.pm-model { display: grid; gap: 8px; padding: 10px 12px; border-left: 4px solid var(--accent); border-radius: 10px; background: color-mix(in srgb, var(--accent) 7%, var(--surface)); }
+.pm-model .pp-code { margin: 0; }
+.pm-rub { display: grid; gap: 4px; }
+.pm-rub-i { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: baseline; gap: 8px; padding: 4px 6px; border-radius: 8px; cursor: pointer; }
+.pm-rub-i:hover { background: var(--surface); }
+.pm-rub-i b { white-space: nowrap; color: var(--muted); }
+.pm-rub-i:has(input:checked) b { color: var(--good); }
+.pm-why { color: var(--muted); }
+.pm-model[hidden], .pm-why[hidden], .pm-sum[hidden] { display: none; }
+.pm-mock-task .lp-head h3 { font-size: 1.2rem; }
+.pm-row { grid-template-columns: 150px minmax(0, 1fr) auto auto; }
+.pm-row .len-topic { justify-self: start; }
+@media (max-width: 640px) {
+  .pm-part { grid-template-columns: 1.6em minmax(0, 1fr) auto; }
+  .pm-part .lp-mc { grid-column: 1 / -1; }
+  .pm-row { grid-template-columns: minmax(0, 1fr) auto auto; }
+  .pm-row .lw-bar { display: none; }
+}
+
 /* ------------------------------------------------------------ ProPa (propa.js and its chapters)
    Reuses LEN's page parts (len-sec, len-index, len-toc, lw drawings, checks) and adds Lean code and
    the drawings of its own. Colours in code: keyword indigo, type blue, effect red, operator pink,

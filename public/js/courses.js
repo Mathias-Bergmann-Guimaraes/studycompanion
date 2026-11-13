@@ -28,7 +28,7 @@ const COURSES = [
   },
   {
     id: "propa",
-    tabs: ["propa-home", "propa-l1", "propa-l2", "propa-l3", "propa-l4", "propa-l5", "propa-l6", "propa-l7", "propa-l8", "propa-cheat", "propa-exams", "propa-practice"],
+    tabs: ["propa-home", "propa-l1", "propa-l2", "propa-l3", "propa-l4", "propa-l5", "propa-l6", "propa-l7", "propa-l8", "propa-cheat", "propa-exams", "propa-practice", "propa-mock"],
     mark: "ProPa",
     lang: "de",
     color: "var(--course-propa)",

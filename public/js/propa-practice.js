@@ -219,17 +219,38 @@ const PROPA_DRILLS = [
 
 /* ---------------------------------------------------------------- The page */
 
-const ppPractice = { kind: "all", streak: 0, right: 0, total: 0 };
+// mode "tasks": whole exam tasks (propa-mock.js); "drills": one quick question at a time.
+const ppPractice = { mode: "tasks", kind: "all", streak: 0, right: 0, total: 0 };
 
 // The tasks of one part (the Lean ones have no part set).
 const ppDrillsOf = (part) => PROPA_DRILLS.filter((d) => (d.part || "Lean") === part);
 
+const ppModeSeg = () => `<div class="seg pp-mode" role="tablist">
+  <button type="button" class="${ppPractice.mode === "tasks" ? "active" : ""}" data-mode="tasks">Exam tasks · ${PROPA_TASKS.length}</button>
+  <button type="button" class="${ppPractice.mode === "drills" ? "active" : ""}" data-mode="drills">Quick drills · ${PROPA_DRILLS.length}</button>
+</div>`;
+const ppWireMode = () => $$("#propa-practice [data-mode]").forEach((b) => (b.onclick = () => { ppPractice.mode = b.dataset.mode; renderPropaPractice(); }));
+
 function renderPropaPractice() {
+  if (ppPractice.mode === "tasks") {
+    $("#propa-practice").innerHTML = `
+      <div class="card hero">
+        <h1>Practice <span class="accent">tasks</span></h1>
+        <p>Whole tasks like the old exams', one at a time, each with its sub-questions and new values: values and choices are checked for you;
+          code you write, then mark yourself against the model solution and its rubric. Filter by the exam's topics.</p>
+        ${ppModeSeg()}
+      </div>
+      <div id="pmPractice"></div>`;
+    ppWireMode();
+    renderPmPractice();
+    return;
+  }
   const solved = store.get("propaSolved", {});
   $("#propa-practice").innerHTML = `
     <div class="card hero">
       <h1>Practice <span class="accent">tasks</span></h1>
-      <p>Exam-style questions, made new each time: work out what the code gives before you look at the answers. Pick a kind of task or mix them.</p>
+      <p>Quick exam-style questions, made new each time: work out what the code gives before you look at the answers. Pick a kind of task or mix them.</p>
+      ${ppModeSeg()}
       <div class="pp-kinds">
         <button type="button" class="pp-kind ${ppPractice.kind === "all" ? "active" : ""}" data-kind="all"><b>Mixed: everything</b><span class="small muted">All ${PROPA_DRILLS.length} kinds</span></button>
         ${PROPA_PARTS.map(([part]) => `<button type="button" class="pp-kind ${ppPractice.kind === "all-" + part ? "active" : ""}" data-kind="all-${part}"><b>Mixed: ${part}</b><span class="small muted">${ppDrillsOf(part).length} kinds</span></button>`).join("")}
@@ -239,6 +260,7 @@ function renderPropaPractice() {
       </div>`).join("")}
     </div>
     <div class="card len-check pp-task" id="ppTask"></div>`;
+  ppWireMode();
   $$("#propa-practice [data-kind]").forEach((b) => (b.onclick = () => {
     ppPractice.kind = b.dataset.kind;
     $$("#propa-practice [data-kind]").forEach((x) => x.classList.toggle("active", x === b));

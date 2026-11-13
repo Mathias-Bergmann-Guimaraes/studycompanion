@@ -465,8 +465,20 @@ const VERB_PATTERNS = [
       patEx("A goal", "I'm saving up to buy a house.", ["家[いえ]", "を", "object"], ["買[か]う{ために}", "", "point"], ["貯金[ちょきん]しています", "", "verb"]),
       patEx("Used for: のに", "These scissors are for cutting flowers.", ["はさみ", "は", "topic"], ["花[はな]", "を", "object"], ["切[き]る{のに}", "", "point"], ["使[つか]います", "", "verb"]),
     ],
-    forms: [["V dict ために", "in order to"], ["N のために", "for: 家族のために"], ["V dict のに使います", "is used for doing"], ["V dict のにいいです", "is good for doing"]],
+    forms: [["V dict ために", "in order to"], ["N のために", "for: 家族のために"], ["V dict のに使います", "is used for doing"], ["V dict のにいいです", "is good for doing"], ["V dict ための N", "N for doing: 覚えるためのアプリ"]],
     tip: "ために takes a verb you control (買う), and ように takes one you don't (買える)." }),
+  patDef({ id: "toori", lesson: 34, title: "〜とおり(に)", base: "dict", ending: "とおりに", en: "just as (I) {v}", avoid: ["ta"],
+    name: "Just as", meaning: "(just) as · the way…",
+    caption: "Copy the model, line for line",
+    idea: "Dictionary form or た-form + とおり(に): do it the same way as something said, shown or planned. After a noun it's N のとおり or, joined straight on, N どおり.",
+    lit: [["とおり", "the way"], ["に", "(how)"]], result: "“in the way that”",
+    ex: [
+      patEx("As said", "I tried it just as the teacher said.", ["先生[せんせい]", "が", "subject"], ["言[い]った{とおりに}", "", "owner"], ["やってみました", "", "verb"]),
+      patEx("As shown", "Please draw it the way I draw it.", ["私[わたし]", "が", "subject"], ["描[か]く{とおりに}", "", "owner"], ["描[か]いてください", "", "verb"]),
+      patEx("With a noun: どおり", "The train arrived on time.", ["電車[でんしゃ]", "は", "topic"], ["時間[じかん]{どおりに}", "", "owner"], ["着[つ]きました", "", "verb"]),
+    ],
+    forms: [["V dict とおりに", "as (someone) does"], ["V た とおりに", "as (someone) did"], ["N のとおりに", "as N: 説明のとおりに"], ["N どおりに", "as N: 予定どおりに"], ["〜とおりの N", "before a noun: 思ったとおりの結果"]],
+    tip: "Joined straight onto a noun, とおり turns into どおり: 予定どおり, 時間どおり. After の it stays とおり: 予定のとおり." }),
   patDef({ id: "nominal", lesson: 38, title: "〜のが好[す]き", base: "dict", ending: "のが好[す]きです", en: "like {ing}", avoid: ["ta"],
     name: "Turning a verb into a noun", meaning: "like doing · doing is…",
     caption: "Put a verb in a box, and it acts like a noun",
@@ -560,6 +572,18 @@ const VERB_PATTERNS = [
     ],
     forms: [["〜たばかりです", "have only just"], ["〜たばかりの N", "before a noun: 買ったばかりの車"], ["〜たところです", "just this second"]],
     tip: "たところ is seconds ago by the clock, and たばかり is how recent it feels. A month ago can still be たばかり." }),
+
+  patDef({ id: "kikkake", lesson: 53, title: "〜のがきっかけで", base: "ta", ending: "のがきっかけで", en: "having {pp}, (I) got started",
+    name: "It started with", meaning: "being motivated by · it all started when…",
+    caption: "One small event sets things going",
+    idea: "た-form + のがきっかけで (or ことがきっかけで): the first half is the spark, the event that made something new begin. After a noun it's simply N がきっかけで.",
+    lit: [["の", "(the event)"], ["が", "(subject)"], ["きっかけ", "trigger"], ["で", "by"]], result: "“the trigger being that”",
+    ex: [
+      patEx("The spark", "Watching anime is what got me started on Japanese.", ["アニメ", "を", "object"], ["見[み]た{のがきっかけで}", "", "range"], ["日本語[にほんご]", "を", "object"], ["始[はじ]めました", "", "verb"]),
+      patEx("With a noun", "A trip to Kyoto got me interested in temples.", ["京都旅行[きょうとりょこう]{がきっかけで}", "", "range"], ["お寺[てら]", "に", "point"], ["興味[きょうみ]を持[も]ちました", "", "verb"]),
+    ],
+    forms: [["V た のがきっかけで", "it started with doing"], ["V た ことがきっかけで", "the same, a little more formal"], ["N がきっかけで", "with a noun: 留学がきっかけで"], ["〜のがきっかけになった", "… was what started it"]],
+    tip: "The second half is a beginning or a change: 始めた, 好きになった, 興味を持った. For an everyday reason, use 〜から or 〜ので." }),
 
   // ---------------------------------------------------------------- Plain form
   patDef({ id: "omou", lesson: 21, title: "〜と思[おも]う", base: "plain", ending: "と思[おも]う", en: "I think (someone will) {v}",
@@ -662,6 +686,31 @@ const VERB_PATTERNS = [
     forms: [["V plain ようです", "it seems"], ["N のようです", "with a noun: 雨のようです"], ["な-adj なようです", "with な-adj: 暇なようです"], ["〜みたいです", "casual"]],
     tip: "Three to compare: そう (looks like, from your eyes), よう (seems, from clues), そう (I hear, from others)." }),
 
+  patDef({ id: "nara", lesson: 35, title: "〜なら", base: "plain", ending: "なら", en: "if (you're going to) {v}",
+    name: "If that's the case", meaning: "if · if it's… · as for",
+    caption: "Take what they said, then add your advice",
+    idea: "Plain form + なら picks up what someone just said or plans (“if you're going to…”) and answers it with advice, an opinion or a request. After a noun it can also just mean “as for N”.",
+    lit: [["なら", "if it's"]], result: "“if it's that…”",
+    ex: [
+      patEx("Picking it up", "If you're going to Hokkaido, winter is the time.", ["北海道[ほっかいどう]", "へ", "dir"], ["行[い]く{なら}", "", "range"], ["冬[ふゆ]", "が", "subject"], ["いいですよ", "", "verb"]),
+      patEx("As for N", "Tanaka? He's in the library.", ["田中[たなか]さん{なら}", "", "topic"], ["図書館[としょかん]", "に", "point"], ["いますよ", "", "verb"]),
+      patEx("Contrast", "I don't eat meat, but fish I do eat.", ["肉[にく]", "は", "topic"], ["食[た]べませんが、", "", "verb"], ["魚[さかな]{なら}", "", "topic"], ["食[た]べます", "", "verb"]),
+    ],
+    forms: [["V plain なら", "if (you're going to)"], ["N / な-adj なら", "no だ: 暇なら, 雨なら"], ["N なら", "as for N"], ["〜んなら / 〜のなら", "the same, spoken / stressed"]],
+    tip: "The order in time is free with なら: 京都へ行くなら、新幹線が便利です gives advice before the trip, which 〜たら can't do." }),
+  patDef({ id: "rashii", lesson: 52, title: "〜らしい", tag: "it seems", base: "plain", ending: "らしい", en: "apparently (someone will) {v}",
+    name: "Apparently", meaning: "it seems that · apparently",
+    caption: "Heard it somewhere, can't vouch for it",
+    idea: "Plain form + らしい: you pass on something you've heard or read, keeping a little distance from it. It sits between そうです (I hear) and ようです (from your own clues). After a noun it can instead mean “typical of N”.",
+    lit: [["らしい", "seems"]], result: "“so it seems”",
+    ex: [
+      patEx("Apparently", "Apparently there's an exam next week.", ["来週[らいしゅう]", "", "time"], ["試験[しけん]", "が", "subject"], ["ある{らしい}です", "", "verb"]),
+      patEx("Apparently not", "It seems Tanaka isn't coming today.", ["田中[たなか]さん", "は", "topic"], ["今日[きょう]", "", "time"], ["来[こ]ない{らしい}です", "", "verb"]),
+      patEx("Typical: N らしい", "It's real spring weather today.", ["今日[きょう]", "は", "topic"], ["春[はる]{らしい}天気[てんき]ですね", "", "verb"]),
+    ],
+    forms: [["V plain らしい", "apparently"], ["N / な-adj らしい", "no だ: 雨らしい, 暇らしい"], ["N らしい N", "a real N: 春らしい天気"], ["N らしくない", "not like N at all: 彼らしくない"]],
+    tip: "The same words can mean two things: 子供らしい is “seems to be a child” or “childlike, the way a child should be”. The context decides." }),
+
   // ---------------------------------------------------------------- Volitional form
   patDef({ id: "volomou", lesson: 31, title: "〜(よ)うと思[おも]う", base: "vol", ending: "と思[おも]っています", en: "I'm thinking of {ing}",
     name: "Thinking of doing", meaning: "I'm thinking of doing",
@@ -680,6 +729,7 @@ const VERB_PATTERNS = [
 const PLAIN_JOIN = {
   omou: { n: "だ", na: "だ" }, nda: { n: "な", na: "な" }, deshou: { n: "", na: "" }, kamo: { n: "", na: "" }, node: { n: "な", na: "な" },
   noni: { n: "な", na: "な" }, hazu: { n: "の", na: "な" }, souhear: { n: "だ", na: "だ" }, youdesu: { n: "の", na: "な" },
+  nara: { n: "", na: "" }, rashii: { n: "", na: "" },
 };
 VERB_PATTERNS.forEach((p) => { p.color = PATTERN_GROUPS.find((g) => g.id === patGroupOf(p)).color; });
 
@@ -791,5 +841,9 @@ const PATTERN_SVG = (() => {
     souhear: who(35, 50, "them") + who(185, 50, "me", true) + ar(58, 50, 162, 50) + tx(110, 36, "I heard…"),
     youdesu: `<circle cx="96" cy="44" r="26" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-width="4"/><line x1="115" y1="63" x2="142" y2="90" stroke="currentColor" stroke-width="6" stroke-linecap="round"/><circle cx="86" cy="38" r="4" fill="currentColor"/><circle cx="104" cy="50" r="4" fill="currentColor"/>` + tx(110, 110, "from the clues…"),
     volomou: thought("“let's…”"),
+    toori: block(14, 30, 80, 40, "model") + ar(102, 50, 124, 50) + block(130, 30, 80, 40, "copy", false) + tx(110, 98, "the same way"),
+    kikkake: `<circle cx="36" cy="60" r="12" fill="currentColor"/><g stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="36" y1="36" x2="36" y2="42"/><line x1="14" y1="60" x2="20" y2="60"/><line x1="52" y1="44" x2="57" y2="39"/><line x1="20" y1="44" x2="15" y2="39"/></g>` + ar(56, 60, 96, 60) + `<path d="M104 92 C130 92 150 40 204 26" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>` + tx(36, 96, "spark") + tx(156, 110, "something new"),
+    nara: who(28, 40, "them") + bubble(96, 26, 46, 18, "I'm going…") + ar(96, 48, 96, 70) + who(192, 40, "me", true) + bubble(118, 92, 60, 18, "then try…!"),
+    rashii: who(28, 46, "") + `<circle cx="52" cy="38" r="3" fill="currentColor" opacity=".5"/><circle cx="62" cy="30" r="4" fill="currentColor" opacity=".6"/>` + bubble(108, 34, 40, 22, "…?") + ar(150, 34, 172, 34, true) + who(194, 46, "me", true) + tx(110, 100, "word going around"),
   };
 })();

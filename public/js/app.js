@@ -1192,7 +1192,7 @@ function renderPatterns() {
     <div class="card hero">
       <h1>Verb <span class="accent">patterns</span>: snap an ending onto a verb</h1>
       <p>Most grammar patterns are just <b>a verb form + a fixed ending</b>. The verb part changes;
-      the pattern part never does. Here are the ${VERB_PATTERNS.length} main ones from Minna no Nihongo, grouped by the
+      the pattern part never does. Here are the ${VERB_PATTERNS.length} main ones from Minna no Nihongo and the extra lessons, grouped by the
       verb form they need. Open any of them to see how it works.</p>
       <div class="pat-nav">
         ${PATTERN_GROUPS.map((g) => `<button class="pat-jump" data-jump="${g.id}" style="--pc:${g.color}" lang="ja">${g.label} <span class="pat-count">${inGroup(g).length}</span></button>`).join("")}

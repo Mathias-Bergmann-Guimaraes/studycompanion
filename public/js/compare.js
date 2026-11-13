@@ -4,7 +4,7 @@
 
 const COMPARISONS = [
   {
-    id: "if", title: "たら・と・ば・なら", name: "Four ways to say “if”", patterns: ["tara", "to"],
+    id: "if", title: "たら・と・ば・なら", name: "Four ways to say “if”", patterns: ["tara", "to", "nara"],
     rule: "When in doubt, use たら. It's the only one with almost no restrictions.",
     cols: [
       { ja: "〜たら", when: "One particular if or once. Anything can follow, even a request or a plan.", ex: "駅[えき]に着[つ]い{たら}、電話[でんわ]してください。", en: "Call me once you get to the station." },

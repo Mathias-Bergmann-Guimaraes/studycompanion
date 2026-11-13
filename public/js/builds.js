@@ -287,4 +287,24 @@ const BUILDS = {
     [1, "I'd like to meet the president.", "社長[しゃちょう]+に:point お目[め]にかかり:verb たいんですが:verb"],
     [2, "The restroom is on the 2nd floor.", "お手洗[てあら]い+は:topic 2階[にかい]:point でございます:verb"],
   ],
+  51: [
+    [0, "Osaka means takoyaki, surely.", "大阪[おおさか]+といえば、:topic たこ焼[や]きでしょう:verb"],
+    [1, "If you're not going, please say so soon.", "行[い]かないなら、:clause 早[はや]く:owner 言[い]ってください:verb"],
+    [2, "Tanaka? He's in the meeting room.", "田中[たなか]さん+なら、:topic 会議室[かいぎしつ]+に:point いますよ:verb"],
+    [3, "I can't drink alcohol, but juice I can.", "お酒[さけ]は飲[の]めませんが、:clause ジュース+なら:topic 飲[の]めます:verb"],
+  ],
+  52: [
+    [0, "I went just as it says on the map.", "地図[ちず]+に:point 書[か]いてあるとおりに:owner 行[い]きました:verb"],
+    [1, "The train arrived on time.", "~電車[でんしゃ]+は:topic ~時間[じかん]どおりに:owner 着[つ]きました:verb"],
+    [2, "Apparently the manager isn't coming today.", "~部長[ぶちょう]+は:topic ~今日[きょう]:time 来[こ]ないらしいです:verb"],
+    [3, "It's real spring weather today.", "今日[きょう]+は:topic 春[はる]らしい:owner 天気[てんき]ですね:verb"],
+    [4, "According to the newspaper, petrol is going to get more expensive.", "新聞[しんぶん]によると、:clause ガソリン+が:subject 高[たか]くなるそうです:verb"],
+  ],
+  53: [
+    [0, "I run every morning for my health.", "健康[けんこう]のために、:point 毎朝[まいあさ]:time 走[はし]っています:verb"],
+    [1, "What's this tool for?", "これ+は:topic 何[なん]のための:owner 道具[どうぐ]ですか:verb"],
+    [2, "Getting ill is what made me quit smoking.", "病気[びょうき]になったのがきっかけで、:clause たばこ+を:object やめました:verb"],
+    [3, "My baby has started to walk.", "赤[あか]ちゃん+が:subject 歩[ある]けるようになりました:verb"],
+    [4, "Please make sure not to be late for class.", "授業[じゅぎょう]+に:point 遅[おく]れないようにしてください:verb"],
+  ],
 };

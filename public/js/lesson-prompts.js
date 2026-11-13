@@ -7,8 +7,11 @@ const promptJa = (m, furi) => (furi ? m.replace(KANJI_RE, "$1($2)") : plain(m)).
 function promptContext(l, furi) {
   const known = l.n === 1
     ? "This is my first lesson, so I don't know any other grammar yet."
-    : `I already know the grammar of lessons 1–${l.n - 1}, but nothing after lesson ${l.n}.`;
-  return `I'm learning Japanese with the textbook Minna no Nihongo (みんなの日本語 初級 I・II). I'm on lesson ${l.n} of 50, "${l.title}". ${known} I'm a visual learner and grammar is the hard part for me.
+    : `I already know the grammar of ${grammarUpTo(l.n - 1)}, but nothing after lesson ${l.n}.`;
+  const where = bookOf(l.n).extra
+    ? `I've worked through Minna no Nihongo (みんなの日本語 初級 I・II) and I'm now on extra lesson ${l.n}, "${l.title}", from my university course "Japanisch: Vertiefung und Praxis".`
+    : `I'm learning Japanese with the textbook Minna no Nihongo (みんなの日本語 初級 I・II). I'm on lesson ${l.n} of 50, "${l.title}".`;
+  return `${where} ${known} I'm a visual learner and grammar is the hard part for me.
 
 Grammar points of lesson ${l.n}:
 ${l.points.map((p, i) => `${i + 1}. ${promptJa(p.g, furi)} — ${p.m}
@@ -19,7 +22,7 @@ ${l.points.map((p, i) => `${i + 1}. ${promptJa(p.g, furi)} — ${p.m}
 function promptStyle(l, furi) {
   const ex = furi ? "🟦 私(わたし)は | 🟩 本(ほん)を | 🟪 読(よ)みます" : "🟦 私は | 🟩 本を | 🟪 読みます";
   return `How to write your answers:
-- Stick to grammar from lessons 1–${l.n} and common words. When you use a word I might not know, give its meaning.
+- Stick to grammar from ${grammarUpTo(l.n)} and common words. When you use a word I might not know, give its meaning.
 - ${furi ? "Write furigana in brackets after kanji, like 学生(がくせい)." : "Write kanji normally, without furigana."} Don't use romaji.
 - Make it visual. Break Japanese sentences into blocks and mark each block's job with the colours my study site uses: 🟦 topic (は), 🟥 subject (が), 🟩 object (を), 🟧 target / point (に), 🟪 verb or predicate (always last). Name any other job in words, e.g. [time], [place で].
   Example: ${ex}

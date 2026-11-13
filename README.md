@@ -4,7 +4,10 @@ A study site with a course picker as its front page. Its courses so far are Japa
 (electrical networks) and ProPa (programming paradigms), see below. Japanese is a visual grammar course: colour-coded sentence blocks, particles, verb conjugation,
 adjectives, verb patterns and a Practice tab — plus a 50-lesson course with practice
 sentences, a 5-question check (worth up to three stars) for every grammar point and a test for
-every lesson. Right answers earn XP towards levels and a daily streak. Learners can also write
+every lesson. After Minna no Nihongo's 50 lessons come extra lessons from the university course
+*Japanisch: Vertiefung und Praxis* (51–53 for week 1, with their own big test), listed in
+`LESSON_BOOKS` at the end of `public/js/lessons.js`. The Listen tab doesn't spot their grammar yet.
+Right answers earn XP towards levels and a daily streak. Learners can also write
 three sentences of their own with each grammar point for extra XP; the site checks the basics
 (Japanese, not copied, the pattern spotted where it can tell) and builds a prompt to get them
 corrected by any chatbot. Pasting the chatbot's answer back redraws it with the site's colour

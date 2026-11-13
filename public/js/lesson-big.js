@@ -27,6 +27,7 @@ const BIG_BLOCKS = [
   { id: "t36-40", from: 36, to: 40, title: "Passive & embedded sentences" },
   { id: "t41-45", from: 41, to: 45, title: "Purpose, appearance & difficulty" },
   { id: "t46-50", from: 46, to: 50, title: "Causative & polite language" },
+  { id: "x51-53", from: 51, to: 53, title: "Vertiefung W1: なら, らしい, ために & co." },
 ];
 const BIG_TESTS = [
   ...BIG_BLOCKS.map((b, j) => ({
@@ -165,7 +166,7 @@ function drawBigIntro(b) {
       : `You've finished every lesson it covers, so this is the real test of whether it all stuck.`;
   box.innerHTML = `
     <div class="card lesson-head big-head${b.final ? " big-final" : ""}">
-      <div class="lesson-kicker">${b.name} · ${bigRange(b)} · Book ${b.to <= 25 ? "I" : "II"}</div>
+      <div class="lesson-kicker">${b.name} · ${bigRange(b)} · ${bookOf(b.to).name}</div>
       <h2>${b.title}</h2>
       <div class="big-lessons">
         ${bigLessons(b).map((l) => `<button class="big-lesson${lessonPassed(l.n) ? " done" : ""}" data-go-l="${l.n}">
@@ -756,7 +757,7 @@ function bigPrompt(b, t) {
   const f = `the grammar of ${bigRange(b)}`;
   const task = AI_PRESETS.find((x) => x.id === "check").task({ l, f, furi }).replace(/1\. $/, "");
   const list = (get) => t.batch.map((j, k) => `${k + 1}. ${get(j)}`).join("\n");
-  const context = `I'm learning Japanese with the textbook Minna no Nihongo (みんなの日本語 初級 I・II). I've just taken a test on ${f}, and I know the grammar of lessons 1–${b.to}.`;
+  const context = `I'm learning Japanese with the textbook Minna no Nihongo (みんなの日本語 初級 I・II). I've just taken a test on ${f}, and I know the grammar of ${grammarUpTo(b.to)}.`;
   return [context, promptStyle(l, furi),
     `${task}${list((j) => t.typed[j])}
 

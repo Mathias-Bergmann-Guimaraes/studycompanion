@@ -24,7 +24,8 @@ function renderLessons() {
   $("#lessons").innerHTML = `
     <div class="card hero">
       <h1>Grammar in <span class="accent">Minna no Nihongo</span> order</h1>
-      <p>All 50 lessons of <span lang="ja">みんなの日本語 初級 Ⅰ・Ⅱ</span>, one after another. Each grammar point comes with an example,
+      <p>All 50 lessons of <span lang="ja">みんなの日本語 初級 Ⅰ・Ⅱ</span>, one after another, then extra lessons from the
+      course <i>Japanisch: Vertiefung und Praxis</i>. Each grammar point comes with an example,
       and <b>See it →</b> jumps to the picture that explains it. <b>Check</b> each point with 5 quick questions to earn up to
       three stars, <b>write</b> three sentences of your own for extra XP, then pass the lesson test to finish the
       lesson. Every few lessons a <b>big test</b> covers everything since the last one, and passing it finishes all of
@@ -32,10 +33,9 @@ function renderLessons() {
     </div>
     <div class="lessons-layout">
       <nav class="card lpath" aria-label="Lessons">
-        <div class="book-label">Book I · <span lang="ja">初級 Ⅰ</span></div>
-        <div class="lnodes">${bookNodesHTML(1, 25, node)}</div>
-        <div class="book-label">Book II · <span lang="ja">初級 Ⅱ</span></div>
-        <div class="lnodes">${bookNodesHTML(26, 50, node)}</div>
+        ${LESSON_BOOKS.map((b) => `
+          <div class="book-label">${b.name} · <span lang="ja">${b.ja}</span></div>
+          <div class="lnodes">${bookNodesHTML(b.from, b.to, node)}</div>`).join("")}
       </nav>
       <div id="lessonDetail"></div>
       <div id="bigDetail" hidden></div>
@@ -49,6 +49,13 @@ function renderLessons() {
     showBig(openTest);
     requestAnimationFrame(() => { if ($("#lessons").classList.contains("active")) scrollBelowBar($("#bigDetail")); });
   }
+}
+
+function lessonKicker(l) {
+  const b = bookOf(l.n);
+  return b.extra
+    ? `Extra lesson ${l.n - b.from + 1} of ${b.to - b.from + 1} · ${b.name}`
+    : `<span lang="ja">第${l.n}課</span> · Lesson ${l.n} of ${MINNA_LAST} · ${b.name}`;
 }
 
 function linkLabel(link) {
@@ -88,7 +95,7 @@ function showLesson(n, scroll) {
   const d = $("#lessonDetail");
   d.innerHTML = `
     <div class="card lesson-head">
-      <div class="lesson-kicker"><span lang="ja">第${l.n}課</span> · Lesson ${l.n} of ${LESSONS.length} · Book ${l.n <= 25 ? "I" : "II"}</div>
+      <div class="lesson-kicker">${lessonKicker(l)}</div>
       <h2>${l.title}</h2>
       <div class="lesson-tags">
         ${l.points.map((p) => `<span class="ltag" style="--c:${ROLES[p.role].color}" lang="ja">${p.g}</span>`).join("")}

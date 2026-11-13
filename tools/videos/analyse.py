@@ -508,6 +508,8 @@ def test():
     plain = lambda ex: re.sub(r"\[[^\]]*\]", "", ex).replace("{", "").replace("}", "")
     keys, missed, early = set(), [], {}
     for l in lessons:
+        if l["n"] > 50:  # the extra lessons after Minna no Nihongo have no rules (yet)
+            continue
         for i, p in enumerate(l["points"]):
             k = f"{l['n']}.{i}"
             keys.add(k)

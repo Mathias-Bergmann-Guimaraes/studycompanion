@@ -1,4 +1,5 @@
-// Grammar points following the lesson order of Minna no Nihongo (Shokyū I & II, 2nd ed.).
+// Grammar points following the lesson order of Minna no Nihongo (Shokyū I & II, 2nd ed.), then
+// extra lessons from a university course (see LESSON_BOOKS at the end).
 // Example sentences are original, not taken from the textbook.
 // Each point: g = pattern, m = meaning, ex = example (markup), en = translation,
 // role = colour (a ROLES key), link = where the visual explanation lives on this site.
@@ -208,13 +209,13 @@ const LESSONS = [
     { g: "plain と 言って いました", m: "(someone) said that…", ex: "田中[たなか]さんは遅[おく]れる{と言[い]っていました}。", en: "Tanaka said he'd be late.", role: "with", link: { tab: "patterns", id: "omou" } },
   ] },
   { n: 34, title: "Order of actions", points: [
-    { g: "V dict / V た / N の とおりに", m: "exactly as…", ex: "私[わたし]が言[い]う{とおりに}書[か]いてください。", en: "Please write it exactly as I say.", role: "owner" },
+    { g: "V dict / V た / N の とおりに", m: "exactly as…", ex: "私[わたし]が言[い]う{とおりに}書[か]いてください。", en: "Please write it exactly as I say.", role: "owner", link: { tab: "patterns", id: "toori" } },
     { g: "V た / N の あとで", m: "after…", ex: "仕事[しごと]{のあとで}、飲[の]みに行[い]きます。", en: "I'll go for a drink after work.", role: "time", link: { tab: "patterns", id: "ato" } },
     { g: "V て / V ないで + V2", m: "do V2 with / without doing V1", ex: "砂糖[さとう]を入[い]れ{ないで}飲[の]みます。", en: "I drink it without sugar.", role: "with", link: { tab: "patterns", id: "naide" } },
   ] },
   { n: 35, title: "The ば conditional", points: [
     { g: "ば-form", m: "if…", ex: "安[やす]{ければ}、買[か]います。", en: "If it's cheap, I'll buy it.", role: "range", link: { tab: "verbs", form: "ba" } },
-    { g: "N なら", m: "if it's (topic)…", ex: "温泉[おんせん]{なら}、箱根[はこね]がいいですよ。", en: "If it's hot springs you want, Hakone is good.", role: "topic" },
+    { g: "N なら", m: "if it's (topic)…", ex: "温泉[おんせん]{なら}、箱根[はこね]がいいですよ。", en: "If it's hot springs you want, Hakone is good.", role: "topic", link: { tab: "patterns", id: "nara" } },
     { g: "〜ば 〜ほど", m: "the more…, the more…", ex: "練習[れんしゅう]すれ{ば}する{ほど}上手[じょうず]になります。", en: "The more you practise, the better you get.", role: "range" },
   ] },
   { n: 36, title: "So that & coming to", points: [
@@ -293,4 +294,40 @@ const LESSONS = [
     { g: "Special verbs: 参る・いただく・申す", m: "go / eat / say (humble)", ex: "田中[たなか]と{申[もう]します}。", en: "My name is Tanaka.", role: "verb", link: { tab: "verbs", keigo: true } },
     { g: "ございます / でございます", m: "very polite あります / です", ex: "お手洗[てあら]いはあちら{でございます}。", en: "The restroom is over there.", role: "verb" },
   ] },
+
+  // ---------------------------------------------------------------- Extra: Vertiefung und Praxis W1
+  // Not from Minna no Nihongo: the grammar list of the course "Japanisch: Vertiefung und Praxis",
+  // week 1. Some points repeat Book II ones, here with the course's wording and new examples.
+  { n: 51, title: "Speaking of & なら", points: [
+    { g: "N といえば", m: "speaking of N · N reminds me of…", ex: "夏[なつ]{といえば}、花火[はなび]ですね。", en: "Speaking of summer, it's fireworks, isn't it?", role: "topic" },
+    { g: "plain / な-adj / N なら", m: "if (that's the case)…", ex: "北海道[ほっかいどう]へ行[い]く{なら}、冬[ふゆ]がいいですよ。", en: "If you're going to Hokkaido, winter is the time.", role: "range", link: { tab: "patterns", id: "nara" } },
+    { g: "N なら (as for)", m: "as for N (picking up what was just said)", ex: "田中[たなか]さん{なら}、図書館[としょかん]にいますよ。", en: "Tanaka? He's in the library.", role: "topic" },
+    { g: "N なら (contrast)", m: "N, unlike the other thing", ex: "肉[にく]は食[た]べませんが、魚[さかな]{なら}食[た]べます。", en: "I don't eat meat, but fish I do eat.", role: "topic" },
+  ] },
+  { n: 52, title: "As, typical & hearsay", points: [
+    { g: "V dict / V た とおり(に)", m: "(just) as…", ex: "先生[せんせい]が言[い]った{とおりに}やってみました。", en: "I tried it just as the teacher said.", role: "owner", link: { tab: "patterns", id: "toori" } },
+    { g: "N どおり(に)", m: "as N · according to N", ex: "電車[でんしゃ]は時間[じかん]{どおりに}着[つ]きました。", en: "The train arrived on time.", role: "owner" },
+    { g: "plain / な-adj / N らしい", m: "it seems that… (from what I've heard)", ex: "来週[らいしゅう]、試験[しけん]がある{らしい}です。", en: "Apparently there's an exam next week.", role: "verb", link: { tab: "patterns", id: "rashii" } },
+    { g: "N らしい (typical)", m: "a perfect example of N · typical of N", ex: "今日[きょう]は春[はる]{らしい}天気[てんき]ですね。", en: "It's real spring weather today.", role: "owner" },
+    { g: "N によると", m: "according to N", ex: "天気予報[てんきよほう]{によると}、明日[あした]は雪[ゆき]だそうです。", en: "According to the forecast, it'll snow tomorrow.", role: "with", link: { tab: "patterns", id: "souhear" } },
+  ] },
+  { n: 53, title: "Purpose, triggers & change", points: [
+    { g: "V dict ために", m: "in order to do", ex: "日本[にほん]で働[はたら]く{ために}、日本語[にほんご]を勉強[べんきょう]しています。", en: "I'm studying Japanese in order to work in Japan.", role: "point", link: { tab: "patterns", id: "tame" } },
+    { g: "V dict ための N", m: "N for doing", ex: "これは漢字[かんじ]を覚[おぼ]える{ための}アプリです。", en: "This is an app for learning kanji.", role: "owner", link: { tab: "patterns", id: "tame" } },
+    { g: "N / V た の・こと がきっかけで", m: "it started with… · triggered by…", ex: "アニメを見[み]た{のがきっかけで}、日本語[にほんご]を始[はじ]めました。", en: "Watching anime is what got me started on Japanese.", role: "range", link: { tab: "patterns", id: "kikkake" } },
+    { g: "V dict ように なる", m: "come to do · begin to do", ex: "練習[れんしゅう]して、漢字[かんじ]が読[よ]める{ようになりました}。", en: "With practice, I've become able to read kanji.", role: "verb", link: { tab: "patterns", id: "younaru" } },
+    { g: "V dict / V ない ように する", m: "make a point of (not) doing · make sure to", ex: "夜[よる]は甘[あま]い物[もの]を食[た]べない{ようにしています}。", en: "I make a point of not eating sweets at night.", role: "verb", link: { tab: "patterns", id: "younisuru" } },
+  ] },
 ];
+
+// The books, and the extra lessons after them, each shown under its own label in the lesson list.
+const LESSON_BOOKS = [
+  { name: "Book I", ja: "初級 Ⅰ", from: 1, to: 25 },
+  { name: "Book II", ja: "初級 Ⅱ", from: 26, to: 50 },
+  { name: "Extra · Vertiefung W1", ja: "応用", from: 51, to: 53, extra: true },
+];
+const MINNA_LAST = 50;
+const bookOf = (n) => LESSON_BOOKS.find((b) => n >= b.from && n <= b.to);
+// How a chatbot prompt names the grammar up to lesson n, since lessons past 50 aren't Minna's.
+const grammarUpTo = (n) => (n <= MINNA_LAST ? `lessons 1–${n}`
+  : `lessons 1–${MINNA_LAST} of Minna no Nihongo, plus my course's extra ${n === MINNA_LAST + 1 ? "lesson" : "lessons"} ${MINNA_LAST + 1}${n > MINNA_LAST + 1 ? `–${n}` : ""}`);

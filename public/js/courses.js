@@ -1,8 +1,9 @@
 // The course picker, where the site opens (an address with no #page, or #courses). Each course is
-// a set of tabs (`tabs`, the first is its Home); picking one opens its Home. Japanese, LEN and ProPa
-// can be opened, the rest are placeholders (`soon`). Each course has its own main colour (`color`, a token
+// a set of tabs (`tabs`, the first is its Home); picking one opens its Home. Japanese, LEN, ProPa and
+// NuMa can be opened, the rest are placeholders (`soon`). Each course has its own main colour (`color`, a token
 // from style.css) and its own line under every page (`footer`). Loaded after home.js and uses its
-// helpers and game.js's; the LEN card comes from len.js, the ProPa card from propa.js.
+// helpers and game.js's; the LEN card comes from len.js, the ProPa card from propa.js, the NuMa card
+// from numa.js.
 
 const COURSES = [
   {
@@ -37,6 +38,17 @@ const COURSES = [
     footer: "Colours mean the same in every code block and drawing — blue is a type, red an effect, green what #eval prints.",
     card: (c) => propaCourseCardHTML(c),
   },
+  {
+    id: "numa",
+    tabs: ["numa-home", "numa-k1", "numa-k2", "numa-k3", "numa-k4", "numa-k5", "numa-k6", "numa-k7", "numa-sheet", "numa-exams", "numa-practice", "numa-mock"],
+    mark: "NuMa",
+    lang: "de",
+    color: "var(--course-numa)",
+    name: "Numerische Mathematik",
+    about: "Numerische Mathematik für Informatik und Ingenieurwesen, mit Zeichnungen, die jedes Verfahren vorrechnen.",
+    footer: `<span lang="de">Farben bedeuten überall dasselbe — grün ist immer die exakte Lösung, blau eine Näherung, rot ein Fehler.</span>`,
+    card: (c) => numaCourseCardHTML(c),
+  },
   { id: "robotics1", soon: true, mark: "Rob I", lang: "en", color: "var(--course-robotics)", name: "Robotics I", about: "Robot arms: kinematics, dynamics and control." },
   { id: "gki", soon: true, mark: "GKI", lang: "de", color: "var(--course-gki)", name: "Grundlagen der künstlichen Intelligenz", about: "Search, logic, probability and learning." },
 ];
@@ -67,6 +79,7 @@ function renderCourses() {
   }));
   wireLenCourseCard();
   wirePropaCourseCard();
+  wireNumaCourseCard();
   const go = $("#courseContinue");
   if (go) go.onclick = () => {
     track("courses.continue");

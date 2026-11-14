@@ -40,6 +40,7 @@
   --course-robotics: var(--c-point);
   --course-propa: var(--c-time);
   --course-gki: var(--c-with);
+  --course-numa: var(--c-place);
   --jp: "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
   --ui: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
@@ -3026,3 +3027,119 @@ mark.pp-hl { background: color-mix(in srgb, var(--len-hl) 30%, transparent); col
 .pp-etask .len-task-pts { justify-self: end; }
 .pp-asks { grid-column: 1 / -1; margin: 0; padding-left: 1.3em; display: grid; gap: 2px; font-size: .9rem; }
 .pp-etask .len-task-go { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-start; }
+
+/* ------------------------------------------------------------ NuMa (numa.js and its chapters)
+   Reuses LEN's and ProPa's page parts and adds matrices and the drawings of its own. Colours: green
+   the exact solution, blue an approximation (iterate), red an error, gold the pivot or what happens
+   now, pink a stored multiplier ℓ. */
+body[data-course="numa"] { --accent: var(--course-numa); }
+:root { --nm-exact: var(--c-object); --nm-approx: var(--c-topic); --nm-err: var(--c-subject); --nm-piv: var(--len-hl); --nm-ell: var(--c-with); }
+.nm-mi { font-family: "Cambria Math", "STIX Two Math", "Latin Modern Math", "Times New Roman", serif; font-style: italic; font-size: 1.05em; white-space: nowrap; }
+.nm-mi sub, .nm-mi sup { font-size: .72em; }
+.nm-exact { color: var(--nm-exact); }
+.nm-approx { color: var(--nm-approx); }
+.nm-err { color: var(--nm-err); }
+.nm-piv { color: var(--nm-piv); font-weight: 700; }
+.nm-ell { color: var(--nm-ell); font-weight: 650; }
+b.nm-exact, b.nm-approx, b.nm-err, b.nm-piv, b.nm-ell { font-family: "Cambria Math", "Times New Roman", serif; }
+/* Matrices in round brackets, drawn by two borders. */
+.nm-mx {
+  display: inline-grid; grid-template-columns: repeat(var(--n), auto); gap: .05em .7em; align-items: center; justify-items: center;
+  position: relative; padding: .15em .55em; margin: 0 .15em; vertical-align: middle; line-height: 1.3; font-variant-numeric: tabular-nums; font-style: normal;
+}
+.nm-mx::before, .nm-mx::after { content: ""; position: absolute; top: 0; bottom: 0; width: .38em; border: 1.6px solid currentColor; }
+.nm-mx::before { left: 0; border-right: 0; border-radius: .55em 0 0 .55em; }
+.nm-mx::after { right: 0; border-left: 0; border-radius: 0 .55em .55em 0; }
+.nm-mx.nm-plain::before, .nm-mx.nm-plain::after { display: none; }
+.nm-mx > span { padding: 0 .1em; border-radius: 5px; }
+.nm-mx .fr { font-size: .82em; }
+.nm-mx > .nm-piv { background: color-mix(in srgb, var(--nm-piv) 24%, transparent); color: inherit; }
+.nm-mx > .nm-cand { background: color-mix(in srgb, var(--nm-piv) 10%, transparent); }
+.nm-mx > .nm-ell { color: var(--nm-ell); }
+.nm-perm { color: var(--muted); font-weight: 700; font-family: var(--ui); font-size: .85em; }
+.nm-lr { display: inline-flex; align-items: center; gap: .3em; font-size: 1.25rem; font-family: "Cambria Math", "Times New Roman", serif; }
+.nm-plr { display: flex; flex-wrap: wrap; justify-content: center; gap: .3em 1em; }
+.nm-center { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 18px; margin: 8px 0; }
+.nm-int { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; line-height: .9; margin: 0 .1em; }
+.nm-int > span { font-size: 1.5em; }
+.nm-int small { font-size: .6em; }
+.nm-sqrt { border-top: 1.4px solid currentColor; padding: 0 .1em; }
+.nm-cases { display: inline-flex; flex-direction: column; border-left: 1.6px solid currentColor; border-radius: 6px 0 0 6px; padding-left: .45em; text-align: left; vertical-align: middle; line-height: 1.5; }
+.nm-see { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+.nm-ul, .nm-ol { margin: 6px 0; padding-left: 1.3em; display: grid; gap: 4px; }
+.nm-ol li .lf { text-align: left; }
+.nm-scroll { max-height: 320px; overflow: auto; border-radius: 10px; }
+.nm-tab { font-size: .85rem; font-variant-numeric: tabular-nums; margin: 6px 0; }
+.nm-tab td, .nm-tab th { padding: 3px 8px; }
+.nm-tab code { font: .82rem var(--pp-mono); }
+.nm-data-tab { width: auto; }
+.nm-bad-row td { color: var(--nm-err); }
+.nm-dd td { text-align: center; white-space: nowrap; }
+.nm-piv-cell { background: color-mix(in srgb, var(--nm-piv) 22%, transparent); border-radius: 6px; font-weight: 700; }
+.nm-new { outline: 2px solid color-mix(in srgb, var(--nm-approx) 55%, transparent); outline-offset: -2px; border-radius: 6px; }
+.nm-sheet-f { text-align: left; margin: 0; }
+.nm-pills { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+.nm-gap { display: inline-block; min-width: 3.5em; border-bottom: 2px dashed var(--muted); color: var(--muted); text-align: center; }
+.nm-model { margin: 10px 0 8px; padding: 10px 14px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border); }
+.nm-model-cap { display: block; font-size: .75rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.nm-ta { font: .95rem/1.5 var(--ui); }
+.nm-perpt { margin-top: 12px; align-items: center; }
+/* Drawings */
+.lw-svg .nm-exact-c { color: var(--nm-exact); }
+.lw-svg .nm-approx-c { color: var(--nm-approx); }
+.lw-svg .nm-err-c { color: var(--nm-err); }
+.lw-svg .nm-ell-c { color: var(--nm-ell); }
+.lw-svg .curve.dim { opacity: .22; }
+.lw-svg .nm-exact-pt { color: var(--nm-exact); }
+.lw-svg .nm-approx-pt { color: var(--nm-approx); }
+.lw-svg .nm-err-pt { color: var(--nm-err); }
+.lw-svg .nm-piv-pt { color: var(--nm-piv); }
+.lw-svg .nm-ell-pt { color: var(--nm-ell); }
+.lw-svg .nm-data-pt { color: var(--text); }
+.lw-svg .nm-approx-t, .lw-svg .vec-a.nm-approx { fill: var(--nm-approx); }
+.lw-svg .nm-exact-t { fill: var(--nm-exact); }
+.nm-approx-v { color: var(--nm-approx); }
+.nm-exact-v { color: var(--nm-exact); }
+.nm-piv-v { color: var(--nm-piv); }
+.nm-ell-v { color: var(--nm-ell); }
+.lw-svg .vec-l.nm-approx-v, .lw-svg .vec-a.nm-approx-v { fill: var(--nm-approx); }
+.lw-svg .vec-l.nm-exact-v { fill: var(--nm-exact); }
+.lw-svg .vec-l.nm-piv-v, .lw-svg .vec-a.nm-piv-v { fill: var(--nm-piv); }
+.lw-svg .vec-a.nm-ell-v { fill: var(--nm-ell); }
+.lw-svg .nm-err-g { stroke: var(--nm-err); }
+.lw-svg .nm-tickfl { stroke: var(--text); stroke-width: 1.3; }
+.lw-svg .nm-xline { stroke: var(--nm-approx); stroke-width: 2; stroke-dasharray: 4 3; }
+.lw-svg .nm-flpt { fill: var(--nm-exact); stroke: var(--surface); stroke-width: 2; }
+.lw-svg .nm-mirror { stroke: var(--muted); stroke-width: 2; stroke-dasharray: 7 5; }
+.lw-svg .nm-line { stroke: var(--text); stroke-width: 2; }
+.lw-svg .nm-line.pert { stroke: var(--nm-approx); stroke-dasharray: 6 5; }
+.lw-svg .nm-resid { stroke: var(--nm-err); stroke-width: 2.5; }
+.lw-svg .nm-tangent { stroke: var(--nm-piv); stroke-width: 2; }
+.lw-svg .nm-area { fill: color-mix(in srgb, var(--nm-approx) 18%, transparent); stroke: var(--nm-approx); stroke-width: 1.4; }
+.lw-svg .nm-eig1, .lw-svg .nm-eig2 { stroke: var(--nm-exact); stroke-width: 1.6; stroke-dasharray: 6 5; }
+.lw-svg .nm-eig2 { stroke: var(--muted); }
+.lw-svg .nm-edge { stroke: var(--muted); stroke-width: 2.5; }
+.lw-svg .nm-cut { stroke: var(--nm-err); stroke-width: 3; stroke-dasharray: 6 4; }
+.lw-svg .nm-vminus { fill: color-mix(in srgb, var(--nm-approx) 30%, var(--surface)); stroke: var(--nm-approx); stroke-width: 2.5; }
+.lw-svg .nm-vplus { fill: color-mix(in srgb, var(--nm-exact) 30%, var(--surface)); stroke: var(--nm-exact); stroke-width: 2.5; }
+.lw-svg .nm-vt { font-size: 10px; font-weight: 700; }
+.lw-svg .nm-level { fill: none; stroke: var(--muted); stroke-width: 1.2; opacity: .7; }
+.nm-qra { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 14px; align-items: center; }
+.nm-heatgrid { display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 2px; aspect-ratio: 1; max-width: 240px; }
+.nm-heat {
+  display: grid; place-items: center; border-radius: 4px; font-size: .62rem; font-weight: 600; font-variant-numeric: tabular-nums;
+  background: color-mix(in srgb, var(--accent) calc(var(--a) * 85%), var(--surface-2)); color: var(--text); overflow: hidden;
+}
+.nm-crs { display: grid; gap: 6px; font: .9rem var(--pp-mono); margin-top: 8px; }
+.nm-crs span { display: inline-block; min-width: 2.2em; padding: 1px 4px; margin: 1px; text-align: center; border: 1px solid var(--border); border-radius: 6px; }
+.nm-spies { display: flex; gap: 22px; justify-content: center; flex-wrap: wrap; }
+.nm-spies > div { display: grid; gap: 6px; justify-items: center; }
+.nm-spy { display: grid; grid-template-columns: repeat(var(--n), 18px); gap: 2px; }
+.nm-spy span { width: 18px; height: 18px; border-radius: 3px; background: var(--surface-2); }
+.nm-spy span.on { background: var(--text); }
+.nm-spy span.fill { background: var(--nm-err); }
+@media (max-width: 760px) {
+  .nm-qra { grid-template-columns: minmax(0, 1fr); }
+  .nm-lr { font-size: 1.05rem; }
+  .nm-mx { gap: .05em .45em; }
+}

@@ -1,7 +1,7 @@
 # Study Companion
 
 A study site with a course picker as its front page. Its courses so far are Japanese, LEN
-(electrical networks) and ProPa (programming paradigms), see below. Japanese is a visual grammar course: colour-coded sentence blocks, particles, verb conjugation,
+(electrical networks), ProPa (programming paradigms) and NuMa (numerical mathematics), see below. Japanese is a visual grammar course: colour-coded sentence blocks, particles, verb conjugation,
 adjectives, verb patterns and a Practice tab — plus a 50-lesson course with practice
 sentences, a 5-question check (worth up to three stars) for every grammar point and a test for
 every lesson. After Minna no Nihongo's 50 lessons come extra lessons from the university course
@@ -200,6 +200,37 @@ as you tick the rubrics; the whole exam, only Lean, only Reussner or any topics 
 older ones only the Reussner tasks are listed. The PDFs are KIT's, so they are **not in git**
 (`public/propa-exams/` is ignored): copy them onto the server by hand as `2324-ws.pdf`,
 `2324-ws-solutions.pdf`, … for `2324-ws`, `2424-ss`, `2425-ws`, `2525-ss`, `2526-ws` and `2626-ss`.
+
+The fourth course is **NuMa** (Numerische Mathematik für die Fachrichtungen Informatik und
+Ingenieurwesen, SS 26), in German like the lecture, built from the Skript, the 14 lectures, the
+exercise sheets and the old exams. Its seven chapters follow the Skript's numbering: floating point,
+condition and stability; LR, Cholesky and QR decompositions, the condition of linear systems, least
+squares and the SVD; Newton's method; polynomial, Chebyshev and spline interpolation; quadrature
+(order, Gauß, error, summed rules); eigenvalues (power method, spectral bisection, QR algorithm);
+and iterative methods (Jacobi, Gauß-Seidel, cg). Each section has the idea in short, the formulas,
+drawings that run the method step by step — a small floating-point system, Archimedes' π in double
+precision, the LR scheme with column pivoting on exact fractions, Householder reflections, Newton in
+1D and 2D, Runge and the Lebesgue function, divided differences, splines with three boundary
+conditions, a rule's order from its nodes, the QR algorithm on the lecture's 6 × 6 matrix, cg against
+steepest descent — then the traps and a check (`numaChecks`). A **Formelsammlung** tab collects
+formulas, operation counts and terms. The shared parts are in `public/js/numa.js` (formulas,
+matrices, exact fractions, small matrix routines); the chapters in `numa-k1-3.js`, `numa-k4-5.js`
+and `numa-k6-7.js`.
+
+NuMa's **Altklausuren** tab lists the eleven exams from SS 17 to SS 26 task by task, summarised and
+tagged by topic (short-task blocks split by topic), with a points-per-topic grid, done ticks
+(`numaExamDone`), the exam's marking rules in short, and links into the PDFs (`public/js/numa-exams.js`).
+**Übungsaufgaben** has 31 exam-style tasks with new numbers each time — LR with pivoting, Cholesky,
+Householder vectors, Hessenberg form, norms, least squares, Newton steps, divided differences,
+spline parameters, quadrature weights and order, power iteration, Jacobi/Gauß-Seidel, a cg step and
+fill-in texts — each modelled on an old exam task (`public/js/numa-tasks.js`, `numaTaskSolved`).
+Numbers are checked within rounding, also as fractions or lists separated by `;`; proofs are marked
+against a model answer by ticking a rubric. The **Probeklausur** puts six of them together like a real
+exam (LR and quadrature always), timed per point, marked on hand-in (`public/js/numa-mock.js`,
+`numaMock`). The PDFs are KIT's and **not in git** (`public/numa-exams/` is ignored): copy them onto
+the server as `<id>.pdf` and `<id>-loesung.pdf` for `17-ss`, `1718-ws`, `19-ss` (no solution),
+`1920-ws`, `20-ss`, `2021-ws`, `22-ss`, `2223-ws`, `24-ss`, `2425-ws` and `26-ss` (only
+`26-ss-loesung.pdf`, which contains the tasks).
 
 The whole site is **private**. Visitors without a login only see a login page. From there they
 can pick a username and password and send an access request, which you approve by hand — or

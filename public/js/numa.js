@@ -299,13 +299,30 @@ function nmFrame(W, H, [x0, x1], [y0, y1], pad = { l: 34, r: 12, t: 12, b: 26 })
       (yl ? `<text x="${ax + 6}" y="${pad.t + 10}" class="ax-t">${yl}</text>` : "");
   };
   // A function as a polyline, cut where it leaves the frame by more than the frame's height.
+  // A function as a path, cut exactly where it leaves the frame [y0, y1] (and where it isn't finite).
   const path = (f, n = 240, a = x0, b = x1) => {
-    let d = "", pen = false;
+    let d = "", pen = false, px = null, py = null;
+    const pt = (x, y) => `${X(x).toFixed(1)},${Y(y).toFixed(1)}`;
+    const edge = (xa, ya, xb, yb, lim) => xa + ((lim - ya) / (yb - ya)) * (xb - xa);
     for (let i = 0; i <= n; i++) {
-      const x = a + ((b - a) * i) / n, y = f(x);
-      if (!isFinite(y) || y > y1 + (y1 - y0) || y < y0 - (y1 - y0)) { pen = false; continue; }
-      d += `${pen ? "L" : "M"}${X(x).toFixed(1)},${Y(y).toFixed(1)}`;
-      pen = true;
+      const x = a + ((b - a) * i) / n, y = f(x), ok = isFinite(y);
+      const inside = ok && y >= y0 && y <= y1;
+      const prevIn = py !== null && isFinite(py) && py >= y0 && py <= y1;
+      if (inside) {
+        if (!pen) {
+          // Coming in from above or below: start on the frame's edge.
+          if (py !== null && isFinite(py)) { const lim = py > y1 ? y1 : y0; d += `M${pt(edge(px, py, x, y, lim), lim)}`; pen = true; }
+          else d += `M${pt(x, y)}`;
+        }
+        if (pen || d) d += `L${pt(x, y)}`;
+        pen = true;
+      } else if (pen && prevIn && ok) {
+        // Leaving: end on the frame's edge.
+        const lim = y > y1 ? y1 : y0;
+        d += `L${pt(edge(px, py, x, y, lim), lim)}`;
+        pen = false;
+      } else pen = false;
+      px = x; py = y;
     }
     return d;
   };

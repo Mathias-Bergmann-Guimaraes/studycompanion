@@ -212,7 +212,9 @@ drawings that run the method step by step — a small floating-point system, Arc
 precision, the LR scheme with column pivoting on exact fractions, Householder reflections, Newton in
 1D and 2D, Runge and the Lebesgue function, divided differences, splines with three boundary
 conditions, a rule's order from its nodes, the QR algorithm on the lecture's 6 × 6 matrix, cg against
-steepest descent — then the traps and a check (`numaChecks`). A **Formelsammlung** tab collects
+steepest descent — then the traps and a check (`numaChecks`). Formulas are TeX in `$…$`, typeset by
+KaTeX 0.16.11 (MIT), which is self-hosted in `public/vendor/katex/` like the fonts, so the site still
+makes no outside requests; every NuMa panel is typeset again whenever its content changes. A **Formelsammlung** tab collects
 formulas, operation counts and terms. The shared parts are in `public/js/numa.js` (formulas,
 matrices, exact fractions, small matrix routines); the chapters in `numa-k1-3.js`, `numa-k4-5.js`
 and `numa-k6-7.js`.

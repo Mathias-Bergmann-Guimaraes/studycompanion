@@ -3143,3 +3143,12 @@ b.nm-exact, b.nm-approx, b.nm-err, b.nm-piv, b.nm-ell { font-family: "Cambria Ma
   .nm-lr { font-size: 1.05rem; }
   .nm-mx { gap: .05em .45em; }
 }
+/* KaTeX formulas on NuMa pages ($…$ inline, tx() on a line of its own). */
+.nm-tex { margin: 12px 0; overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+.nm-tex .katex-display { margin: 0; }
+.panel .katex { font-size: 1.06em; }
+.q-opt .katex, .lp-opt .katex, .len-ix .katex { font-size: 1em; }
+.katex .nm-exact { color: var(--nm-exact); } .katex .nm-approx { color: var(--nm-approx); } .katex .nm-err { color: var(--nm-err); } .katex .nm-ell { color: var(--nm-ell); }
+.nm-sheet-f { min-width: 0; overflow-x: auto; overflow-y: hidden; }
+.nm-sheet-f .katex-display { margin: 0; text-align: left; }
+.nm-sheet-f .katex-display > .katex { text-align: left; }

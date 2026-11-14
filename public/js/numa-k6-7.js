@@ -145,101 +145,101 @@ NUMA_CHAPTERS.push({
       id: "6.1", title: "Vektoriteration und inverse Vektoriteration", short: "Vektoriteration", about: "Power method, Konvergenzrate |λ₂/λ₁|, invers, mit Shift, Kondition des LGS",
       html: () => `
         ${nmGist([
-          `<b>Vektoriteration</b>: y<sub>k</sub> = x<sub>k</sub>/‖x<sub>k</sub>‖, x<sub>k+1</sub> = Ay<sub>k</sub>. Für symmetrisches A mit |λ₁| &gt; |λ₂| ≥ ⋯ und x₀ᵀv₁ ≠ 0 konvergiert y<sub>k</sub> gegen den normierten EV v₁ (bis auf das Vorzeichen); λ₁ = v₁ᵀAv₁.`,
-          `Die Konvergenzrate ist <b>|λ₂|/|λ₁|</b>.`,
-          `<b>Inverse Iteration mit Shift</b>: löse (A − λ*I)x<sub>k+1</sub> = y<sub>k</sub> — sie findet den EW, der λ* am nächsten liegt.`,
+          `<b>Vektoriteration</b>: $y_k = x_k/\\|x_k\\|$, $x_{k+1} = Ay_k$. Für symmetrisches $A$ mit $|\\lambda_1| > |\\lambda_2| \\ge \\cdots$ und $x_0^\\top v_1 \\neq 0$ konvergiert $y_k$ gegen den normierten EV $v_1$ (bis auf das Vorzeichen); $\\lambda_1 = v_1^\\top Av_1$.`,
+          `Die Konvergenzrate ist <b>$|\\lambda_2|/|\\lambda_1|$</b>.`,
+          `<b>Inverse Iteration mit Shift</b>: löse $(A - \\lambda^*I)\\,x_{k+1} = y_k$ — sie findet den EW, der $\\lambda^*$ am nächsten liegt.`,
         ])}
         <div class="card">
           <h3>Warum es funktioniert</h3>
-          <p>Zerlege x = μ₁v₁ + ⋯ + μ<sub>N</sub>v<sub>N</sub> in Eigenvektoren. Dann</p>
-          ${F(`A<sup>k</sup>x = λ<sub>1</sub><sup>k</sup>[μ<sub>1</sub>v<sub>1</sub> + (${frac("λ<sub>2</sub>", "λ<sub>1</sub>")})<sup>k</sup>μ<sub>2</sub>v<sub>2</sub> + ⋯ + (${frac("λ<sub>N</sub>", "λ<sub>1</sub>")})<sup>k</sup>μ<sub>N</sub>v<sub>N</sub>]`)}
-          <p>Alle Anteile außer v₁ verschwinden wie (λ<sub>n</sub>/λ₁)<sup>k</sup>. Gilt auch für nicht symmetrische A mit halbeinfachen EW, deren betragsgrößter einfach ist (PageRank, Übung 6).</p>
+          <p>Zerlege $x = \\mu_1v_1 + \\cdots + \\mu_Nv_N$ in Eigenvektoren. Dann</p>
+          ${tx(`A^kx = \\lambda_1^k\\Big[\\mu_1v_1 + \\Big(\\frac{\\lambda_2}{\\lambda_1}\\Big)^k\\mu_2v_2 + \\cdots + \\Big(\\frac{\\lambda_N}{\\lambda_1}\\Big)^k\\mu_Nv_N\\Big]`)}
+          <p>Alle Anteile außer $v_1$ verschwinden wie $(\\lambda_n/\\lambda_1)^k$. Gilt auch für nicht symmetrische $A$ mit halbeinfachen EW, deren betragsgrößter einfach ist (PageRank, Übung 6).</p>
           ${ppFacts([
-            ["Spektren", "A − λ*I hat die EW λ<sub>n</sub> − λ*, A⁻¹ hat 1/λ<sub>n</sub> — dieselben Eigenvektoren."],
-            ["Shift", "Beispiel der Vorlesung: EW 3, 2, 1, Rate 2/3. A − 1,5 I hat die EW 1,5; 0,5; −0,5: Rate 1/3."],
-            ["invers", "Für 0 &lt; |λ₁| &lt; |λ₂| ≤ ⋯: Ax<sub>k+1</sub> = y<sub>k</sub> konvergiert gegen v₁ (kleinster EW). A einmal LR- bzw. Cholesky-zerlegen, dann pro Schritt nur N² (SS 17)."],
-            ["Kondition", "cond₂(A − λ*I) = max|λ − λ*|/min|λ − λ*| ist riesig, wenn λ* nah an einem EW liegt — trotzdem kein Problem: gesucht ist nur die Richtung, und die ist gut konditioniert."],
+            ["Spektren", "$A - \\lambda^*I$ hat die EW $\\lambda_n - \\lambda^*$, $A^{-1}$ hat $1/\\lambda_n$ — dieselben Eigenvektoren."],
+            ["Shift", "Beispiel der Vorlesung: EW $3, 2, 1$, Rate $\\frac23$. $A - 1{,}5\\,I$ hat die EW $1{,}5;\\ 0{,}5;\\ -0{,}5$: Rate $\\frac13$."],
+            ["invers", "Für $0 < |\\lambda_1| < |\\lambda_2| \\le \\cdots$: $Ax_{k+1} = y_k$ konvergiert gegen $v_1$ (kleinster EW). $A$ einmal LR- bzw. Cholesky-zerlegen, dann pro Schritt nur $N^2$ (SS 17)."],
+            ["Kondition", "$\\cond_2(A - \\lambda^*I) = \\frac{\\max|\\lambda - \\lambda^*|}{\\min|\\lambda - \\lambda^*|}$ ist riesig, wenn $\\lambda^*$ nah an einem EW liegt — trotzdem kein Problem: gesucht ist nur die Richtung, und die ist gut konditioniert."],
           ])}
         </div>
         ${pw("pow", `${pslider("l1", "λ₁", -4, 4, 0.1, 3)}${pslider("l2", "λ₂", -4, 4, 0.1, 2)}${pslider("ang", "Startvektor", 0, 180, 1, 80)}
           ${pseg("mode", [["pow", "Vektoriteration"], ["inv", "invers"], ["shift", "invers mit Shift"]], "pow")}
           <div class="nm-mu">${pslider("mu", "Shift μ", -40, 40, 1, 15)}</div>`, { wide: true })}
         ${nmTraps([
-          "Bei |λ₁| = |λ₂| (z. B. λ und −λ) konvergiert die Vektoriteration nicht.",
-          "Der Startvektor muss einen Anteil in Richtung v₁ haben (x₀ᵀv₁ ≠ 0) — durch Rundung fast immer erfüllt.",
-          "Inverse Iteration: nie A⁻¹ bilden, sondern das LGS lösen — mit einer Zerlegung, die man für alle Schritte wiederverwendet.",
+          "Bei $|\\lambda_1| = |\\lambda_2|$ (z. B. $\\lambda$ und $-\\lambda$) konvergiert die Vektoriteration nicht.",
+          "Der Startvektor muss einen Anteil in Richtung $v_1$ haben ($x_0^\\top v_1 \\neq 0$) — durch Rundung fast immer erfüllt.",
+          "Inverse Iteration: nie $A^{-1}$ bilden, sondern das LGS lösen — mit einer Zerlegung, die man für alle Schritte wiederverwendet.",
         ])}`,
       setup: (root) => nmWPower(root),
       check: [
-        { q: "A symmetrisch mit EW 4, −3, 1. Wie schnell konvergiert die Vektoriteration?", opts: ["mit Rate 3/4", "mit Rate 1/4", "gar nicht", "quadratisch"], why: "|λ₂|/|λ₁| = 3/4." },
-        { q: "Welchen Eigenwert findet die inverse Iteration mit Shift λ*?", opts: ["den, der λ* am nächsten liegt", "den größten", "den kleinsten", "λ* selbst"], why: "Der betragsgrößte EW von (A − λ*I)⁻¹ ist 1/(λ − λ*) mit minimalem |λ − λ*|." },
-        { q: "Was muss in jedem Schritt der inversen Vektoriteration getan werden?", opts: ["ein LGS (A − λ*I)x = y lösen", "eine QR-Zerlegung", "A⁻¹ neu berechnen", "das charakteristische Polynom auswerten"], why: "Mit einer Zerlegung von A − λ*I, die nur einmal berechnet wird." },
-        { q: "Wie bekommt man aus dem EV v₁ den Eigenwert?", opts: ["λ₁ = v₁ᵀAv₁ (‖v₁‖₂ = 1)", "λ₁ = ‖v₁‖", "λ₁ = det(A)", "λ₁ = v₁ᵀv₁"], why: "Rayleigh-Quotient." },
+        { q: "$A$ symmetrisch mit EW $4, -3, 1$. Wie schnell konvergiert die Vektoriteration?", opts: ["mit Rate $\\frac34$", "mit Rate $\\frac14$", "gar nicht", "quadratisch"], why: "$|\\lambda_2|/|\\lambda_1| = \\frac34$." },
+        { q: "Welchen Eigenwert findet die inverse Iteration mit Shift $\\lambda^*$?", opts: ["den, der $\\lambda^*$ am nächsten liegt", "den größten", "den kleinsten", "$\\lambda^*$ selbst"], why: "Der betragsgrößte EW von $(A - \\lambda^*I)^{-1}$ ist $1/(\\lambda - \\lambda^*)$ mit minimalem $|\\lambda - \\lambda^*|$." },
+        { q: "Was muss in jedem Schritt der inversen Vektoriteration getan werden?", opts: ["ein LGS $(A - \\lambda^*I)x = y$ lösen", "eine QR-Zerlegung", "$A^{-1}$ neu berechnen", "das charakteristische Polynom auswerten"], why: "Mit einer Zerlegung von $A - \\lambda^*I$, die nur einmal berechnet wird." },
+        { q: "Wie bekommt man aus dem EV $v_1$ den Eigenwert?", opts: ["$\\lambda_1 = v_1^\\top Av_1$ ($\\|v_1\\|_2 = 1$)", "$\\lambda_1 = \\|v_1\\|$", "$\\lambda_1 = \\det(A)$", "$\\lambda_1 = v_1^\\top v_1$"], why: "Rayleigh-Quotient." },
       ],
     },
     {
       id: "6.2", title: "Spektrale Bisektion", short: "Spektrale Bisektion", about: "Graph halbieren, Laplacematrix, Relaxation, Fiedler-Vektor, (A + eeᵀ)",
       html: () => `
         ${nmGist([
-          `Ziel: die Knoten eines ungerichteten zusammenhängenden Graphen in zwei <b>gleich große</b> Mengen V<sup>+</sup>, V<sup>−</sup> teilen, so dass <b>möglichst wenige Kanten</b> zwischen ihnen verlaufen.`,
-          `Das ganzzahlige Problem ist zu schwer. <b>Relaxiert</b>: berechne den EV w zum <b>kleinsten positiven EW</b> der Laplacematrix und teile am Median von w.`,
-          `Numerisch: inverse Vektoriteration auf A + eeᵀ, mit x₀ ⊥ e.`,
+          `Ziel: die Knoten eines ungerichteten zusammenhängenden Graphen in zwei <b>gleich große</b> Mengen $V^+$, $V^-$ teilen, so dass <b>möglichst wenige Kanten</b> zwischen ihnen verlaufen.`,
+          `Das ganzzahlige Problem ist zu schwer. <b>Relaxiert</b>: berechne den EV $w$ zum <b>kleinsten positiven EW</b> der Laplacematrix und teile am Median von $w$.`,
+          `Numerisch: inverse Vektoriteration auf $A + ee^\\top$, mit $x_0 \\perp e$.`,
         ])}
         <div class="card">
           <h3>Laplacematrix</h3>
-          ${F(`a<sub>nn</sub> = Grad von v<sub>n</sub>,  a<sub>nm</sub> = −1, falls {v<sub>n</sub>, v<sub>m</sub>} ∈ Γ, sonst 0`)}
-          <p>A ist symmetrisch (der Graph ist ungerichtet), positiv semidefinit, und Ae = 0: der kleinste EW ist 0 mit EV e = (1, …, 1). Deshalb kann man die inverse Iteration nicht direkt auf A anwenden — A ist <b>singulär</b>.</p>
+          ${tx(`a_{nn} = \\text{Grad von } v_n, \\qquad a_{nm} = \\begin{cases}-1, & \\{v_n, v_m\\} \\in \\Gamma,\\\\ \\phantom{-}0 & \\text{sonst}\\end{cases}`)}
+          <p>$A$ ist symmetrisch (der Graph ist ungerichtet), positiv semidefinit, und $Ae = 0$: der kleinste EW ist $0$ mit EV $e = (1, \\dots, 1)^\\top$. Deshalb kann man die inverse Iteration nicht direkt auf $A$ anwenden — $A$ ist <b>singulär</b>.</p>
           <h3>Der Trick</h3>
           <ol class="nm-ol">
-            <li>Wähle x₀ mit eᵀx₀ = 0, k = 0.</li>
-            <li>Normiere y<sub>k</sub> = x<sub>k</sub>/‖x<sub>k</sub>‖₂.</li>
-            <li>Löse (A + eeᵀ)x<sub>k+1</sub> = y<sub>k</sub>, k um 1 erhöhen, weiter mit 2.</li>
+            <li>Wähle $x_0$ mit $e^\\top x_0 = 0$, $k = 0$.</li>
+            <li>Normiere $y_k = x_k/\\|x_k\\|_2$.</li>
+            <li>Löse $(A + ee^\\top)\\,x_{k+1} = y_k$, $k$ um 1 erhöhen, weiter mit 2.</li>
           </ol>
-          <p>Mit eᵀx₀ = 0 bleibt eᵀx<sub>k</sub> = 0, und gesucht ist auch ein Vektor ⊥ e. A + eeᵀ ist <b>spd</b>: Cholesky möglich — oder bei großem, dünn besetztem A in jedem Schritt das cg-Verfahren (${nmSee("7.2")}), dessen Hauptaufwand eine Matrix-Vektor-Multiplikation ist (Lückentext SS 22).</p>
+          <p>Mit $e^\\top x_0 = 0$ bleibt $e^\\top x_k = 0$, und gesucht ist auch ein Vektor $\\perp e$. $A + ee^\\top$ ist <b>spd</b>: Cholesky möglich — oder bei großem, dünn besetztem $A$ in jedem Schritt das cg-Verfahren (${nmSee("7.2")}), dessen Hauptaufwand eine Matrix-Vektor-Multiplikation ist (Lückentext SS 22).</p>
         </div>
         ${pw("fied", pseg("g", Object.entries(NM_GRAPHS).map(([k, v]) => [k, v.name]), "dumb"), { wide: true })}
         ${nmTraps([
-          "Gesucht ist der kleinste <b>positive</b> EW — der kleinste ist 0.",
-          "Der Median sorgt für |V<sup>+</sup>| = |V<sup>−</sup>|; das Vorzeichen allein würde das nicht garantieren.",
+          "Gesucht ist der kleinste <b>positive</b> EW — der kleinste ist $0$.",
+          "Der Median sorgt für $|V^+| = |V^-|$; das Vorzeichen allein würde das nicht garantieren.",
         ])}`,
       setup: (root) => nmWFiedler(root),
       check: [
-        { q: "Was ist der kleinste Eigenwert der Laplacematrix eines Graphen?", opts: ["0, mit EV e = (1, …, 1)", "1", "der kleinste Knotengrad", "negativ"], why: "Jede Zeilensumme ist 0, also Ae = 0." },
-        { q: "Warum wendet man die inverse Iteration auf A + eeᵀ statt auf A an?", opts: ["A ist singulär, A + eeᵀ ist spd", "A ist nicht symmetrisch", "A + eeᵀ hat weniger Nicht-Nullen", "Das ist schneller"], why: "Mit x ⊥ e ändert eeᵀ nichts an der Iteration, macht die Matrix aber regulär." },
-        { q: "Welcher Eigenvektor teilt den Graphen?", opts: ["der zum kleinsten positiven EW", "der zum größten EW", "e", "der zum EW 0"], why: "Der Fiedler-Vektor der Relaxation." },
-        { q: "Wie wird aus w die Zerlegung?", opts: ["V⁻ = {vₙ : wₙ < Median von w}", "nach dem Vorzeichen von wₙ", "nach dem Knotengrad", "zufällig"], why: "Der Median teilt in zwei gleich große Mengen." },
+        { q: "Was ist der kleinste Eigenwert der Laplacematrix eines Graphen?", opts: ["$0$, mit EV $e = (1, \\dots, 1)$", "$1$", "der kleinste Knotengrad", "negativ"], why: "Jede Zeilensumme ist $0$, also $Ae = 0$." },
+        { q: "Warum wendet man die inverse Iteration auf $A + ee^\\top$ statt auf $A$ an?", opts: ["$A$ ist singulär, $A + ee^\\top$ ist spd", "$A$ ist nicht symmetrisch", "$A + ee^\\top$ hat weniger Nicht-Nullen", "Das ist schneller"], why: "Mit $x \\perp e$ ändert $ee^\\top$ nichts an der Iteration, macht die Matrix aber regulär." },
+        { q: "Welcher Eigenvektor teilt den Graphen?", opts: ["der zum kleinsten positiven EW", "der zum größten EW", "$e$", "der zum EW $0$"], why: "Der Fiedler-Vektor der Relaxation." },
+        { q: "Wie wird aus $w$ die Zerlegung?", opts: ["$V^- = \\{v_n : w_n < \\text{Median von } w\\}$", "nach dem Vorzeichen von $w_n$", "nach dem Knotengrad", "zufällig"], why: "Der Median teilt in zwei gleich große Mengen." },
       ],
     },
     {
       id: "6.3", title: "QR-Algorithmus", short: "QR-Algorithmus", about: "Aₖ = QₖRₖ, Aₖ₊₁ = RₖQₖ, Hessenbergform, Shift hₙₙ, Deflation, Konvergenz",
       html: () => `
         ${nmGist([
-          `<b>Naiv</b>: A₀ = A, zerlege A<sub>k</sub> = Q<sub>k</sub>R<sub>k</sub>, setze A<sub>k+1</sub> = R<sub>k</sub>Q<sub>k</sub> = Q<sub>k</sub>ᵀA<sub>k</sub>Q<sub>k</sub> — ähnlich, also dieselben EW; A<sub>k</sub> wird (fast) obere Dreiecksmatrix.`,
-          `Erst auf <b>Hessenbergform</b> H = QᵀAQ bringen (N − 2 Householder-Spiegelungen, 5N³/3): sie bleibt erhalten, und ein Schritt kostet nur O(N²) — symmetrisch tridiagonal O(N).`,
-          `<b>Shift</b> μ<sub>k</sub> = h<sub>NN</sub>: H<sub>k</sub> − μ<sub>k</sub>I = Q<sub>k</sub>R<sub>k</sub>, H<sub>k+1</sub> = R<sub>k</sub>Q<sub>k</sub> + μ<sub>k</sub>I — quadratische Konvergenz, symmetrisch kubisch.`,
+          `<b>Naiv</b>: $A_0 = A$, zerlege $A_k = Q_kR_k$, setze $A_{k+1} = R_kQ_k = Q_k^\\top A_kQ_k$ — ähnlich, also dieselben EW; $A_k$ wird (fast) obere Dreiecksmatrix.`,
+          `Erst auf <b>Hessenbergform</b> $H = Q^\\top AQ$ bringen ($N - 2$ Householder-Spiegelungen, $\\tfrac53 N^3$): sie bleibt erhalten, und ein Schritt kostet nur $O(N^2)$ — symmetrisch tridiagonal $O(N)$.`,
+          `<b>Shift</b> $\\mu_k = h_{NN}$: $H_k - \\mu_kI = Q_kR_k$, $H_{k+1} = R_kQ_k + \\mu_kI$ — quadratische Konvergenz, symmetrisch kubisch.`,
         ])}
         <div class="card">
           <h3>Hessenbergform</h3>
-          <p>Der erste Householder-Vektor w₂ = (0, w̃₂) lässt die erste Zeile stehen und spiegelt (a₂₁, …, a<sub>N1</sub>) auf ein Vielfaches von e₁ ∈ ℝ<sup>N−1</sup>. Von rechts multipliziert ändert Q₂ die erste Spalte nicht — die Nullen bleiben. Ist A symmetrisch, ist H tridiagonal.</p>
-          <p><b>3 × 3</b> (WS 24/25, SS 22): nur eine Spiegelung Q = diag(1, Q̃) mit 2 × 2-Householder Q̃, die (a₂₁, a₃₁) auf (σ, 0) spiegelt. Für (−4, 3): σ = 5, und Q̃ = ${mx([["−⅘", "⅗"], ["⅗", "⅘"]])}.</p>
+          <p>Der erste Householder-Vektor $w_2 = (0, \\tilde w_2)$ lässt die erste Zeile stehen und spiegelt $(a_{21}, \\dots, a_{N1})$ auf ein Vielfaches von $e_1 \\in \\R^{N-1}$. Von rechts multipliziert ändert $Q_2$ die erste Spalte nicht — die Nullen bleiben. Ist $A$ symmetrisch, ist $H$ tridiagonal.</p>
+          <p><b>3 × 3</b> (WS 24/25, SS 22): nur eine Spiegelung $Q = \\diag(1, \\tilde Q)$ mit $2\\times2$-Householder $\\tilde Q$, die $(a_{21}, a_{31})$ auf $(\\sigma, 0)$ spiegelt. Für $(-4, 3)$: $\\sigma = 5$, und $\\tilde Q = \\begin{pmatrix}-\\frac45 & \\frac35\\\\ \\frac35 & \\frac45\\end{pmatrix}$.</p>
           <h3>Ein Schritt auf einer Hessenbergmatrix</h3>
-          <p>Die QR-Zerlegung braucht nur N − 1 Spiegelungen mit je zwei Nicht-Null-Komponenten (w<sub>n</sub> = (0, …, ∗, ∗, 0, …)), und RQ ist wieder Hessenberg. Zerfällt H (ein h<sub>n+1,n</sub> = 0), behandelt man die Blöcke getrennt — o. E. ist H irreduzibel.</p>
+          <p>Die QR-Zerlegung braucht nur $N - 1$ Spiegelungen mit je zwei Nicht-Null-Komponenten ($w_n = (0, \\dots, *, *, 0, \\dots)$), und $RQ$ ist wieder Hessenberg. Zerfällt $H$ (ein $h_{n+1,n} = 0$), behandelt man die Blöcke getrennt — o. E. ist $H$ irreduzibel.</p>
           <h3>Shift und Deflation</h3>
-          <p>Ist μ ein EW einer irreduziblen Hessenbergmatrix H und H − μI = QR, dann hat H̄ = RQ + μI die letzte Zeile (0, …, 0, μ): h̄<sub>N,N−1</sub> = 0, die Matrix zerfällt nach einem Schritt. Mit μ<sub>k</sub> = h<sub>NN</sub> und |h<sub>N,N−1</sub>| = δ klein wird h̄<sub>N,N−1</sub> = O(δ²) (quadratisch; symmetrisch O(δ³)). Ist |h<sub>N,N−1</sub>| ≤ ε(|h<sub>NN</sub>| + |h<sub>N−1,N−1</sub>|), wird h<sub>NN</sub> als EW akzeptiert und mit dem (N − 1) × (N − 1)-Block weitergemacht.</p>
+          <p>Ist $\\mu$ ein EW einer irreduziblen Hessenbergmatrix $H$ und $H - \\mu I = QR$, dann hat $\\bar H = RQ + \\mu I$ die letzte Zeile $(0, \\dots, 0, \\mu)$: $\\bar h_{N,N-1} = 0$, die Matrix zerfällt nach einem Schritt. Mit $\\mu_k = h_{NN}$ und $|h_{N,N-1}| = \\delta$ klein wird $\\bar h_{N,N-1} = O(\\delta^2)$ (quadratisch; symmetrisch $O(\\delta^3)$). Ist $|h_{N,N-1}| \\le \\varepsilon\\,(|h_{NN}| + |h_{N-1,N-1}|)$, wird $h_{NN}$ als EW akzeptiert und mit dem $(N - 1)\\times(N - 1)$-Block weitergemacht.</p>
         </div>
         ${pw("qra", `${pseg("shift", [[0, "ohne Shift"], [1, "mit Shift h<sub>NN</sub>"]], 0)}${pslider("k", "Schritt k", 0, 60, 1, 0)}`, { wide: true })}
-        <p class="small muted">Das Beispiel der Vorlesung: A = 10 BBᵀ mit der 6 × 6-Matrix B aus dem PageRank-Beispiel (Übung 6); EW ≈ 13,33; 8,85; 5,69; 2,34; 0,478; 0,145.</p>
+        <p class="small muted">Das Beispiel der Vorlesung: $A = 10\\,BB^\\top$ mit der $6\\times6$-Matrix $B$ aus dem PageRank-Beispiel (Übung 6); EW $\\approx 13{,}33;\\ 8{,}85;\\ 5{,}69;\\ 2{,}34;\\ 0{,}478;\\ 0{,}145$.</p>
         ${nmTraps([
-          "Naive Schritte kosten O(N³) pro Schritt — deshalb zuerst Hessenberg.",
-          "Quadratische Konvergenz heißt: die Zahl richtiger Nachkommastellen von μ verdoppelt sich ungefähr pro Schritt (Lückentext WS 20/21).",
-          "Lückentext: N − 2 Householder-Transformationen, 5N³/3 Operationen, symmetrisch → symmetrische Tridiagonalmatrix, (e<sub>N</sub>)ᵀH̄ = μe<sub>N</sub>ᵀ.",
+          "Naive Schritte kosten $O(N^3)$ pro Schritt — deshalb zuerst Hessenberg.",
+          "Quadratische Konvergenz heißt: die Zahl richtiger Nachkommastellen von $\\mu$ verdoppelt sich ungefähr pro Schritt (Lückentext WS 20/21).",
+          "Lückentext: $N - 2$ Householder-Transformationen, $\\tfrac53 N^3$ Operationen, symmetrisch → symmetrische Tridiagonalmatrix, $e_N^\\top\\bar H = \\mu e_N^\\top$.",
         ])}`,
       setup: (root) => nmWQRAlg(root),
       check: [
-        { q: "Warum haben Aₖ und Aₖ₊₁ = RₖQₖ dieselben Eigenwerte?", opts: ["Aₖ₊₁ = QₖᵀAₖQₖ ist ähnlich zu Aₖ", "Weil Rₖ eine Dreiecksmatrix ist", "Weil det(Qₖ) = 1", "Das stimmt nur mit Shift"], why: "Rₖ = QₖᵀAₖ, also RₖQₖ = QₖᵀAₖQₖ." },
-        { q: "Wie viele Householder-Transformationen bringen A ∈ ℝᴺˣᴺ auf Hessenbergform?", opts: ["N − 2", "N − 1", "N", "N²"], why: "Spalten 1 bis N − 2; die vorletzte Spalte hat unter der Nebendiagonale nichts mehr." },
-        { q: "Was kostet ein QR-Schritt für eine symmetrische Tridiagonalmatrix?", opts: ["O(N)", "O(N²)", "O(N³)", "O(1)"], why: "N − 1 kleine Spiegelungen mit konstantem Aufwand (6 Operationen)." },
-        { q: "μ ist ein Eigenwert der irreduziblen Hessenbergmatrix H. Was gilt nach einem Schritt mit Shift μ?", opts: ["h̄_{N,N−1} = 0 und h̄_{NN} = μ", "H̄ = H", "H̄ ist diagonal", "h̄₁₁ = μ"], why: "Die Matrix zerfällt sofort; μ kann abgespalten werden." },
+        { q: "Warum haben $A_k$ und $A_{k+1} = R_kQ_k$ dieselben Eigenwerte?", opts: ["$A_{k+1} = Q_k^\\top A_kQ_k$ ist ähnlich zu $A_k$", "Weil $R_k$ eine Dreiecksmatrix ist", "Weil $\\det(Q_k) = 1$", "Das stimmt nur mit Shift"], why: "$R_k = Q_k^\\top A_k$, also $R_kQ_k = Q_k^\\top A_kQ_k$." },
+        { q: "Wie viele Householder-Transformationen bringen $A \\in \\R^{N\\times N}$ auf Hessenbergform?", opts: ["$N - 2$", "$N - 1$", "$N$", "$N^2$"], why: "Spalten $1$ bis $N - 2$; die vorletzte Spalte hat unter der Nebendiagonale nichts mehr." },
+        { q: "Was kostet ein QR-Schritt für eine symmetrische Tridiagonalmatrix?", opts: ["$O(N)$", "$O(N^2)$", "$O(N^3)$", "$O(1)$"], why: "$N - 1$ kleine Spiegelungen mit konstantem Aufwand (6 Operationen)." },
+        { q: "$\\mu$ ist ein Eigenwert der irreduziblen Hessenbergmatrix $H$. Was gilt nach einem Schritt mit Shift $\\mu$?", opts: ["$\\bar h_{N,N-1} = 0$ und $\\bar h_{NN} = \\mu$", "$\\bar H = H$", "$\\bar H$ ist diagonal", "$\\bar h_{11} = \\mu$"], why: "Die Matrix zerfällt sofort; $\\mu$ kann abgespalten werden." },
       ],
     },
   ],
@@ -390,111 +390,111 @@ NUMA_CHAPTERS.push({
       id: "7.1", title: "Allgemeine lineare Iterationen", short: "Jacobi & Gauß-Seidel", about: "Fixpunktform, ρ(I − B⁻¹A) < 1, Jacobi B = D, Gauß-Seidel B = L + D, unvollständige LR",
       html: () => `
         ${nmGist([
-          `Mit einem <b>Vorkonditionierer</b> B ≈ A: Ax = b ⇔ x = (I − B⁻¹A)x + B⁻¹b. Fixpunktiteration x<sub>k+1</sub> = x<sub>k</sub> + B⁻¹r<sub>k</sub>, r<sub>k</sub> = b − Ax<sub>k</sub>.`,
-          `<b>Konvergenz</b> für jeden Startwert, wenn ρ(I − B⁻¹A) &lt; 1 (dann ist A regulär); linear.`,
-          `A = L + D + R: <b>Jacobi</b> B = D (Gesamtschritt), <b>Gauß-Seidel</b> B = L + D (Einzelschritt), oder eine unvollständige LR-Zerlegung.`,
+          `Mit einem <b>Vorkonditionierer</b> $B \\approx A$: $Ax = b \\Leftrightarrow x = (I - B^{-1}A)\\,x + B^{-1}b$. Fixpunktiteration $x_{k+1} = x_k + B^{-1}r_k$, $r_k = b - Ax_k$.`,
+          `<b>Konvergenz</b> für jeden Startwert, wenn $\\rho(I - B^{-1}A) < 1$ (dann ist $A$ regulär); linear.`,
+          `$A = L + D + R$: <b>Jacobi</b> $B = D$ (Gesamtschritt), <b>Gauß-Seidel</b> $B = L + D$ (Einzelschritt), oder eine unvollständige LR-Zerlegung.`,
         ])}
         <div class="card">
           <h3>Praktische Durchführung</h3>
           <ol class="nm-ol">
-            <li>Wähle x₀, ε &gt; 0; r₀ = b − Ax₀, k = 0.</li>
-            <li>Falls ‖r<sub>k</sub>‖ ≤ ε‖b‖: STOPP. Sonst löse Bc<sub>k</sub> = r<sub>k</sub>, x<sub>k+1</sub> = x<sub>k</sub> + c<sub>k</sub>, r<sub>k+1</sub> = r<sub>k</sub> − Ac<sub>k</sub>, k um 1 erhöhen.</li>
+            <li>Wähle $x_0$, $\\varepsilon > 0$; $r_0 = b - Ax_0$, $k = 0$.</li>
+            <li>Falls $\\|r_k\\| \\le \\varepsilon\\|b\\|$: STOPP. Sonst löse $Bc_k = r_k$, $x_{k+1} = x_k + c_k$, $r_{k+1} = r_k - Ac_k$, $k$ um 1 erhöhen.</li>
           </ol>
-          <p>Wichtig: Bc = r muss <b>viel leichter</b> lösbar sein als Ax = b. B = I bringt nichts, B = A ist unmöglich.</p>
+          <p>Wichtig: $Bc = r$ muss <b>viel leichter</b> lösbar sein als $Ax = b$. $B = I$ bringt nichts, $B = A$ ist unmöglich.</p>
           ${ppFacts([
-            ["Jacobi", `x<sub>k+1,n</sub> = (b<sub>n</sub> − Σ<sub>m≠n</sub> a<sub>nm</sub>x<sub>k,m</sub>)/a<sub>nn</sub> — leicht parallel.`],
+            ["Jacobi", `$x_{k+1,n} = \\dfrac{1}{a_{nn}}\\Big(b_n - \\sum_{m\\neq n} a_{nm}x_{k,m}\\Big)$ — leicht parallel.`],
             ["Gauß-Seidel", "benutzt die schon neuen Komponenten sofort; explizit ausführbar (Vorwärtssubstitution), konvergiert oft schneller."],
-            ["hinreichend", "A strikt diagonaldominant ⇒ Jacobi (und Gauß-Seidel) konvergieren."],
-            ["Gerschgorin (SS 26)", "Alle EW von M liegen in ⋃ K<sub>n</sub>, K<sub>n</sub> = {z : |z − m<sub>nn</sub>| ≤ Σ<sub>k≠n</sub>|m<sub>nk</sub>|}. Für die Spline-Matrix (2 1; 1 4 1; …) und Jacobi: Mittelpunkte 0, Radien ≤ ½ ⇒ ρ ≤ ½ &lt; 1."],
+            ["hinreichend", "$A$ strikt diagonaldominant $\\Rightarrow$ Jacobi (und Gauß-Seidel) konvergieren."],
+            ["Gerschgorin (SS 26)", "Alle EW von $M$ liegen in $\\bigcup_n K_n$, $K_n = \\{z : |z - m_{nn}| \\le \\sum_{k\\neq n}|m_{nk}|\\}$. Für die Spline-Matrix $(2\\ 1;\\ 1\\ 4\\ 1;\\ \\dots)$ und Jacobi: Mittelpunkte $0$, Radien $\\le \\frac12$ $\\Rightarrow \\rho \\le \\frac12 < 1$."],
           ])}
         </div>
         ${pw("jgs", `${pseg("sys", Object.entries(NM_IT_SYS).map(([k, v]) => [k, v.name]), "dd")}${pseg("m", [["jac", "Jacobi"], ["gs", "Gauß-Seidel"]], "jac")}`, { wide: true })}
         ${nmTraps([
-          "Die Iterationsmatrix ist I − B⁻¹A, nicht B⁻¹A. Für Jacobi: I − D⁻¹A hat Nullen auf der Diagonale.",
-          "Konvergenz hängt am Spektralradius, nicht an einer Norm — eine Norm &lt; 1 reicht aber (‖·‖ ≥ ρ).",
-          "Lückentext WS 19/20: iterativ, wenn N <b>groß</b> und A <b>dünn besetzt</b>; die Hauptidee ist, dass Bc = r <b>leichter</b> gelöst werden kann.",
+          "Die Iterationsmatrix ist $I - B^{-1}A$, nicht $B^{-1}A$. Für Jacobi: $I - D^{-1}A$ hat Nullen auf der Diagonale.",
+          "Konvergenz hängt am Spektralradius, nicht an einer Norm — eine Norm $< 1$ reicht aber ($\\|\\cdot\\| \\ge \\rho$).",
+          "Lückentext WS 19/20: iterativ, wenn $N$ <b>groß</b> und $A$ <b>dünn besetzt</b>; die Hauptidee ist, dass $Bc = r$ <b>leichter</b> gelöst werden kann.",
         ])}`,
       setup: (root) => nmWIter(root),
       check: [
-        { q: "Welcher Vorkonditionierer gehört zum Gauß-Seidel-Verfahren (A = L + D + R)?", opts: ["B = L + D", "B = D", "B = D + R", "B = A"], why: "Untere Dreiecksmatrix mit Diagonale: Bc = r per Vorwärtssubstitution." },
-        { q: "Wann konvergiert x_{k+1} = (I − B⁻¹A)xₖ + B⁻¹b für jeden Startwert?", opts: ["Wenn ρ(I − B⁻¹A) < 1", "Wenn A symmetrisch ist", "Wenn ‖B‖ < 1", "Wenn det A ≠ 0"], why: "Dann ist I − B⁻¹A eine Kontraktion (in einer passenden Norm)." },
-        { q: "Was ist ein Vorteil des Jacobi-Verfahrens?", opts: ["Es lässt sich leicht parallelisieren", "Es konvergiert immer", "Es ist exakt nach N Schritten", "Es braucht keine Diagonale"], why: "Jede Komponente hängt nur vom alten Vektor ab." },
-        { q: "Eine hinreichende Bedingung für die Konvergenz von Jacobi?", opts: ["A strikt diagonaldominant", "A symmetrisch", "A regulär", "A dünn besetzt"], why: "Dann ist ‖I − D⁻¹A‖∞ < 1." },
+        { q: "Welcher Vorkonditionierer gehört zum Gauß-Seidel-Verfahren ($A = L + D + R$)?", opts: ["$B = L + D$", "$B = D$", "$B = D + R$", "$B = A$"], why: "Untere Dreiecksmatrix mit Diagonale: $Bc = r$ per Vorwärtssubstitution." },
+        { q: "Wann konvergiert $x_{k+1} = (I - B^{-1}A)x_k + B^{-1}b$ für jeden Startwert?", opts: ["Wenn $\\rho(I - B^{-1}A) < 1$", "Wenn $A$ symmetrisch ist", "Wenn $\\|B\\| < 1$", "Wenn $\\det A \\neq 0$"], why: "Dann ist $I - B^{-1}A$ eine Kontraktion (in einer passenden Norm)." },
+        { q: "Was ist ein Vorteil des Jacobi-Verfahrens?", opts: ["Es lässt sich leicht parallelisieren", "Es konvergiert immer", "Es ist exakt nach $N$ Schritten", "Es braucht keine Diagonale"], why: "Jede Komponente hängt nur vom alten Vektor ab." },
+        { q: "Eine hinreichende Bedingung für die Konvergenz von Jacobi?", opts: ["$A$ strikt diagonaldominant", "$A$ symmetrisch", "$A$ regulär", "$A$ dünn besetzt"], why: "Dann ist $\\|I - D^{-1}A\\|_\\infty < 1$." },
       ],
     },
     {
       id: "7.2", title: "Das cg-Verfahren", short: "cg", about: "Φ(x) = ½xᵀAx − xᵀb, Energienorm, αₖ, βₖ, A-orthogonale Suchrichtungen, Fehlerabschätzung",
       html: () => `
         ${nmGist([
-          `Für <b>spd</b> A: x löst Ax = b ⇔ x minimiert <b>Φ(x) = ½xᵀAx − xᵀb</b>, denn ∇Φ = Ax − b und die Hesse-Matrix A ist positiv definit.`,
-          `Jeder Schritt minimiert Φ entlang einer Suchrichtung d<sub>k</sub>; die nächste Richtung d<sub>k+1</sub> = r<sub>k+1</sub> + β<sub>k</sub>d<sub>k</sub> ist <b>A-orthogonal</b> zu d<sub>k</sub>.`,
-          `Hauptaufwand: <b>eine Matrix-Vektor-Multiplikation Ad<sub>k</sub></b> pro Schritt. Theoretisch nach höchstens N Schritten exakt.`,
+          `Für <b>spd</b> $A$: $x$ löst $Ax = b \\Leftrightarrow x$ minimiert <b>$\\Phi(x) = \\frac12x^\\top Ax - x^\\top b$</b>, denn $\\nabla\\Phi = Ax - b$ und die Hesse-Matrix $A$ ist positiv definit.`,
+          `Jeder Schritt minimiert $\\Phi$ entlang einer Suchrichtung $d_k$; die nächste Richtung $d_{k+1} = r_{k+1} + \\beta_kd_k$ ist <b>$A$-orthogonal</b> zu $d_k$.`,
+          `Hauptaufwand: <b>eine Matrix-Vektor-Multiplikation $Ad_k$</b> pro Schritt. Theoretisch nach höchstens $N$ Schritten exakt.`,
         ])}
         <div class="card">
           <h3>Algorithmus</h3>
           <ol class="nm-ol">
-            <li>Wähle x₀, ε &gt; 0; d₀ = r₀ = b − Ax₀, k = 0.</li>
-            <li>Falls ‖r<sub>k</sub>‖ ≤ ε‖b‖ STOPP, sonst
-              ${F(`α<sub>k</sub> = ${frac("⟨r<sub>k</sub>, r<sub>k</sub>⟩", "⟨d<sub>k</sub>, d<sub>k</sub>⟩<sub>A</sub>")},  x<sub>k+1</sub> = x<sub>k</sub> + α<sub>k</sub>d<sub>k</sub>,  r<sub>k+1</sub> = r<sub>k</sub> − α<sub>k</sub>Ad<sub>k</sub>,  β<sub>k</sub> = ${frac("⟨r<sub>k+1</sub>, r<sub>k+1</sub>⟩", "⟨r<sub>k</sub>, r<sub>k</sub>⟩")},  d<sub>k+1</sub> = r<sub>k+1</sub> + β<sub>k</sub>d<sub>k</sub>`, "small-f")}</li>
+            <li>Wähle $x_0$, $\\varepsilon > 0$; $d_0 = r_0 = b - Ax_0$, $k = 0$.</li>
+            <li>Falls $\\|r_k\\| \\le \\varepsilon\\|b\\|$ STOPP, sonst
+              ${tx(`\\alpha_k = \\frac{\\langle r_k, r_k\\rangle}{\\langle d_k, d_k\\rangle_A},\\quad x_{k+1} = x_k + \\alpha_kd_k,\\quad r_{k+1} = r_k - \\alpha_kAd_k,\\quad \\beta_k = \\frac{\\langle r_{k+1}, r_{k+1}\\rangle}{\\langle r_k, r_k\\rangle},\\quad d_{k+1} = r_{k+1} + \\beta_kd_k`)}</li>
           </ol>
           ${ppFacts([
-            ["Energienorm", "⟨x, y⟩<sub>A</sub> = xᵀAy, ‖x‖<sub>A</sub> = √(xᵀAx); Φ(x) − Φ(x*) = ½‖x − x*‖<sub>A</sub>²: die Höhenlinien sind Ellipsen um x*."],
-            ["α<sub>k</sub>", "Minimum der Parabel α ↦ Φ(x<sub>k</sub> + αd<sub>k</sub>): α<sub>k</sub> = ⟨r<sub>k</sub>, d<sub>k</sub>⟩/⟨d<sub>k</sub>, d<sub>k</sub>⟩<sub>A</sub> (= ⟨r<sub>k</sub>, r<sub>k</sub>⟩/… wegen r<sub>k</sub> ⊥ d<sub>k−1</sub>)."],
-            ["β<sub>k</sub>", "aus ⟨d<sub>k+1</sub>, d<sub>k</sub>⟩<sub>A</sub> = 0: β<sub>k</sub> = −⟨r<sub>k+1</sub>, d<sub>k</sub>⟩<sub>A</sub>/⟨d<sub>k</sub>, d<sub>k</sub>⟩<sub>A</sub> (SS 24)."],
-            ["Fehler", `${nrm("x* − x<sub>k</sub>", "A")} ≤ max<sub>λ∈σ(A)</sub>|q<sub>k</sub>(λ)| ${nrm("x* − x<sub>0</sub>", "A")} für jedes q<sub>k</sub> ∈ P<sub>k</sub> mit q<sub>k</sub>(0) = 1; daraus ≤ 2(${frac("√κ − 1", "√κ + 1")})<sup>k</sup>${nrm("x* − x<sub>0</sub>", "A")}, κ = cond₂(A).`],
-            ["L verschiedene EW", "Mit q = Lagrange-Polynom, das in 0 gleich 1 und in allen L Eigenwerten 0 ist: exakt nach L Schritten (SS 26). Wenige schmale Cluster ⇒ schnelle Konvergenz."],
+            ["Energienorm", "$\\langle x, y\\rangle_A = x^\\top Ay$, $\\|x\\|_A = \\sqrt{x^\\top Ax}$; $\\Phi(x) - \\Phi(x^*) = \\frac12\\|x - x^*\\|_A^2$: die Höhenlinien sind Ellipsen um $x^*$."],
+            ["$\\alpha_k$", "Minimum der Parabel $\\alpha \\mapsto \\Phi(x_k + \\alpha d_k)$: $\\alpha_k = \\frac{\\langle r_k, d_k\\rangle}{\\langle d_k, d_k\\rangle_A}$ ($= \\frac{\\langle r_k, r_k\\rangle}{\\langle d_k, d_k\\rangle_A}$ wegen $r_k \\perp d_{k-1}$)."],
+            ["$\\beta_k$", "aus $\\langle d_{k+1}, d_k\\rangle_A = 0$: $\\beta_k = -\\frac{\\langle r_{k+1}, d_k\\rangle_A}{\\langle d_k, d_k\\rangle_A}$ (SS 24)."],
+            ["Fehler", `$\\|x^* - x_k\\|_A \\le \\max_{\\lambda\\in\\sigma(A)}|q_k(\\lambda)|\\;\\|x^* - x_0\\|_A$ für jedes $q_k \\in P_k$ mit $q_k(0) = 1$; daraus $\\le 2\\Big(\\frac{\\sqrt\\kappa - 1}{\\sqrt\\kappa + 1}\\Big)^k\\|x^* - x_0\\|_A$, $\\kappa = \\cond_2(A)$.`],
+            ["L verschiedene EW", "Mit $q$ = Lagrange-Polynom, das in $0$ gleich $1$ und in allen $L$ Eigenwerten $0$ ist: exakt nach $L$ Schritten (SS 26). Wenige schmale Cluster $\\Rightarrow$ schnelle Konvergenz."],
           ])}
         </div>
         ${pw("cg", `${pslider("kap", "κ = cond₂(A)", 1, 30, 1, 8)}${pseg("start", [[0, "Start 1"], [1, "Start 2"], [2, "Start 3"]], 0)}`, { wide: true })}
         ${nmTraps([
-          "cg nur für <b>symmetrisch positiv definite</b> A. Sonst z. B. auf die Normalengleichung AᵀAx = Aᵀb anwenden (" + nmSee("7.3") + ").",
-          "Skaliert man A und b mit λ &gt; 0 (SS 24), bleiben die x<sub>k</sub> gleich, r<sub>k</sub> skaliert mit λ: ein Stoppkriterium ‖r<sub>k</sub>‖ ≤ ε ohne ‖b‖ wäre nicht skalierungsinvariant.",
-          "Energienorm ausrechnen (WS 24/25, WS 20/21): ‖d‖<sub>A</sub>² = dᵀAd; für A = D + eeᵀ ist dᵀAd = dᵀDd + (eᵀd)².",
+          `cg nur für <b>symmetrisch positiv definite</b> $A$. Sonst z. B. auf die Normalengleichung $A^\\top Ax = A^\\top b$ anwenden (${nmSee("7.3")}).`,
+          "Skaliert man $A$ und $b$ mit $\\lambda > 0$ (SS 24), bleiben die $x_k$ gleich, $r_k$ skaliert mit $\\lambda$: ein Stoppkriterium $\\|r_k\\| \\le \\varepsilon$ ohne $\\|b\\|$ wäre nicht skalierungsinvariant.",
+          "Energienorm ausrechnen (WS 24/25, WS 20/21): $\\|d\\|_A^2 = d^\\top Ad$; für $A = D + ee^\\top$ ist $d^\\top Ad = d^\\top Dd + (e^\\top d)^2$.",
         ])}`,
       setup: (root) => nmWCG(root),
       check: [
-        { q: "Welches Funktional minimiert das cg-Verfahren?", opts: ["Φ(x) = ½xᵀAx − xᵀb", "‖Ax − b‖₂", "xᵀAx", "½‖x‖² − bᵀx"], why: "∇Φ = Ax − b; das Minimum ist die Lösung, weil A spd ist." },
-        { q: "Was ist der Hauptaufwand eines cg-Schritts?", opts: ["die Matrix-Vektor-Multiplikation Adₖ", "eine LR-Zerlegung", "das Invertieren von A", "das Sortieren der Residuen"], why: "Alles andere sind Skalarprodukte und Vektor-Updates (O(N))." },
-        { q: "A hat nur drei verschiedene Eigenwerte. Nach wie vielen Schritten ist cg (exakt gerechnet) fertig?", opts: ["höchstens 3", "N", "1", "nie"], why: "Ein Polynom vom Grad 3 mit q(0) = 1 verschwindet auf allen drei EW." },
-        { q: "Welche Bedingung legt βₖ fest?", opts: ["⟨dₖ₊₁, dₖ⟩_A = 0", "⟨rₖ₊₁, dₖ⟩ = 0", "‖dₖ₊₁‖ = 1", "dₖ₊₁ = rₖ₊₁"], why: "Die neue Suchrichtung soll A-orthogonal (konjugiert) zur alten sein." },
+        { q: "Welches Funktional minimiert das cg-Verfahren?", opts: ["$\\Phi(x) = \\frac12x^\\top Ax - x^\\top b$", "$\\|Ax - b\\|_2$", "$x^\\top Ax$", "$\\frac12\\|x\\|^2 - b^\\top x$"], why: "$\\nabla\\Phi = Ax - b$; das Minimum ist die Lösung, weil $A$ spd ist." },
+        { q: "Was ist der Hauptaufwand eines cg-Schritts?", opts: ["die Matrix-Vektor-Multiplikation $Ad_k$", "eine LR-Zerlegung", "das Invertieren von $A$", "das Sortieren der Residuen"], why: "Alles andere sind Skalarprodukte und Vektor-Updates ($O(N)$)." },
+        { q: "$A$ hat nur drei verschiedene Eigenwerte. Nach wie vielen Schritten ist cg (exakt gerechnet) fertig?", opts: ["höchstens 3", "$N$", "1", "nie"], why: "Ein Polynom vom Grad 3 mit $q(0) = 1$ verschwindet auf allen drei EW." },
+        { q: "Welche Bedingung legt $\\beta_k$ fest?", opts: ["$\\langle d_{k+1}, d_k\\rangle_A = 0$", "$\\langle r_{k+1}, d_k\\rangle = 0$", "$\\|d_{k+1}\\| = 1$", "$d_{k+1} = r_{k+1}$"], why: "Die neue Suchrichtung soll $A$-orthogonal (konjugiert) zur alten sein." },
       ],
     },
     {
       id: "7.3", title: "Dünn besetzte Matrizen und Vorkonditionierung", short: "Dünn & vorkonditioniert", about: "CRS/CCS, Fill-in, A⁻¹ voll, vorkonditioniertes cg, cg für die Normalengleichung",
       html: () => `
         ${nmGist([
-          `Dünn besetzte Matrizen speichert man nur mit ihren K ≪ N² Nicht-Nullen: <b>CRS</b> (zeilenweise) oder <b>CCS</b> (spaltenweise). Ax kostet dann K statt N² Operationen.`,
-          `Direkte Verfahren erzeugen <b>Fill-in</b>: die Faktoren (und erst recht A⁻¹) sind viel dichter als A.`,
-          `<b>Vorkonditionieren</b>: B⁻¹Ax = B⁻¹b mit cond(B⁻¹A) ≪ cond(A) — weniger Schritte, weniger Aufwand.`,
+          `Dünn besetzte Matrizen speichert man nur mit ihren $K \\ll N^2$ Nicht-Nullen: <b>CRS</b> (zeilenweise) oder <b>CCS</b> (spaltenweise). $Ax$ kostet dann $K$ statt $N^2$ Operationen.`,
+          `Direkte Verfahren erzeugen <b>Fill-in</b>: die Faktoren (und erst recht $A^{-1}$) sind viel dichter als $A$.`,
+          `<b>Vorkonditionieren</b>: $B^{-1}Ax = B^{-1}b$ mit $\\cond(B^{-1}A) \\ll \\cond(A)$ — weniger Schritte, weniger Aufwand.`,
         ])}
         <div class="card">
           <h3>CRS-Format (Übung 3)</h3>
-          <p>Drei Vektoren: v (Werte zeilenweise), c (Spaltenindex jedes Werts) und p (Zeiger: p<sub>n+1</sub> − p<sub>n</sub> Nicht-Nullen in Zeile n, p₁ = 0, p<sub>M+1</sub> = K).</p>
+          <p>Drei Vektoren: $v$ (Werte zeilenweise), $c$ (Spaltenindex jedes Werts) und $p$ (Zeiger: $p_{n+1} - p_n$ Nicht-Nullen in Zeile $n$, $p_1 = 0$, $p_{M+1} = K$).</p>
         </div>
         ${pw("crs", pseg("row", [[0, "Zeile 1"], [1, "Zeile 2"], [2, "Zeile 3"], [3, "Zeile 4"]], 1), { wide: true })}
         <div class="card">
           <h3>Fill-in</h3>
-          <p>Beispiel der Vorlesung: eine spd-Matrix mit 17 801 Nicht-Nullen — ihr Cholesky-Faktor hat 13-mal so viele, obwohl die Bandstruktur bleibt. A⁻¹ ist sogar voll.</p>
+          <p>Beispiel der Vorlesung: eine spd-Matrix mit 17 801 Nicht-Nullen — ihr Cholesky-Faktor hat 13-mal so viele, obwohl die Bandstruktur bleibt. $A^{-1}$ ist sogar voll.</p>
         </div>
         ${pw("fill", pseg("arrow", [[0, "Pfeil oben links"], [1, "Pfeil unten rechts"]], 0), { wide: true })}
         <div class="card">
           <h3>Vorkonditioniertes cg und Normalengleichung</h3>
           ${ppFacts([
-            ["vorkonditioniert", "Mit spd B = CCᵀ wendet man cg auf C⁻¹AC⁻ᵀ an; praktisch braucht man pro Schritt eine Lösung von Bz = r (z. B. unvollständige Cholesky-Zerlegung)."],
-            ["Normalengleichung", "AᵀAx = Aᵀb mit A ∈ ℝ<sup>M×N</sup> von vollem Rang: cg mit AᵀAd<sub>k</sub> = Aᵀ(Ad<sub>k</sub>) — zwei Matrix-Vektor-Produkte (2MN), nie das Produkt AᵀA bilden."],
-            ["Aufwand (SS 17)", "Ein cg-Schritt kostet für voll besetztes A etwa N², für dünn besetztes mit K Nicht-Nullen etwa K."],
+            ["vorkonditioniert", "Mit spd $B = CC^\\top$ wendet man cg auf $C^{-1}AC^{-\\top}$ an; praktisch braucht man pro Schritt eine Lösung von $Bz = r$ (z. B. unvollständige Cholesky-Zerlegung)."],
+            ["Normalengleichung", "$A^\\top Ax = A^\\top b$ mit $A \\in \\R^{M\\times N}$ von vollem Rang: cg mit $A^\\top Ad_k = A^\\top(Ad_k)$ — zwei Matrix-Vektor-Produkte ($2MN$), nie das Produkt $A^\\top A$ bilden."],
+            ["Aufwand (SS 17)", "Ein cg-Schritt kostet für voll besetztes $A$ etwa $N^2$, für dünn besetztes mit $K$ Nicht-Nullen etwa $K$."],
           ])}
         </div>
         ${nmTraps([
-          "CRS für dünn besetzte Matrizen sinnvoll — für volle Matrizen braucht es mehr Speicher als das Feld selbst.",
+          "CRS ist für dünn besetzte Matrizen sinnvoll — für volle Matrizen braucht es mehr Speicher als das Feld selbst.",
           "Auch eine Approximation reicht oft (spektrale Bisektion, weitere Fehlerquellen): man muss das LGS nicht exakt lösen.",
         ])}`,
       setup: (root) => { nmWCRS(root); nmWFill(root); },
       check: [
-        { q: "Wie viele Operationen kostet Ax im CRS-Format mit K Nicht-Nullen?", opts: ["K", "N²", "N", "K²"], why: "Jede Nicht-Null wird genau einmal multipliziert." },
-        { q: "Was ist Fill-in?", opts: ["Nullen von A werden in den Faktoren einer Zerlegung zu Nicht-Nullen", "Das Auffüllen von A mit Einsen", "Das Speichern im CRS-Format", "Die Vorkonditionierung"], why: "Darum werden direkte Verfahren für große dünne Matrizen teuer." },
-        { q: "Wie wendet man cg auf die Normalengleichung an, ohne AᵀA zu bilden?", opts: ["AᵀAd = Aᵀ(Ad): zwei Matrix-Vektor-Produkte", "AᵀA vorher mit Cholesky zerlegen", "Nur A statt AᵀA verwenden", "Gar nicht"], why: "Das spart das Matrix-Matrix-Produkt (MN²/2)." },
-        { q: "Wozu dient ein Vorkonditionierer B beim cg-Verfahren?", opts: ["cond(B⁻¹A) ≪ cond(A): weniger Schritte", "A symmetrisch machen", "Das Residuum berechnen", "Fill-in erzeugen"], why: "Die Fehlerschranke hängt an √κ." },
+        { q: "Wie viele Operationen kostet $Ax$ im CRS-Format mit $K$ Nicht-Nullen?", opts: ["$K$", "$N^2$", "$N$", "$K^2$"], why: "Jede Nicht-Null wird genau einmal multipliziert." },
+        { q: "Was ist Fill-in?", opts: ["Nullen von $A$ werden in den Faktoren einer Zerlegung zu Nicht-Nullen", "Das Auffüllen von $A$ mit Einsen", "Das Speichern im CRS-Format", "Die Vorkonditionierung"], why: "Darum werden direkte Verfahren für große dünne Matrizen teuer." },
+        { q: "Wie wendet man cg auf die Normalengleichung an, ohne $A^\\top A$ zu bilden?", opts: ["$A^\\top Ad = A^\\top(Ad)$: zwei Matrix-Vektor-Produkte", "$A^\\top A$ vorher mit Cholesky zerlegen", "Nur $A$ statt $A^\\top A$ verwenden", "Gar nicht"], why: "Das spart das Matrix-Matrix-Produkt ($\\tfrac12 MN^2$)." },
+        { q: "Wozu dient ein Vorkonditionierer $B$ beim cg-Verfahren?", opts: ["$\\cond(B^{-1}A) \\ll \\cond(A)$: weniger Schritte", "$A$ symmetrisch machen", "Das Residuum berechnen", "Fill-in erzeugen"], why: "Die Fehlerschranke hängt an $\\sqrt\\kappa$." },
       ],
     },
   ],

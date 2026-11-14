@@ -27,7 +27,7 @@ function nmWPower(root) {
     const target = dom ? v2 : v1, lam = dom ? l2 : l1;
     const S = 100, C = [150, 140], P = (p) => [C[0] + p[0] * S, C[1] - p[1] * S];
     const axis = (v, cls) => `<line x1="${P(v.map((x) => -1.3 * x))[0]}" y1="${P(v.map((x) => -1.3 * x))[1]}" x2="${P(v.map((x) => 1.3 * x))[0]}" y2="${P(v.map((x) => 1.3 * x))[1]}" class="${cls}"/>`;
-    fig.innerHTML = `<svg class="lw-svg" viewBox="0 0 300 280" role="img" aria-label="Iterierte der Vektoriteration">
+    fig.innerHTML = `<svg class="lw-svg" viewBox="0 0 340 280" role="img" aria-label="Iterierte der Vektoriteration">
       <circle cx="${C[0]}" cy="${C[1]}" r="${S}" class="guide" fill="none"/>
       ${axis(v1, "nm-eig1")}${axis(v2, "nm-eig2")}
       <text x="${P(v1.map((x) => 1.32 * x))[0]}" y="${P(v1.map((x) => 1.32 * x))[1]}" class="cap">v₁ (λ = ${nmD(l1, 1)})</text>

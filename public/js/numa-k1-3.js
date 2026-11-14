@@ -147,7 +147,7 @@ function nmWSum(root) {
     const P = nmFrame(520, 200, [-1.5, 1.5], [0, 12]);
     const f = (t) => (1 + Math.abs(t)) / Math.abs(1 + t);
     fig.innerHTML = `<svg class="lw-svg" viewBox="0 0 520 200" role="img" aria-label="Verstärkungsfaktor der Addition">
-      ${P.axes({ xl: "y (bei x = 1)", yl: "(|x| + |y|) / |x + y|", yt: [1, 4, 8, 12] })}
+      ${P.axes({ yl: "(|x| + |y|) / |x + y|", yt: [1, 4, 8, 12] })}<text x="508" y="${P.Y(11)}" text-anchor="end" class="ax-t">y (bei x = 1)</text>
       <line x1="${P.X(-1)}" y1="12" x2="${P.X(-1)}" y2="174" class="guide nm-err-g"/>
       <path d="${P.path(f, 600)}" class="curve nm-err-c"/>
       <circle cx="${P.X(y)}" cy="${P.Y(Math.min(kappa, 12))}" r="6" class="pt nm-piv-pt"/></svg>`;
@@ -415,7 +415,7 @@ function nmWHouse(root) {
     fig.innerHTML = `<svg class="lw-svg" viewBox="0 0 380 280" role="img" aria-label="Householder-Spiegelung in der Ebene">
       ${ln([-3.8, 0], [3.8, 0], "tick")}${ln([0, -2.7], [0, 2.7], "tick")}
       ${ln(mirror.map((x) => -3 * x), mirror.map((x) => 3 * x), "nm-mirror")}
-      <text x="${P(mirror.map((x) => 2.6 * x))[0] + 6}" y="${P(mirror.map((x) => 2.6 * x))[1]}" class="cap">Spiegelebene E</text>
+      ${(() => { const [mx, my] = P(mirror.map((x) => 2.6 * x)), end = mx > 260; return `<text x="${end ? mx - 6 : mx + 6}" y="${Math.min(Math.max(my, 16), 270)}" text-anchor="${end ? "end" : "start"}" class="cap">Spiegelebene E</text>`; })()}
       <circle cx="${C[0]}" cy="${C[1]}" r="${2 * S}" class="guide" fill="none"/>
       ${arrow(v, "nm-approx-v", "v")}
       ${arrow([sigma, 0], "nm-exact-v", "σe₁", [-14, -12])}
@@ -513,7 +513,7 @@ function nmWSvd(root) {
     const Sc = 34, C1 = [110, 140], C2 = [330, 140];
     const pt = (C, p) => [C[0] + p[0] * Sc, C[1] - p[1] * Sc];
     const ring = (C, f) => Array.from({ length: 121 }, (_, i) => { const t = (i / 120) * 2 * Math.PI; return pt(C, f([Math.cos(t), Math.sin(t)])).map((z) => z.toFixed(1)).join(","); }).join(" ");
-    const arr = (C, p, cls, lab) => { const [x, y] = pt(C, p); return `${arrowSVG(C[0], C[1], x, y, cls, 2.4, 9)}<text x="${x + 6}" y="${y - 6}" class="vec-a ${cls}">${lab}</text>`; };
+    const arr = (C, p, cls, lab) => { const [x, y] = pt(C, p); return `${arrowSVG(C[0], C[1], x, y, cls, 2.4, 9)}<text x="${x > 380 ? x - 6 : x + 6}" y="${y - 6}" text-anchor="${x > 380 ? "end" : "start"}" class="vec-a ${cls}">${lab}</text>`; };
     fig.innerHTML = `<svg class="lw-svg" viewBox="0 0 440 280" role="img" aria-label="Einheitskreis und sein Bild unter A">
       <polyline points="${ring(C1, (p) => p)}" class="curve" style="color:var(--muted)"/>
       <polyline points="${ring(C2, (p) => nmMv(A, p))}" class="curve nm-approx-c"/>

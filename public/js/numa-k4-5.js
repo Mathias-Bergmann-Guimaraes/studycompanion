@@ -463,7 +463,7 @@ function nmWSummed(root) {
     const rules = ["rect", "mid", "trap", "simp"], cls = { rect: "nm-ell-c", mid: "nm-approx-c", trap: "nm-err-c", simp: "nm-exact-c" };
     const E = Object.fromEntries(rules.map((r) => [r, Ns.map((N) => Math.abs(nmQuad(NM_RULES[r], G.f, a, b, N) - exact))]));
     const P = nmFrame(520, 260, [0, 7], [-14, 2]);
-    const lg = (x) => Math.log10(Math.max(x, 1e-15));
+    const lg = (x) => Math.max(Math.log10(Math.max(x, 1e-15)), -14);
     fig.innerHTML = `<svg class="lw-svg" viewBox="0 0 520 260" role="img" aria-label="Fehler summierter Quadraturformeln">
       ${P.axes({ xl: "N (Teilintervalle)", yl: "log₁₀ Fehler", xt: [], yt: [-12, -8, -4, 0] })}
       ${Ns.map((N, i) => `<text x="${P.X(i)}" y="${P.Y(-14) + 16}" text-anchor="middle" class="tick-t">${N}</text>`).join("")}

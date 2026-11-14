@@ -194,6 +194,10 @@ function showTab(id) {
   if (id === "propa-practice" && !$("#propa-practice").innerHTML) renderPropaPractice();
   if (id === "propa-exams") renderPropaExams();
   if (id === "propa-mock" && pmMock.phase === "setup") renderPropaMock();
+  if (id === "numa-home") renderNumaHome();
+  if (id === "numa-practice" && !$("#numa-practice").innerHTML) renderNumaPractice();
+  if (id === "numa-exams") renderNumaExams();
+  if (id === "numa-mock" && nmMock.phase === "setup") renderNumaMock();
 }
 
 /* ---------------------------------------------------------------- Account */
@@ -1554,6 +1558,7 @@ function init() {
   renderPractice();
   setupLen();
   setupPropa();
+  setupNuma();
   showTab(location.hash.slice(1));
   setupAccount();
 }

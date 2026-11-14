@@ -37,6 +37,34 @@ const ig = (a, b) => `<span class="nm-int"><small>${b}</small><span>∫</span><s
 const sq = (x) => `√<span class="nm-sqrt">${x}</span>`;
 const tp = (x) => `${x}<sup>⊤</sup>`;
 
+// TeX in the text: $…$ inline, $$…$$ on a line of its own (tx()), typeset by KaTeX, which is
+// self-hosted in public/vendor/katex/. Backslashes are doubled in JS strings: "$\\frac{1}{2}$", and a
+// decimal comma is written {,}. Every NuMa panel is typeset again whenever its content changes
+// (drawings, checks, tasks), so anything written into it may use $…$ — except SVG text.
+// \ex{…}, \ap{…}, \er{…}, \lc{…} colour a part like the rest of the course (exact, approximation, error, ℓ).
+const NM_TEX = {
+  delimiters: [{ left: "$$", right: "$$", display: true }, { left: "$", right: "$", display: false }],
+  throwOnError: false,
+  strict: "ignore",
+  trust: (ctx) => ctx.command === "\\htmlClass",
+  macros: {
+    "\\R": "\\mathbb{R}", "\\eps": "\\mathrm{eps}", "\\fl": "\\mathrm{fl}", "\\FL": "\\mathrm{FL}",
+    "\\cond": "\\operatorname{cond}", "\\diag": "\\operatorname{diag}", "\\sign": "\\operatorname{sign}",
+    "\\ex": "\\htmlClass{nm-exact}{#1}", "\\ap": "\\htmlClass{nm-approx}{#1}", "\\er": "\\htmlClass{nm-err}{#1}", "\\lc": "\\htmlClass{nm-ell}{#1}",
+  },
+};
+const tx = (tex) => `<div class="nm-tex">$$${tex}$$</div>`;
+function nmTypeset(el) {
+  if (window.renderMathInElement && el.textContent.includes("$")) renderMathInElement(el, NM_TEX);
+}
+function setupNumaTex() {
+  const mo = new MutationObserver((ms) => {
+    const els = [...new Set(ms.map((m) => (m.target.nodeType === 1 ? m.target : m.target.parentElement)).filter(Boolean))];
+    els.filter((e) => e.isConnected && !els.some((o) => o !== e && o.contains(e))).forEach(nmTypeset);
+  });
+  $$('.panel[id^="numa-"]').forEach((p) => { nmTypeset(p); mo.observe(p, { childList: true, subtree: true, characterData: true }); });
+}
+
 // Numbers the German way: decimal comma, a real minus, trailing zeros dropped.
 function nmD(x, d = 4) {
   if (!isFinite(x)) return x > 0 ? "∞" : x < 0 ? "−∞" : "NaN";
@@ -113,6 +141,14 @@ class NmQ {
   }
 }
 const nmQ = (n, d = 1) => (n instanceof NmQ ? n : new NmQ(n, d));
+// The same as TeX, for $…$: a fraction, a number with a decimal comma, a matrix, a column vector.
+NmQ.prototype.tex = function () {
+  const s = this.n < 0 ? "-" : "";
+  return this.d === 1 ? s + Math.abs(this.n) : `${s}\\frac{${Math.abs(this.n)}}{${this.d}}`;
+};
+const qt = (x) => (x instanceof NmQ ? x.tex() : String(x).replace(".", "{,}"));
+const tmx = (rows) => `\\begin{pmatrix}${rows.map((r) => r.map(qt).join("&")).join("\\\\")}\\end{pmatrix}`;
+const tcv = (xs) => tmx(xs.map((x) => [x]));
 const qm = (rows) => rows.map((r) => r.map((x) => nmQ(x)));
 const qh = (x) => (x instanceof NmQ ? x.html() : nmD(x));
 const qmx = (M, o) => mx(M.map((r) => r.map(qh)), o);
@@ -499,107 +535,107 @@ function wireNumaCourseCard() {
 
 /* ---------------------------------------------------------------- Formelsammlung */
 
-// [group, [[what, formula, note, section]]]
+// [group, [[what, formula (TeX), note, section]]]
 const NUMA_SHEET = [
   ["Gleitpunktzahlen", [
-    ["Gleitpunktzahl", `±(0.${mi("a")}<sub>1</sub>${mi("a")}<sub>2</sub>…${mi("a")}<sub>${mi("L")}<sub>m</sub></sub>)<sub>${mi("B")}</sub> · ${mi("B")}<sup>${mi("e")}</sup>, ${mi("a")}<sub>1</sub> ≠ 0`, "Normalisiert: B⁻¹ ≤ |m| < 1.", "1.1"],
-    ["Exponenten", `${mi("e")}<sub>max</sub> = ${mi("e")}<sub>min</sub> + ${mi("B")}<sup>${mi("L")}<sub>e</sub></sup> − 1`, "Le Ziffern zur Basis B für e − emin.", "1.1"],
-    ["Größte, kleinste", `max FL = ${mi("B")}<sup>${mi("e")}<sub>max</sub></sup>(1 − ${mi("B")}<sup>−${mi("L")}<sub>m</sub></sup>),  min FL<sup>+</sup> = ${mi("B")}<sup>${mi("e")}<sub>min</sub>−1</sup>`, "", "1.1"],
-    ["Maschinengenauigkeit", `eps = ${frac("1", "2")}${mi("B")}<sup>1−${mi("L")}<sub>m</sub></sup>,  fl(${mi("x")}) = ${mi("x")}(1 + ε), |ε| ≤ eps`, "IEEE double (wie in der Vorlesung): eps = 2⁻⁵² ≈ 2,2 · 10⁻¹⁶.", "1.1"],
-    ["Kondition der Summe", `${frac(`|x̃ + ỹ − (x + y)|`, `|x + y|`)} ≤ ε ${frac(`|x| + |y|`, `|x + y|`)}`, "Schlecht bei x ≈ −y: Auslöschung.", "1.2"],
+    ["Gleitpunktzahl", `\\pm(0.a_1a_2\\cdots a_{L_m})_B\\cdot B^e,\\quad a_1\\neq0`, "Normalisiert: $B^{-1} \\le |m| < 1$.", "1.1"],
+    ["Exponenten", `e_{\\max} = e_{\\min} + B^{L_e} - 1`, "$L_e$ Ziffern zur Basis $B$ für $e - e_{\\min}$.", "1.1"],
+    ["Größte, kleinste", `\\max\\FL = B^{e_{\\max}}(1 - B^{-L_m}),\\qquad \\min\\FL^+ = B^{e_{\\min}-1}`, "", "1.1"],
+    ["Maschinengenauigkeit", `\\eps = \\tfrac12B^{1-L_m},\\qquad \\fl(x) = x(1+\\varepsilon),\\ |\\varepsilon|\\le\\eps`, "IEEE double (wie in der Vorlesung): $\\eps = 2^{-52} \\approx 2{,}2\\cdot10^{-16}$.", "1.1"],
+    ["Kondition der Summe", `\\frac{|\\tilde x + \\tilde y - (x+y)|}{|x+y|} \\le \\varepsilon\\,\\frac{|x|+|y|}{|x+y|}`, "Schlecht bei $x \\approx -y$: Auslöschung.", "1.2"],
   ]],
   ["Lineare Gleichungssysteme", [
-    ["LR-Zerlegung", `${mi("PA")} = ${mi("LR")}, dann ${mi("Ly")} = ${mi("Pb")} vorwärts, ${mi("Rx")} = ${mi("y")} rückwärts`, "ℓnn = 1; Spaltenpivotwahl: betragsgrößtes Element.", "2.1"],
-    ["Cholesky", `${mi("A")} = ${mi("L")}${tp(mi("L"))}: ${mi("ℓ")}<sub>nn</sub> = ${sq(`${mi("a")}<sub>nn</sub> − Σ<sub>k&lt;n</sub> ${mi("ℓ")}<sub>nk</sub><sup>2</sup>`)}`, "Existiert genau für spd A. Kein Pivotisieren.", "2.2"],
-    ["Householder", `${mi("Q")} = ${mi("I")} − 2${mi("w")}${tp(mi("w"))}, ${mi("w")} = ${frac(`v − σe<sub>1</sub>`, `‖v − σe<sub>1</sub>‖<sub>2</sub>`)}, σ = −sign(${mi("v")}<sub>1</sub>)${nrm(mi("v"), 2)}`, "Q symmetrisch, orthogonal, Spiegelung.", "2.3"],
-    ["Konditionszahl", `cond(${mi("A")}) = ${nrm(mi("A"))} ${nrm(`${mi("A")}<sup>−1</sup>`)},  cond<sub>2</sub>(${mi("A")}) = ${frac("|λ|<sub>max</sub>", "|λ|<sub>min</sub>")} (A symm.)`, "", "2.4"],
-    ["Störungssatz", `${frac(`‖x − x̃‖`, `‖x‖`)} ≤ ${frac(`cond(A)`, `1 − ε<sub>A</sub> cond(A)`)} (ε<sub>A</sub> + ε<sub>b</sub>)`, "", "2.4"],
-    ["Matrixnormen", `${nrm(mi("A"), 1)} = max Spaltensumme, ${nrm(mi("A"), "∞")} = max Zeilensumme, ${nrm(mi("A"), 2)} = ${sq(`λ<sub>max</sub>(${tp("A")}A)`)}`, "", "2.4"],
-    ["Ausgleich", `${nrm(`${mi("Ax")} − ${mi("b")}`, 2)} = min! ⇔ ${tp(mi("A"))}${mi("Ax")} = ${tp(mi("A"))}${mi("b")}`, "Besser per QR: x = R̄⁻¹c mit Qᵀb = (c, d), Residuum ‖d‖₂.", "2.5"],
-    ["SWZ", `${mi("A")} = ${mi("U")}Σ${tp(mi("V"))}, σ<sub>n</sub> = ${sq(`λ<sub>n</sub>(${tp("A")}A)`)}, ${nrm(mi("A"), 2)} = σ<sub>1</sub>`, "x = Σ (uᵣᵀb/σᵣ) vᵣ: Lösung kleinster Norm.", "2.6"],
+    ["LR-Zerlegung", `PA = LR,\\quad Ly = Pb\\ \\text{vorwärts},\\quad Rx = y\\ \\text{rückwärts}`, "$\\ell_{nn} = 1$; Spaltenpivotwahl: betragsgrößtes Element.", "2.1"],
+    ["Cholesky", `A = LL^\\top,\\qquad \\ell_{nn} = \\sqrt{a_{nn} - \\textstyle\\sum_{k\\lt n}\\ell_{nk}^2}`, "Existiert genau für spd $A$. Kein Pivotisieren.", "2.2"],
+    ["Householder", `Q = I - 2ww^\\top,\\quad w = \\frac{v - \\sigma e_1}{\\|v - \\sigma e_1\\|_2},\\quad \\sigma = -\\sign(v_1)\\|v\\|_2`, "$Q$ symmetrisch, orthogonal, Spiegelung.", "2.3"],
+    ["Konditionszahl", `\\cond(A) = \\|A\\|\\,\\|A^{-1}\\|,\\qquad \\cond_2(A) = \\frac{|\\lambda|_{\\max}}{|\\lambda|_{\\min}}\\ (A\\ \\text{symm.})`, "", "2.4"],
+    ["Störungssatz", `\\frac{\\|x - \\tilde x\\|}{\\|x\\|} \\le \\frac{\\cond(A)}{1 - \\varepsilon_A\\cond(A)}\\,(\\varepsilon_A + \\varepsilon_b)`, "", "2.4"],
+    ["Matrixnormen", `\\begin{gathered}\\|A\\|_1 = \\max_m\\textstyle\\sum_n|a_{nm}|,\\qquad \\|A\\|_\\infty = \\max_n\\textstyle\\sum_m|a_{nm}|,\\\\ \\|A\\|_2 = \\sqrt{\\lambda_{\\max}(A^\\top A)}\\end{gathered}`, "Spalten-, Zeilensummen-, Spektralnorm.", "2.4"],
+    ["Ausgleich", `\\|Ax - b\\|_2 = \\min!\\ \\Leftrightarrow\\ A^\\top Ax = A^\\top b`, "Besser per QR: $x = \\bar R^{-1}c$ mit $Q^\\top b = \\binom cd$, Residuum $\\|d\\|_2$.", "2.5"],
+    ["SWZ", `A = U\\Sigma V^\\top,\\quad \\sigma_n = \\sqrt{\\lambda_n(A^\\top A)},\\quad \\|A\\|_2 = \\sigma_1`, "$x = \\sum \\frac{u_r^\\top b}{\\sigma_r}v_r$: Lösung kleinster Norm.", "2.6"],
   ]],
   ["Nichtlineare Gleichungen", [
-    ["Newton", `${mi("f")}′(${mi("x")}<sub>k</sub>)${mi("d")}<sub>k</sub> = −${mi("f")}(${mi("x")}<sub>k</sub>),  ${mi("x")}<sub>k+1</sub> = ${mi("x")}<sub>k</sub> + ${mi("d")}<sub>k</sub>`, "Stopp, wenn ‖dₖ‖ < ε. Lokal quadratisch.", "3.1"],
-    ["Wurzel", `${mi("x")}<sub>k+1</sub> = ${frac("1", "2")}(${mi("x")}<sub>k</sub> + ${frac("a", "x<sub>k</sub>")})`, "Newton für f(x) = x² − a.", "3.1"],
-    ["Vereinfacht", `${mi("A")}${mi("d")}<sub>k</sub> = −${mi("f")}(${mi("x")}<sub>k</sub>), ${mi("A")} ≈ ${mi("f")}′(${mi("x")}<sub>0</sub>)`, "Eine LR-Zerlegung, aber nur linear.", "3.2"],
-    ["Minimum", `∇${mi("f")}(${mi("x")}) = 0: ${mi("H")}<sub>f</sub>(${mi("x")}<sub>k</sub>)${mi("d")}<sub>k</sub> = −∇${mi("f")}(${mi("x")}<sub>k</sub>)<sup>⊤</sup>`, "Newton auf den Gradienten.", "3.3"],
+    ["Newton", `f'(x_k)\\,d_k = -f(x_k),\\qquad x_{k+1} = x_k + d_k`, "Stopp, wenn $\\|d_k\\| < \\varepsilon$. Lokal quadratisch.", "3.1"],
+    ["Wurzel", `x_{k+1} = \\tfrac12\\Big(x_k + \\frac{a}{x_k}\\Big)`, "Newton für $f(x) = x^2 - a$.", "3.1"],
+    ["Vereinfacht", `A\\,d_k = -f(x_k),\\qquad A \\approx f'(x_0)`, "Eine LR-Zerlegung, aber nur linear.", "3.2"],
+    ["Minimum", `H_f(x_k)\\,d_k = -\\nabla f(x_k)^\\top`, "Newton auf den Gradienten.", "3.3"],
   ]],
   ["Interpolation", [
-    ["Lagrange", `${mi("L")}<sub>n</sub>(${mi("x")}) = ∏<sub>m≠n</sub> ${frac("x − x<sub>m</sub>", "x<sub>n</sub> − x<sub>m</sub>")},  ${mi("p")} = Σ ${mi("f")}<sub>n</sub>${mi("L")}<sub>n</sub>`, "", "4.1"],
-    ["Lebesgue-Konstante", `Λ<sub>N</sub> = max<sub>x</sub> Σ<sub>n</sub> |${mi("L")}<sub>n</sub>(${mi("x")})|,  max|p − p̃| ≤ Λ<sub>N</sub> max|f<sub>n</sub> − f̃<sub>n</sub>|`, "", "4.1"],
-    ["Dividierte Differenzen", `${mi("f")}<sub>n,k</sub> = ${frac("f<sub>n,k−1</sub> − f<sub>n+1,k</sub>", "x<sub>n</sub> − x<sub>k</sub>")}`, "", "4.2"],
-    ["Newton-Darstellung", `${mi("p")} = ${mi("f")}<sub>0,0</sub> + ${mi("f")}<sub>0,1</sub>${mi("w")}<sub>1</sub> + … + ${mi("f")}<sub>0,N</sub>${mi("w")}<sub>N</sub>, ${mi("w")}<sub>n</sub> = ∏<sub>m&lt;n</sub>(x − x<sub>m</sub>)`, "", "4.2"],
-    ["Restglied", `${mi("f")}(${mi("x")}) − ${mi("p")}(${mi("x")}) = ${mi("w")}<sub>N+1</sub>(${mi("x")}) ${frac("f<sup>(N+1)</sup>(ξ)", "(N + 1)!")}`, "", "4.3"],
-    ["Tschebyscheff", `${mi("x")}<sub>n</sub> = cos(${frac("2n + 1", "2N + 2")}π),  max|${mi("w")}<sub>N+1</sub>| = 2<sup>−N</sup>`, "T₀ = 1, T₁ = x, Tₙ₊₁ = 2xTₙ − Tₙ₋₁.", "4.3"],
-    ["Spline-Fehler", `max|${mi("f")} − ${mi("s")}| ≤ ${frac("5", "384")}${mi("h")}<sup>4</sup> max|${mi("f")}<sup>(4)</sup>|`, "Eingespannt, f ∈ C⁴.", "4.4"],
+    ["Lagrange", `L_n(x) = \\prod_{m\\neq n}\\frac{x - x_m}{x_n - x_m},\\qquad p = \\sum_n f_nL_n`, "", "4.1"],
+    ["Lebesgue-Konstante", `\\Lambda_N = \\max_x\\sum_n|L_n(x)|,\\qquad \\max|p - \\tilde p| \\le \\Lambda_N\\max|f_n - \\tilde f_n|`, "", "4.1"],
+    ["Dividierte Differenzen", `f_{n,k} = \\frac{f_{n,k-1} - f_{n+1,k}}{x_n - x_k}`, "", "4.2"],
+    ["Newton-Darstellung", `p = f_{0,0} + f_{0,1}w_1 + \\cdots + f_{0,N}w_N,\\qquad w_n = \\prod_{m\\lt n}(x - x_m)`, "", "4.2"],
+    ["Restglied", `f(x) - p(x) = w_{N+1}(x)\\,\\frac{f^{(N+1)}(\\xi)}{(N+1)!}`, "", "4.3"],
+    ["Tschebyscheff", `x_n = \\cos\\Big(\\frac{2n+1}{2N+2}\\pi\\Big),\\qquad \\max|w_{N+1}| = 2^{-N}`, "$T_0 = 1$, $T_1 = x$, $T_{N+1} = 2xT_N - T_{N-1}$.", "4.3"],
+    ["Spline-Fehler", `\\max|f - s| \\le \\frac{5}{384}\\,h^4\\max|f^{(4)}|`, "Eingespannt, $f \\in C^4$.", "4.4"],
   ]],
   ["Integration", [
-    ["Quadraturformel", `${ig("a", "b")}${mi("f")} d${mi("x")} ≈ (${mi("b")} − ${mi("a")}) Σ ${mi("b")}<sub>k</sub>${mi("f")}(${mi("a")} + ${mi("c")}<sub>k</sub>(${mi("b")} − ${mi("a")}))`, "Gewichte bₖ, Knoten cₖ.", "5.1"],
-    ["Ordnungsbedingungen", `Σ<sub>k</sub> ${mi("b")}<sub>k</sub>${mi("c")}<sub>k</sub><sup>q−1</sup> = ${frac("1", "q")} für q = 1, …, p`, "Ordnung p: exakt für Grad ≤ p − 1.", "5.2"],
-    ["Gewichte aus Knoten", `${mi("b")}<sub>k</sub> = ${ig("0", "1")}${mi("L")}<sub>k</sub>(${mi("x")}) d${mi("x")}`, "Genau dann p ≥ s.", "5.2"],
-    ["Gauß", `p = 2s, ${mi("c")}<sub>k</sub> = ${frac("1", "2")}(1 + γ<sub>k</sub>), γ<sub>k</sub> Nullstellen von Legendre`, "s = 2: c = ½ ∓ √3/6, b = ½, ½.", "5.3"],
-    ["Fehler", `|E(f)| ≤ (b − a)<sup>p+1</sup> max|f<sup>(p)</sup>| ${ig("0", "1")}|K<sub>p</sub>|`, "Mittelpunkt 1/24, Trapez 1/12, Simpson 1/2880.", "5.4"],
-    ["Summiert", `Fehler = O(h<sup>p</sup>)`, "Trapez: (b − a)h²/12 · max|f″|.", "5.4"],
+    ["Quadraturformel", `\\int_a^b f\\,dx \\approx (b-a)\\sum_k b_k\\,f\\big(a + c_k(b-a)\\big)`, "Gewichte $b_k$, Knoten $c_k$.", "5.1"],
+    ["Ordnungsbedingungen", `\\sum_k b_kc_k^{q-1} = \\frac1q,\\qquad q = 1, \\dots, p`, "Ordnung $p$: exakt für Grad $\\le p - 1$.", "5.2"],
+    ["Gewichte aus Knoten", `b_k = \\int_0^1 L_k(x)\\,dx`, "Genau dann $p \\ge s$.", "5.2"],
+    ["Gauß", `p = 2s,\\qquad c_k = \\tfrac12(1 + \\gamma_k),\\ \\gamma_k\\ \\text{Nullstellen von Legendre}`, "$s = 2$: $c = \\frac12 \\mp \\frac{\\sqrt3}6$, $b = \\frac12, \\frac12$.", "5.3"],
+    ["Fehler", `|E(f)| \\le (b-a)^{p+1}\\max|f^{(p)}|\\int_0^1|K_p|`, "Mittelpunkt $\\frac1{24}$, Trapez $\\frac1{12}$, Simpson $\\frac1{2880}$.", "5.4"],
+    ["Summiert", `\\text{Fehler} = O(h^p)`, "Trapez: $\\frac{b-a}{12}h^2\\max|f''|$.", "5.4"],
   ]],
   ["Eigenwerte und Iterationen", [
-    ["Vektoriteration", `${mi("y")}<sub>k</sub> = ${frac("x<sub>k</sub>", "‖x<sub>k</sub>‖")},  ${mi("x")}<sub>k+1</sub> = ${mi("A")}${mi("y")}<sub>k</sub>`, "Rate |λ₂/λ₁|; λ ≈ yᵀAy.", "6.1"],
-    ["Inverse mit Shift", `(${mi("A")} − λ*${mi("I")})${mi("x")}<sub>k+1</sub> = ${mi("y")}<sub>k</sub>`, "Liefert den EW am nächsten an λ*.", "6.1"],
-    ["QR-Algorithmus", `${mi("H")}<sub>k</sub> − μ<sub>k</sub>${mi("I")} = ${mi("Q")}<sub>k</sub>${mi("R")}<sub>k</sub>,  ${mi("H")}<sub>k+1</sub> = ${mi("R")}<sub>k</sub>${mi("Q")}<sub>k</sub> + μ<sub>k</sub>${mi("I")}`, "μₖ = hₙₙ: quadratisch, symmetrisch kubisch.", "6.3"],
-    ["Lineare Iteration", `${mi("x")}<sub>k+1</sub> = ${mi("x")}<sub>k</sub> + ${mi("B")}<sup>−1</sup>(${mi("b")} − ${mi("A")}${mi("x")}<sub>k</sub>)`, "Konvergent, wenn ρ(I − B⁻¹A) < 1. Jacobi B = D, Gauß-Seidel B = L + D.", "7.1"],
-    ["cg", `Φ(${mi("x")}) = ${frac("1", "2")}${tp(mi("x"))}${mi("Ax")} − ${tp(mi("x"))}${mi("b")}, α<sub>k</sub> = ${frac("⟨r<sub>k</sub>, r<sub>k</sub>⟩", "⟨d<sub>k</sub>, d<sub>k</sub>⟩<sub>A</sub>")}, β<sub>k</sub> = ${frac("⟨r<sub>k+1</sub>, r<sub>k+1</sub>⟩", "⟨r<sub>k</sub>, r<sub>k</sub>⟩")}`, "", "7.2"],
-    ["cg-Fehler", `${nrm("x* − x<sub>k</sub>", "A")} ≤ 2(${frac("√κ − 1", "√κ + 1")})<sup>k</sup> ${nrm("x* − x<sub>0</sub>", "A")}`, "κ = cond₂(A).", "7.2"],
+    ["Vektoriteration", `y_k = \\frac{x_k}{\\|x_k\\|},\\qquad x_{k+1} = Ay_k`, "Rate $|\\lambda_2/\\lambda_1|$; $\\lambda \\approx y^\\top Ay$.", "6.1"],
+    ["Inverse mit Shift", `(A - \\lambda^*I)\\,x_{k+1} = y_k`, "Liefert den EW am nächsten an $\\lambda^*$.", "6.1"],
+    ["QR-Algorithmus", `H_k - \\mu_kI = Q_kR_k,\\qquad H_{k+1} = R_kQ_k + \\mu_kI`, "$\\mu_k = h_{NN}$: quadratisch, symmetrisch kubisch.", "6.3"],
+    ["Lineare Iteration", `x_{k+1} = x_k + B^{-1}(b - Ax_k)`, "Konvergent, wenn $\\rho(I - B^{-1}A) < 1$. Jacobi $B = D$, Gauß-Seidel $B = L + D$.", "7.1"],
+    ["cg", `\\begin{gathered}\\Phi(x) = \\tfrac12x^\\top Ax - x^\\top b,\\\\ \\alpha_k = \\frac{\\langle r_k, r_k\\rangle}{\\langle d_k, d_k\\rangle_A},\\quad \\beta_k = \\frac{\\langle r_{k+1}, r_{k+1}\\rangle}{\\langle r_k, r_k\\rangle}\\end{gathered}`, "", "7.2"],
+    ["cg-Fehler", `\\|x^* - x_k\\|_A \\le 2\\Big(\\frac{\\sqrt\\kappa - 1}{\\sqrt\\kappa + 1}\\Big)^k\\|x^* - x_0\\|_A`, "$\\kappa = \\cond_2(A)$.", "7.2"],
   ]],
 ];
 
 // Operation counts (1 Operation = 1 Multiplikation + 1 Addition), only the leading term.
 const NUMA_COST = [
-  ["Vorwärts- / Rückwärtssubstitution", "N²/2", "2.1"],
-  ["Matrix-Vektor-Produkt (voll)", "N²", "2.1"],
-  ["LR-Zerlegung", "N³/3", "2.1"],
-  ["Cholesky-Zerlegung", "N³/6", "2.2"],
-  ["QR-Zerlegung (Householder), A ∈ ℝ^{M×N}", "MN² − N³/3 (M = N: 2N³/3)", "2.3"],
-  ["Qy mit Householder-Vektor w", "2N (y − 2(wᵀy)w)", "2.3"],
-  ["AᵀA berechnen", "MN²/2 (symmetrisch)", "2.5"],
-  ["Normalengleichung (AᵀA + Cholesky)", "MN²/2 + N³/6", "2.5"],
-  ["Dividierte Differenzen", "N(N + 1) Additionen, N(N + 1)/2 Divisionen", "4.2"],
-  ["Spline-LGS (tridiagonal)", "O(N)", "4.4"],
-  ["Hessenbergform", "5N³/3 (symmetrisch tridiagonal: 2N³/3)", "6.3"],
-  ["ein QR-Schritt auf Hessenbergform", "O(N²) (symmetrisch: O(N))", "6.3"],
-  ["ein cg-Schritt", "eine Matrix-Vektor-Multiplikation Adₖ (dünn: O(Nicht-Nullen))", "7.2"],
+  ["Vorwärts- / Rückwärtssubstitution", "$\\tfrac12N^2$", "2.1"],
+  ["Matrix-Vektor-Produkt (voll)", "$N^2$", "2.1"],
+  ["LR-Zerlegung", "$\\tfrac13N^3$", "2.1"],
+  ["Cholesky-Zerlegung", "$\\tfrac16N^3$", "2.2"],
+  ["QR-Zerlegung (Householder), $A \\in \\R^{M\\times N}$", "$MN^2 - \\tfrac13N^3$ ($M = N$: $\\tfrac23N^3$)", "2.3"],
+  ["$Qy$ mit Householder-Vektor $w$", "$2N$: $y - 2(w^\\top y)w$", "2.3"],
+  ["$A^\\top A$ berechnen", "$\\tfrac12MN^2$ (symmetrisch)", "2.5"],
+  ["Normalengleichung ($A^\\top A$ + Cholesky)", "$\\tfrac12MN^2 + \\tfrac16N^3$", "2.5"],
+  ["Dividierte Differenzen", "$N(N+1)$ Additionen, $\\tfrac12N(N+1)$ Divisionen", "4.2"],
+  ["Spline-LGS (tridiagonal)", "$O(N)$", "4.4"],
+  ["Hessenbergform", "$\\tfrac53N^3$ (symmetrisch tridiagonal: $\\tfrac23N^3$)", "6.3"],
+  ["ein QR-Schritt auf Hessenbergform", "$O(N^2)$ (symmetrisch: $O(N)$)", "6.3"],
+  ["ein cg-Schritt", "eine Matrix-Vektor-Multiplikation $Ad_k$ (dünn: $O(\\text{Nicht-Nullen})$)", "7.2"],
 ];
 
 // [Begriff, Bedeutung, Abschnitt]
 const NUMA_TERMS = [
-  ["Auslöschung", "Bei x ≈ −y fallen die führenden Stellen weg; übrig bleiben Rundungsfehler. Schlecht konditioniert, nicht instabil.", "1.2"],
+  ["Auslöschung", "Bei $x \\approx -y$ fallen die führenden Stellen weg; übrig bleiben Rundungsfehler. Schlecht konditioniert, nicht instabil.", "1.2"],
   ["Kondition", "Wie stark Fehler in den Daten das Ergebnis ändern — eine Eigenschaft des Problems.", "1.3"],
   ["Stabilität", "Ein Verfahren verstärkt Fehler nur moderat im Vergleich zur Kondition — eine Eigenschaft des Algorithmus.", "1.3"],
-  ["Maschinengenauigkeit", "eps = ½B^{1−Lm}: Schranke des relativen Rundungsfehlers.", "1.1"],
+  ["Maschinengenauigkeit", "$\\eps = \\tfrac12B^{1-L_m}$: Schranke des relativen Rundungsfehlers.", "1.1"],
   ["Spaltenpivotwahl", "Vor jedem Schritt die Zeile mit dem betragsgrößten Element der Spalte nach oben tauschen.", "2.1"],
-  ["Permutationsmatrix", "In jeder Zeile und Spalte genau eine 1; orthogonal: P⁻¹ = Pᵀ.", "2.1"],
-  ["spd", "Symmetrisch (A = Aᵀ) und positiv definit (xᵀAx > 0 für x ≠ 0).", "2.2"],
-  ["Householder-Transformation", "Q = I − 2wwᵀ, ‖w‖₂ = 1: Spiegelung an der Ebene mit Normale w.", "2.3"],
-  ["zugehörige Matrixnorm", "‖A‖ = sup ‖Ax‖/‖x‖; die kleinste Zahl mit ‖Ax‖ ≤ ‖A‖‖x‖.", "2.4"],
-  ["Spektralradius", "ρ(M) = max |λ| über die Eigenwerte von M.", "7.1"],
-  ["Normalengleichung", "AᵀAx = Aᵀb; löst das Ausgleichsproblem, aber cond₂(AᵀA) = cond₂(A)².", "2.5"],
-  ["Tikhonov-Regularisierung", "‖Ax − b‖² + α‖x‖² = min!: bessere Kondition, größerer Fehler.", "2.5"],
-  ["Singulärwerte", "σₙ = √λₙ(AᵀA), der Größe nach geordnet.", "2.6"],
-  ["Pseudoinverse", "A⁺ = VΣ⁺Uᵀ; x = A⁺b ist die Ausgleichslösung kleinster Norm.", "2.6"],
-  ["quadratische Konvergenz", "‖x* − xₖ‖ ≤ C‖x* − xₖ₋₁‖²: die Zahl richtiger Stellen verdoppelt sich etwa.", "3.1"],
-  ["Dämpfung", "xₖ₊₁ = xₖ + tₖdₖ mit tₖ ∈ (0, 1], damit ‖f‖ fällt; globaler, aber nur linear.", "3.2"],
-  ["Lebesgue-Konstante", "Λ_N = max Σ|Lₙ(x)|: Kondition der Interpolation.", "4.1"],
+  ["Permutationsmatrix", "In jeder Zeile und Spalte genau eine $1$; orthogonal: $P^{-1} = P^\\top$.", "2.1"],
+  ["spd", "Symmetrisch ($A = A^\\top$) und positiv definit ($x^\\top Ax > 0$ für $x \\neq 0$).", "2.2"],
+  ["Householder-Transformation", "$Q = I - 2ww^\\top$, $\\|w\\|_2 = 1$: Spiegelung an der Ebene mit Normale $w$.", "2.3"],
+  ["zugehörige Matrixnorm", "$\\|A\\| = \\sup\\|Ax\\|/\\|x\\|$; die kleinste Zahl mit $\\|Ax\\| \\le \\|A\\|\\,\\|x\\|$.", "2.4"],
+  ["Spektralradius", "$\\rho(M) = \\max|\\lambda|$ über die Eigenwerte von $M$.", "7.1"],
+  ["Normalengleichung", "$A^\\top Ax = A^\\top b$; löst das Ausgleichsproblem, aber $\\cond_2(A^\\top A) = \\cond_2(A)^2$.", "2.5"],
+  ["Tikhonov-Regularisierung", "$\\|Ax - b\\|^2 + \\alpha\\|x\\|^2 = \\min!$: bessere Kondition, größerer Fehler.", "2.5"],
+  ["Singulärwerte", "$\\sigma_n = \\sqrt{\\lambda_n(A^\\top A)}$, der Größe nach geordnet.", "2.6"],
+  ["Pseudoinverse", "$A^+ = V\\Sigma^+U^\\top$; $x = A^+b$ ist die Ausgleichslösung kleinster Norm.", "2.6"],
+  ["quadratische Konvergenz", "$\\|x^* - x_k\\| \\le C\\|x^* - x_{k-1}\\|^2$: die Zahl richtiger Stellen verdoppelt sich etwa.", "3.1"],
+  ["Dämpfung", "$x_{k+1} = x_k + t_kd_k$ mit $t_k \\in (0, 1]$, damit $\\|f\\|$ fällt; globaler, aber nur linear.", "3.2"],
+  ["Lebesgue-Konstante", "$\\Lambda_N = \\max\\sum|L_n(x)|$: Kondition der Interpolation.", "4.1"],
   ["Runge-Phänomen", "Bei äquidistanten Stützstellen schwingt das Polynom hohen Grades am Rand auf.", "4.1"],
-  ["Tschebyscheff-Stützstellen", "Nullstellen von T_{N+1}: minimieren max|w_{N+1}|, Λ_N ≈ (2/π) log N.", "4.3"],
-  ["kubischer Spline", "C²-Funktion, auf jedem Teilintervall ein Polynom vom Grad ≤ 3.", "4.4"],
-  ["eingespannt / natürlich / periodisch", "s′ am Rand vorgegeben / s″(a) = s″(b) = 0 / s′ und s″ an a und b gleich.", "4.4"],
-  ["Ordnung einer QF", "Exakt für alle Polynome vom Grad ≤ p − 1, p maximal.", "5.2"],
-  ["symmetrische QF", "cₖ = 1 − c_{s+1−k}, bₖ = b_{s+1−k}; Ordnung gerade.", "5.2"],
-  ["monotone QF", "Alle Gewichte bₖ ≥ 0.", "5.1"],
-  ["Peano-Kern", "K_p(t): Fehler = ∫ K_p(t) g^{(p)}(t) dt.", "5.4"],
+  ["Tschebyscheff-Stützstellen", "Nullstellen von $T_{N+1}$: minimieren $\\max|w_{N+1}|$, $\\Lambda_N \\approx \\frac2\\pi\\log N$.", "4.3"],
+  ["kubischer Spline", "$C^2$-Funktion, auf jedem Teilintervall ein Polynom vom Grad $\\le 3$.", "4.4"],
+  ["eingespannt / natürlich / periodisch", "$s'$ am Rand vorgegeben / $s''(a) = s''(b) = 0$ / $s'$ und $s''$ an $a$ und $b$ gleich.", "4.4"],
+  ["Ordnung einer QF", "Exakt für alle Polynome vom Grad $\\le p - 1$, $p$ maximal.", "5.2"],
+  ["symmetrische QF", "$c_k = 1 - c_{s+1-k}$, $b_k = b_{s+1-k}$; Ordnung gerade.", "5.2"],
+  ["monotone QF", "Alle Gewichte $b_k \\ge 0$.", "5.1"],
+  ["Peano-Kern", "$K_p(t)$: Fehler $= \\int K_p(t)\\,g^{(p)}(t)\\,dt$.", "5.4"],
   ["Hessenbergform", "Null unterhalb der ersten Nebendiagonale; bleibt im QR-Algorithmus erhalten.", "6.3"],
-  ["Laplacematrix", "aₙₙ = Grad des Knotens, aₙₘ = −1 bei Kante: Grundlage der spektralen Bisektion.", "6.2"],
-  ["Vorkonditionierer", "B ≈ A, so dass Bc = r leicht lösbar und cond(B⁻¹A) klein ist.", "7.1"],
-  ["Energienorm", "‖x‖_A = √(xᵀAx) für spd A.", "7.2"],
-  ["Fill-in", "Nullen von A werden in den Faktoren einer Zerlegung zu Nicht-Nullen.", "7.3"],
+  ["Laplacematrix", "$a_{nn}$ = Grad des Knotens, $a_{nm} = -1$ bei Kante: Grundlage der spektralen Bisektion.", "6.2"],
+  ["Vorkonditionierer", "$B \\approx A$, so dass $Bc = r$ leicht lösbar und $\\cond(B^{-1}A)$ klein ist.", "7.1"],
+  ["Energienorm", "$\\|x\\|_A = \\sqrt{x^\\top Ax}$ für spd $A$.", "7.2"],
+  ["Fill-in", "Nullen von $A$ werden in den Faktoren einer Zerlegung zu Nicht-Nullen.", "7.3"],
   ["CRS-Format", "Werte, Spaltenindizes und Zeilenzeiger: speichert nur die Nicht-Nullen.", "7.3"],
 ];
 
@@ -617,7 +653,7 @@ function renderNumaSheet() {
           ${rows.map(([what, f, note, sec]) => `
             <div class="pp-sheet-row">
               <div class="pp-sheet-what"><button type="button" class="len-num len-f-sec" data-sec="${sec}" title="Zum Abschnitt">${sec}</button><b>${what}</b>${note ? `<span class="small muted">${note}</span>` : ""}</div>
-              <div class="lf small-f nm-sheet-f">${f}</div>
+              <div class="nm-sheet-f">$$${f}$$</div>
             </div>`).join("")}
         </div>
       </div>`).join("")}
@@ -650,4 +686,5 @@ function renderNumaSheet() {
 function setupNuma() {
   NUMA_CHAPTERS.forEach(renderNumaChapter);
   renderNumaSheet();
+  setupNumaTex();
 }

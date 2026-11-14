@@ -169,22 +169,22 @@ NUMA_CHAPTERS.push({
       id: "1.1", title: "Gleitpunktzahlen", short: "Gleitpunktzahlen", about: "FL, normalisiert, emax, max FL, min FL⁺, eps, fl(x)",
       html: () => `
         ${nmGist([
-          `Eine Gleitpunktzahl ist ${mi("m")} · ${mi("B")}<sup>${mi("e")}</sup> = ±(0.${mi("a")}<sub>1</sub>${mi("a")}<sub>2</sub>…${mi("a")}<sub>${mi("L")}<sub>m</sub></sub>)<sub>${mi("B")}</sub> · ${mi("B")}<sup>${mi("e")}</sup>, <b>normalisiert</b> heißt ${mi("a")}<sub>1</sub> ≠ 0.`,
-          `Vier Größen legen alles fest: Basis ${mi("B")}, Mantissenlänge ${mi("L")}<sub>m</sub>, Exponentenlänge ${mi("L")}<sub>e</sub> und kleinster Exponent ${mi("e")}<sub>min</sub>.`,
-          `Der relative Rundungsfehler ist höchstens <b>eps = ½${mi("B")}<sup>1−${mi("L")}<sub>m</sub></sup></b>: fl(${mi("x")}) = ${mi("x")}(1 + ε) mit |ε| ≤ eps.`,
+          `Eine Gleitpunktzahl ist $m\\cdot B^e = \\pm(0.a_1a_2\\cdots a_{L_m})_B\\cdot B^e$, <b>normalisiert</b> heißt $a_1 \\neq 0$.`,
+          `Vier Größen legen alles fest: Basis $B$, Mantissenlänge $L_m$, Exponentenlänge $L_e$ und kleinster Exponent $e_{\\min}$.`,
+          `Der relative Rundungsfehler ist höchstens <b>$\\eps = \\tfrac12 B^{1-L_m}$</b>: $\\fl(x) = x(1+\\varepsilon)$ mit $|\\varepsilon| \\le \\eps$.`,
         ])}
         <div class="card">
           <h3>Aufbau</h3>
-          ${F(`${mi("e")} = ${mi("e")}<sub>min</sub> + ${sumOf("L<sub>e</sub>−1", "l=0")} ${mi("c")}<sub>l</sub>${mi("B")}<sup>${mi("l")}</sup>,  ${mi("m")} = ± ${sumOf("L<sub>m</sub>", "l=1")} ${mi("a")}<sub>l</sub>${mi("B")}<sup>−${mi("l")}</sup>,  ${mi("a")}<sub>l</sub>, ${mi("c")}<sub>l</sub> ∈ {0, …, ${mi("B")} − 1}`)}
-          <p>Die Menge FL<sup>+</sup> enthält alle positiven normalisierten Zahlen dieser Form, FL = −FL<sup>+</sup> ∪ {0} ∪ FL<sup>+</sup>. Sie ist <b>endlich</b> und liegt in ℚ. Aus der Normalisierung folgt ${mi("B")}<sup>−1</sup> ≤ |${mi("m")}| &lt; 1.</p>
+          ${tx(`e = e_{\\min} + \\sum_{l=0}^{L_e-1} c_l B^l, \\qquad m = \\pm\\sum_{l=1}^{L_m} a_l B^{-l}, \\qquad a_l, c_l \\in \\{0,\\dots,B-1\\}`)}
+          <p>Die Menge $\\FL^+$ enthält alle positiven normalisierten Zahlen dieser Form, $\\FL = -\\FL^+ \\cup \\{0\\} \\cup \\FL^+$. Sie ist <b>endlich</b> und liegt in $\\mathbb{Q}$. Aus der Normalisierung folgt $B^{-1} \\le |m| < 1$.</p>
           ${ppFacts([
-            ["größter Exponent", F(`${mi("e")}<sub>max</sub> = ${mi("e")}<sub>min</sub> + ${mi("B")}<sup>${mi("L")}<sub>e</sub></sup> − 1`, "small-f")],
-            ["größte Zahl", F(`max FL = ${mi("B")}<sup>${mi("e")}<sub>max</sub></sup>(1 − ${mi("B")}<sup>−${mi("L")}<sub>m</sub></sup>)`, "small-f") + `<span class="small muted">alle Ziffern B − 1</span>`],
-            ["kleinste positive Zahl", F(`min FL<sup>+</sup> = ${mi("B")}<sup>${mi("e")}<sub>min</sub>−1</sup>`, "small-f") + `<span class="small muted">Mantisse (0.10…0)<sub>B</sub> = B⁻¹</span>`],
-            ["IEEE double", `B = 2, 64 Bit: 1 Vorzeichen, 11 Exponent, 52 Mantisse; e<sub>min</sub> = −1022, max FL ≈ 10<sup>308</sup>, min FL<sup>+</sup> ≈ 10<sup>−308</sup>, eps = 2<sup>−52</sup> ≈ 2,2 · 10<sup>−16</sup>.`],
+            ["größter Exponent", `$e_{\\max} = e_{\\min} + B^{L_e} - 1$`],
+            ["größte Zahl", `$\\max\\FL = B^{e_{\\max}}\\,(1 - B^{-L_m})$ <span class="small muted">— alle Ziffern $B-1$</span>`],
+            ["kleinste positive Zahl", `$\\min\\FL^+ = B^{e_{\\min}-1}$ <span class="small muted">— Mantisse $(0.10\\cdots0)_B = B^{-1}$</span>`],
+            ["IEEE double", `$B = 2$, 64 Bit: 1 Vorzeichen, 11 Exponent, 52 Mantisse; $e_{\\min} = -1022$, $\\max\\FL \\approx 10^{308}$, $\\min\\FL^+ \\approx 10^{-308}$, $\\eps = 2^{-52} \\approx 2{,}2\\cdot 10^{-16}$.`],
           ])}
-          <p><b>Runden.</b> Zu ${mi("x")} = ${mi("B")}<sup>${mi("e")}</sup>(0.${mi("a")}<sub>1</sub>…${mi("a")}<sub>${mi("L")}<sub>m</sub></sub>${mi("a")}<sub>${mi("L")}<sub>m</sub>+1</sub>…)<sub>${mi("B")}</sub> wird nach ${mi("L")}<sub>m</sub> Ziffern abgeschnitten und aufgerundet, falls ${mi("a")}<sub>${mi("L")}<sub>m</sub>+1</sub> ≥ ${mi("B")}/2. Unter min FL<sup>+</sup> liefert fl die 0 (Underflow), über max FL ±∞ (Overflow).</p>
-          <p><b>Beispiel</b> (WS 24/25): ${mi("B")} = 3, ${mi("e")}<sub>min</sub> = −12, ${mi("L")}<sub>m</sub> = 5, ${mi("L")}<sub>e</sub> = 3 gibt ${mi("e")}<sub>max</sub> = −12 + 27 − 1 = 14. Für ${mi("x")} = 96,6 = (10120,1210…)<sub>3</sub> ist die sechste Ziffer 1 &lt; 1,5, also fl(96,6) = (0.10120)<sub>3</sub> · 3<sup>5</sup> = 96.</p>
+          <p><b>Runden.</b> Zu $x = B^e(0.a_1\\cdots a_{L_m}a_{L_m+1}\\cdots)_B$ wird nach $L_m$ Ziffern abgeschnitten und aufgerundet, falls $a_{L_m+1} \\ge B/2$. Unter $\\min\\FL^+$ liefert $\\fl$ die $0$ (Underflow), über $\\max\\FL$ den Wert $\\pm\\infty$ (Overflow).</p>
+          <p><b>Beispiel</b> (WS 24/25): $B = 3$, $e_{\\min} = -12$, $L_m = 5$, $L_e = 3$ gibt $e_{\\max} = -12 + 27 - 1 = 14$. Für $x = 96{,}6 = (10120{,}1210\\ldots)_3$ ist die sechste Ziffer $1 < 1{,}5$, also $\\fl(96{,}6) = (0.10120)_3\\cdot 3^5 = 96$.</p>
         </div>
         ${pw("fl", `
           ${pseg("B", [[2, "B = 2"], [3, "B = 3"]], 2)}
@@ -193,52 +193,52 @@ NUMA_CHAPTERS.push({
           ${pslider("emin", "e<sub>min</sub>", -4, 0, 1, -4)}
           ${pslider("x", "x", 1, 100, 0.1, 44)}
           ${pseg("log", [[0, "linear"], [1, "logarithmisch"]], 0)}`, { wide: true })}
-        <p class="small muted">Die Einstellung zu Beginn ist das Beispiel der Vorlesung (B = 2, e<sub>min</sub> = −4, L<sub>m</sub> = 3, L<sub>e</sub> = 3). Lange Striche: Potenzen von B.</p>
+        <p class="small muted">Die Einstellung zu Beginn ist das Beispiel der Vorlesung ($B = 2$, $e_{\\min} = -4$, $L_m = 3$, $L_e = 3$). Lange Striche: Potenzen von $B$.</p>
         ${nmTraps([
-          `min FL<sup>+</sup> = ${mi("B")}<sup>${mi("e")}<sub>min</sub>−1</sup>, nicht ${mi("B")}<sup>${mi("e")}<sub>min</sub></sup>: die kleinste Mantisse ist B⁻¹.`,
-          `${mi("e")}<sub>max</sub> hängt von ${mi("L")}<sub>e</sub> ab, nicht von ${mi("L")}<sub>m</sub>. Erst ${mi("B")}<sup>${mi("L")}<sub>e</sub></sup> Exponenten, dann −1.`,
-          `Die Gleitpunktzahlen sind <b>nicht gleichmäßig</b> verteilt: absolut wachsen die Abstände, relativ sind sie gleich. 1 + 2eps ist hier die nächste Zahl nach 1 (bei IEEE 1 + eps).`,
-          `Vorteil von B = 2 (SS 24): a<sub>1</sub> = 1 ist immer gleich und muss nicht gespeichert werden — ein Bit Mantisse gewonnen (hidden bit).`,
+          `$\\min\\FL^+ = B^{e_{\\min}-1}$, nicht $B^{e_{\\min}}$: die kleinste Mantisse ist $B^{-1}$.`,
+          `$e_{\\max}$ hängt von $L_e$ ab, nicht von $L_m$. Erst $B^{L_e}$ Exponenten, dann $-1$.`,
+          `Die Gleitpunktzahlen sind <b>nicht gleichmäßig</b> verteilt: absolut wachsen die Abstände, relativ sind sie gleich. $1 + 2\\eps$ ist hier die nächste Zahl nach $1$ (bei IEEE $1 + \\eps$).`,
+          `Vorteil von $B = 2$ (SS 24): $a_1 = 1$ ist immer gleich und muss nicht gespeichert werden — ein Bit Mantisse gewonnen (hidden bit).`,
         ])}`,
       setup: (root) => nmWFloat(root),
       check: [
-        { q: `${mi("B")} = 2, ${mi("L")}<sub>m</sub> = 3, ${mi("L")}<sub>e</sub> = 2, ${mi("e")}<sub>min</sub> = −1. Was ist ${mi("e")}<sub>max</sub>?`, opts: ["2", "3", "4", "1"], why: `e<sub>max</sub> = e<sub>min</sub> + B<sup>L<sub>e</sub></sup> − 1 = −1 + 4 − 1 = 2.` },
-        { q: "Was ist min FL⁺ für B = 10, e<sub>min</sub> = −5?", opts: ["10<sup>−6</sup>", "10<sup>−5</sup>", "10<sup>−4</sup>", "0,5 · 10<sup>−5</sup>"], why: `min FL<sup>+</sup> = B<sup>e<sub>min</sub>−1</sup> = 10<sup>−6</sup>: Mantisse 0.1, Exponent −5.` },
-        { q: "Was gilt für die Maschinengenauigkeit eps?", opts: ["|x − fl(x)| / |x| ≤ eps für x im darstellbaren Bereich", "eps ist die kleinste positive Gleitpunktzahl", "|x − fl(x)| ≤ eps für alle x", "eps hängt vom Exponenten ab"], why: "eps ist eine Schranke des <b>relativen</b> Fehlers. Die kleinste positive Zahl ist min FL⁺ — viel kleiner." },
-        { q: "Was passiert mit x = 10<sup>−400</sup> in IEEE double?", opts: ["Underflow: fl(x) = 0", "Overflow: fl(x) = ∞", "fl(x) = min FL⁺", "fl(x) = x(1 + ε) mit |ε| ≤ eps"], why: "min FL⁺ ≈ 10<sup>−308</sup>; kleinere Beträge werden zu 0." },
+        { q: `$B = 2$, $L_m = 3$, $L_e = 2$, $e_{\\min} = -1$. Was ist $e_{\\max}$?`, opts: ["$2$", "$3$", "$4$", "$1$"], why: `$e_{\\max} = e_{\\min} + B^{L_e} - 1 = -1 + 4 - 1 = 2$.` },
+        { q: `Was ist $\\min\\FL^+$ für $B = 10$, $e_{\\min} = -5$?`, opts: ["$10^{-6}$", "$10^{-5}$", "$10^{-4}$", "$0{,}5\\cdot 10^{-5}$"], why: `$\\min\\FL^+ = B^{e_{\\min}-1} = 10^{-6}$: Mantisse $0.1$, Exponent $-5$.` },
+        { q: "Was gilt für die Maschinengenauigkeit eps?", opts: ["$|x - \\fl(x)|/|x| \\le \\eps$ für $x$ im darstellbaren Bereich", "$\\eps$ ist die kleinste positive Gleitpunktzahl", "$|x - \\fl(x)| \\le \\eps$ für alle $x$", "$\\eps$ hängt vom Exponenten ab"], why: "$\\eps$ ist eine Schranke des <b>relativen</b> Fehlers. Die kleinste positive Zahl ist $\\min\\FL^+$ — viel kleiner." },
+        { q: "Was passiert mit $x = 10^{-400}$ in IEEE double?", opts: ["Underflow: $\\fl(x) = 0$", "Overflow: $\\fl(x) = \\infty$", "$\\fl(x) = \\min\\FL^+$", "$\\fl(x) = x(1+\\varepsilon)$ mit $|\\varepsilon| \\le \\eps$"], why: "$\\min\\FL^+ \\approx 10^{-308}$; kleinere Beträge werden zu $0$." },
       ],
     },
     {
       id: "1.2", title: "Rundung, Arithmetik und Auslöschung", short: "Auslöschung", about: "x ⊕ y = fl(x + y), nicht assoziativ, Archimedes' π, (1 + x) − 1",
       html: () => `
         ${nmGist([
-          `Jede Operation wird gerundet: ${mi("x")} ∘̂ ${mi("y")} := fl(${mi("x")} ∘ ${mi("y")}) = (${mi("x")} ∘ ${mi("y")})(1 + ε), |ε| ≤ eps.`,
-          `Gleitpunktoperationen sind <b>nicht assoziativ</b>: (a + b) + c kann etwas anderes ergeben als a + (b + c).`,
+          `Jede Operation wird gerundet: $x \\mathbin{\\hat\\circ} y := \\fl(x\\circ y) = (x\\circ y)(1+\\varepsilon)$, $|\\varepsilon| \\le \\eps$.`,
+          `Gleitpunktoperationen sind <b>nicht assoziativ</b>: $(a+b)+c$ kann etwas anderes ergeben als $a+(b+c)$.`,
           `<b>Auslöschung</b>: werden fast gleich große Zahlen voneinander abgezogen, heben sich die richtigen führenden Stellen weg und die Rundungsfehler bleiben übrig.`,
         ])}
         <div class="card">
           <h3>Das Beispiel der Vorlesung: π nach Archimedes</h3>
-          <p>Ein regelmäßiges n-Eck im Einheitskreis hat den halben Umfang π<sub>n</sub> = n g<sub>n</sub>/2 mit der Seitenlänge g<sub>n</sub>; g<sub>6</sub> = 1. Mit zweimal Pythagoras folgt eine Rekursion für die Verdopplung — und dieselbe Formel lässt sich auf zwei Arten schreiben.</p>
-          ${codePair(F(`(1)  g<sub>2n</sub> = ${sq(`2 − ${sq("4 − g<sub>n</sub><sup>2</sup>")}`)}`, "small-f"), F(`(2)  g<sub>2n</sub> = ${frac("g<sub>n</sub>", sq(`2 + ${sq("4 − g<sub>n</sub><sup>2</sup>")}`))}`, "small-f"))}
+          <p>Ein regelmäßiges $n$-Eck im Einheitskreis hat den halben Umfang $\\pi_n = n g_n/2$ mit der Seitenlänge $g_n$; $g_6 = 1$. Mit zweimal Pythagoras folgt eine Rekursion für die Verdopplung — und dieselbe Formel lässt sich auf zwei Arten schreiben.</p>
+          ${tx(`(1)\\quad g_{2n} = \\sqrt{2 - \\sqrt{4 - g_n^2}} \\qquad\\qquad (2)\\quad g_{2n} = \\frac{g_n}{\\sqrt{2 + \\sqrt{4 - g_n^2}}}`)}
         </div>
         ${pw("pi", pseg("rec", [[1, "Rekursion (1)"], [2, "Rekursion (2)"]], 1), { wide: true })}
         <div class="card">
-          <h3>((1 + x) − 1) / x in der Nähe von eps</h3>
-          <p>Mathematisch ist der Ausdruck immer 1. Der Rechner liefert ein ganz anderes Bild (Übungsblatt 2, WS 17/18 Aufgabe 3):</p>
+          <h3>$((1 + x) - 1)/x$ in der Nähe von eps</h3>
+          <p>Mathematisch ist der Ausdruck immer $1$. Der Rechner liefert ein ganz anderes Bild (Übungsblatt 2, WS 17/18 Aufgabe 3):</p>
         </div>
         ${pw("onex", pseg("zoom", [[1, "0 bis 10⁻¹⁵"], [0, "0 bis 4 · 10⁻¹⁶"]], 1), { wide: true })}
         ${nmTraps([
-          `Auslöschung ist ein Problem der <b>Kondition</b> (x − y für x ≈ y), nicht der Stabilität: die Subtraktion selbst rechnet mit relativem Fehler ≤ eps.`,
+          `Auslöschung ist ein Problem der <b>Kondition</b> ($x - y$ für $x \\approx y$), nicht der Stabilität: die Subtraktion selbst rechnet mit relativem Fehler $\\le \\eps$.`,
           `Abhilfe ist eine mathematisch gleiche, aber auslöschungsfreie Formel — wie Rekursion (2), oder das Vorzeichen beim Householder-Vektor (${nmSee("2.3")}).`,
-          `Abbruchkriterium <code>while s != s_alt</code> bei einer Reihe (WS 22/23): funktioniert nur, weil ab einem k der Summand unter eps · s fällt und s sich nicht mehr ändert.`,
-          `Overflow vermeiden (SS 22): ${sq("x² + y²")} = |x|${sq("1 + (y/x)²")} mit |x| ≥ |y| — so wird nie x² gebildet.`,
+          `Abbruchkriterium <code>while s != s_alt</code> bei einer Reihe (WS 22/23): funktioniert nur, weil ab einem $k$ der Summand unter $\\eps\\cdot s$ fällt und $s$ sich nicht mehr ändert.`,
+          `Overflow vermeiden (SS 22): $\\sqrt{x^2+y^2} = |x|\\sqrt{1 + (y/x)^2}$ mit $|x| \\ge |y|$ — so wird nie $x^2$ gebildet.`,
         ])}`,
       setup: (root) => { nmWPi(root); nmWOnePlus(root); },
       check: [
-        { q: "Warum versagt Rekursion (1) für großes n?", opts: ["2 und √(4 − gₙ²) sind fast gleich: Auslöschung", "Overflow, weil n so groß wird", "Die Rekursion ist mathematisch falsch", "Wurzeln werden ungenau berechnet"], why: "gₙ → 0, also √(4 − gₙ²) → 2. Die Differenz verliert ihre richtigen Stellen." },
-        { q: "Was liefert ein IEEE-Rechner für (1 + 10⁻¹⁷) − 1?", opts: ["0", "10⁻¹⁷", "2,2 · 10⁻¹⁶", "1"], why: "10⁻¹⁷ &lt; 2⁻⁵³, also rundet 1 + 10⁻¹⁷ auf 1." },
-        { q: "Welche Aussage über Gleitpunktoperationen stimmt?", opts: ["x ⊕ y = (x + y)(1 + ε) mit |ε| ≤ eps", "Sie sind assoziativ", "Die Subtraktion fast gleicher Zahlen ist instabil", "x ⊕ y = x + y, wenn x, y ∈ FL"], why: "Jedes Ergebnis wird gerundet. Selbst bei x, y ∈ FL ist x + y meist nicht in FL." },
-        { q: "Ein Rechner hat eps = 10⁻¹⁰. Ist 1 + 10⁻⁷ · 10⁻⁷ größer als 1?", opts: ["Nein, gleich 1: 10⁻¹⁴ &lt; eps", "Ja, 1 + 10⁻¹⁴", "Ja, weil 10⁻¹⁴ darstellbar ist", "Nein, kleiner als 1"], why: "SS 17: 10⁻¹⁴ ist zwar darstellbar, aber 1 + 10⁻¹⁴ rundet auf 1. 1 + 10⁻⁷ dagegen ist größer als 1." },
+        { q: "Warum versagt Rekursion (1) für großes $n$?", opts: ["$2$ und $\\sqrt{4 - g_n^2}$ sind fast gleich: Auslöschung", "Overflow, weil $n$ so groß wird", "Die Rekursion ist mathematisch falsch", "Wurzeln werden ungenau berechnet"], why: "$g_n \\to 0$, also $\\sqrt{4 - g_n^2} \\to 2$. Die Differenz verliert ihre richtigen Stellen." },
+        { q: "Was liefert ein IEEE-Rechner für $(1 + 10^{-17}) - 1$?", opts: ["$0$", "$10^{-17}$", "$2{,}2\\cdot 10^{-16}$", "$1$"], why: "$10^{-17} < 2^{-53}$, also rundet $1 + 10^{-17}$ auf $1$." },
+        { q: "Welche Aussage über Gleitpunktoperationen stimmt?", opts: ["$x \\oplus y = (x+y)(1+\\varepsilon)$ mit $|\\varepsilon| \\le \\eps$", "Sie sind assoziativ", "Die Subtraktion fast gleicher Zahlen ist instabil", "$x \\oplus y = x + y$, wenn $x, y \\in \\FL$"], why: "Jedes Ergebnis wird gerundet. Selbst bei $x, y \\in \\FL$ ist $x + y$ meist nicht in $\\FL$." },
+        { q: "Ein Rechner hat $\\eps = 10^{-10}$. Ist $1 + 10^{-7}\\cdot 10^{-7}$ größer als $1$?", opts: ["Nein, gleich $1$: $10^{-14} < \\eps$", "Ja, $1 + 10^{-14}$", "Ja, weil $10^{-14}$ darstellbar ist", "Nein, kleiner als $1$"], why: "SS 17: $10^{-14}$ ist zwar darstellbar, aber $1 + 10^{-14}$ rundet auf $1$. $1 + 10^{-7}$ dagegen ist größer als $1$." },
       ],
     },
     {
@@ -247,7 +247,7 @@ NUMA_CHAPTERS.push({
         ${nmGist([
           `<b>Kondition</b> gehört zum <b>Problem</b>: wie stark wirken sich Fehler in den Daten auf das Ergebnis aus? Sie misst die unvermeidbare Fehlerverstärkung.`,
           `<b>Stabilität</b> gehört zum <b>Verfahren</b>: es ist stabil, wenn es Fehler nur moderat verstärkt — gemessen an der Kondition und am Aufwand.`,
-          `Die Summe zweier Zahlen ist gut konditioniert bei gleichem Vorzeichen und schlecht bei x ≈ −y.`,
+          `Die Summe zweier Zahlen ist gut konditioniert bei gleichem Vorzeichen und schlecht bei $x \\approx -y$.`,
         ])}
         <div class="card">
           <h3>Fehlerquellen</h3>
@@ -259,24 +259,24 @@ NUMA_CHAPTERS.push({
             ["Fehlerverstärkung", "durch das Problem (Kondition) und durch das Verfahren (Stabilität)."],
           ])}
           <h3>Kondition der Summe</h3>
-          <p>Mit relativ gestörten Daten x̃ = x(1 + ε<sub>x</sub>), ỹ = y(1 + ε<sub>y</sub>), |ε<sub>x</sub>|, |ε<sub>y</sub>| ≤ ε:</p>
-          ${F(`${frac("|x̃ + ỹ − (x + y)|", "|x + y|")} = ${frac("|xε<sub>x</sub> + yε<sub>y</sub>|", "|x + y|")} ≤ ε ${frac("|x| + |y|", "|x + y|")}`)}
-          <p>Beispiel der Vorlesung: x = 0,987654379, y = −0,987654341 gibt x + y = 3,8 · 10⁻⁸ und den Faktor ≈ 5 · 10⁷.</p>
+          <p>Mit relativ gestörten Daten $\\tilde x = x(1+\\varepsilon_x)$, $\\tilde y = y(1+\\varepsilon_y)$, $|\\varepsilon_x|, |\\varepsilon_y| \\le \\varepsilon$:</p>
+          ${tx(`\\frac{|\\tilde x + \\tilde y - (x+y)|}{|x+y|} = \\frac{|x\\varepsilon_x + y\\varepsilon_y|}{|x+y|} \\le \\varepsilon\\,\\frac{|x|+|y|}{|x+y|}`)}
+          <p>Beispiel der Vorlesung: $x = 0{,}987654379$, $y = -0{,}987654341$ gibt $x + y = 3{,}8\\cdot 10^{-8}$ und den Faktor $\\approx 5\\cdot 10^7$.</p>
           <h3>Stabilität der Grundrechenarten</h3>
-          ${F(`${frac("|x ∘̂ y − (x ∘ y)|", "|x ∘ y|")} = |ε| ≤ eps`)}
+          ${tx(`\\frac{|x \\mathbin{\\hat\\circ} y - (x\\circ y)|}{|x\\circ y|} = |\\varepsilon| \\le \\eps`)}
           <p>Jede einzelne Gleitpunktoperation ist also stabil — auch die Subtraktion fast gleicher Zahlen. Instabil wird ein Algorithmus erst, wenn er ein gut konditioniertes Problem über einen schlecht konditionierten Zwischenschritt löst (Rekursion (1)).</p>
         </div>
         ${pw("sum", pslider("y", "y", -150, 150, 1, -80), { wide: true })}
         ${nmTraps([
           "Schlecht konditioniert ≠ instabil. „Instabil“ sagt man über Algorithmen, „schlecht konditioniert“ über Probleme.",
           "Ein Algorithmus heißt <b>instabil</b>, wenn er unvermeidbare Fehler in den Daten unverhältnismäßig verstärkt (Lückentext SS 20).",
-          "Kondition eines Matrix-Problems: cond(A) = ‖A‖‖A⁻¹‖ (" + nmSee("2.4") + ").",
+          `Kondition eines Matrix-Problems: $\\cond(A) = \\|A\\|\\,\\|A^{-1}\\|$ (${nmSee("2.4")}).`,
         ])}`,
       setup: (root) => nmWSum(root),
       check: [
-        { q: "Wann ist die Addition x + y schlecht konditioniert?", opts: ["Wenn x ≈ −y", "Wenn x und y sehr groß sind", "Wenn x ≈ y", "Wenn x oder y negativ ist"], why: "Der Faktor (|x| + |y|)/|x + y| wird groß, wenn sich x und y fast aufheben." },
+        { q: "Wann ist die Addition $x + y$ schlecht konditioniert?", opts: ["Wenn $x \\approx -y$", "Wenn $x$ und $y$ sehr groß sind", "Wenn $x \\approx y$", "Wenn $x$ oder $y$ negativ ist"], why: "Der Faktor $(|x|+|y|)/|x+y|$ wird groß, wenn sich $x$ und $y$ fast aufheben." },
         { q: "Was beschreibt die Kondition?", opts: ["Wie empfindlich die Lösung des Problems auf Datenfehler reagiert", "Wie viele Operationen ein Verfahren braucht", "Ob ein Verfahren Rundungsfehler verstärkt", "Wie schnell ein Verfahren konvergiert"], why: "Kondition = Eigenschaft des Problems, unabhängig vom Algorithmus." },
-        { q: "Ist die Gleitpunktsubtraktion zweier fast gleicher Zahlen stabil?", opts: ["Ja: der relative Fehler ist ≤ eps", "Nein, wegen Auslöschung", "Nur bei B = 2", "Nur wenn das Ergebnis darstellbar ist"], why: "Die Operation rundet das exakte Ergebnis der Daten. Gefährlich sind die schon vorher fehlerhaften Daten (Kondition)." },
+        { q: "Ist die Gleitpunktsubtraktion zweier fast gleicher Zahlen stabil?", opts: ["Ja: der relative Fehler ist $\\le \\eps$", "Nein, wegen Auslöschung", "Nur bei $B = 2$", "Nur wenn das Ergebnis darstellbar ist"], why: "Die Operation rundet das exakte Ergebnis der Daten. Gefährlich sind die schon vorher fehlerhaften Daten (Kondition)." },
         { q: "Ein Verfahren liefert für ein gut konditioniertes Problem riesige Fehler. Es ist …", opts: ["instabil", "schlecht konditioniert", "nicht konvergent", "exakt"], why: "Die Kondition des Problems ist gut, also liegt die Fehlerverstärkung am Verfahren." },
       ],
     },
@@ -539,13 +539,13 @@ NUMA_CHAPTERS.push({
       id: "2.1", title: "LR-Zerlegung", short: "LR", about: "PA = LR, Spaltenpivotwahl, Vorwärts-/Rückwärtssubstitution, Existenz, Aufwand",
       html: () => `
         ${nmGist([
-          `Drei Schritte: <b>PA = LR</b> durch Gauß-Elimination, dann ${mi("Ly")} = ${mi("Pb")} vorwärts, dann ${mi("Rx")} = ${mi("y")} rückwärts. Probe: ${mi("Ax")} = Pᵀ${mi("LRx")} = Pᵀ${mi("Ly")} = Pᵀ${mi("Pb")} = ${mi("b")}.`,
+          `Drei Schritte: <b>$PA = LR$</b> durch Gauß-Elimination, dann $Ly = Pb$ vorwärts, dann $Rx = y$ rückwärts. Probe: $Ax = P^\\top LRx = P^\\top Ly = P^\\top Pb = b$.`,
           `<b>Spaltenpivotwahl</b>: vor jedem Schritt die Zeile mit dem betragsgrößten Element der aktuellen Spalte nach oben tauschen. Das macht die Zerlegung stabiler.`,
-          `Aufwand: Zerlegung ≈ <b>N³/3</b>, jede Substitution <b>N²/2</b> Operationen. A⁻¹ zu kennen bringt nichts: A⁻¹b kostet auch N².`,
+          `Aufwand: Zerlegung $\\approx \\tfrac13 N^3$, jede Substitution $\\tfrac12 N^2$ Operationen. $A^{-1}$ zu kennen bringt nichts: $A^{-1}b$ kostet auch $N^2$.`,
         ])}
         <div class="card">
           <h3>Rückwärtssubstitution</h3>
-          ${F(`x<sub>n</sub> = ${frac(`y<sub>n</sub> − ${sumOf("N", "j=n+1")} r<sub>nj</sub>x<sub>j</sub>`, "r<sub>nn</sub>")}  für n = N, N − 1, …, 1`)}
+          ${tx(`x_n = \\frac{1}{r_{nn}}\\Big(y_n - \\sum_{j=n+1}^{N} r_{nj}x_j\\Big), \\qquad n = N, N-1, \\dots, 1`)}
           ${pycode(`
             def backward_sub(R, y):
                 N = len(y)
@@ -553,43 +553,43 @@ NUMA_CHAPTERS.push({
                 for n in range(N-1, -1, -1):       # n = N-1, ..., 0
                     x[n] = (y[n] - np.dot(R[n,n+1:N], x[n+1:N])) / R[n,n]
                 return x`, { title: "Zeilenversion (Python)" })}
-          <p>Zeile n braucht N − n − 1 Operationen, zusammen Σ(N − n) ≈ <b>N²/2</b>. Die <b>Spaltenversion</b> (WS 22/23) zieht nach jedem fertigen x<sub>n</sub> gleich die Spalte ab: <code>x[n] = y[n]/R[n,n]; y[0:n] = y[0:n] - x[n]*R[0:n,n]</code> — gleicher Aufwand.</p>
+          <p>Zeile $n$ braucht $N - n - 1$ Operationen, zusammen $\\sum (N-n) \\approx \\tfrac12 N^2$. Die <b>Spaltenversion</b> (WS 22/23) zieht nach jedem fertigen $x_n$ gleich die Spalte ab: <code>x[n] = y[n]/R[n,n]; y[0:n] = y[0:n] - x[n]*R[0:n,n]</code> — gleicher Aufwand.</p>
           <h3>Existenz</h3>
           ${ppFacts([
-            ["ohne Tausch", `A = LR mit ℓ<sub>nn</sub> = 1 existiert <b>genau dann</b>, wenn alle führenden Hauptuntermatrizen A[1:n, 1:n] regulär sind. Dann ist sie eindeutig.`],
-            ["mit Tausch", `Zu jeder regulären A gibt es eine Permutation P mit PA = LR. Gegenbeispiel ohne Tausch: ${mx([["0", "1"], ["2", "3"]])}.`],
-            ["Speicher", "Die Faktoren ℓ landen dort, wo die Nullen entstehen; die Zeilennummern links ergeben P. Spätere Tausche vertauschen auch die schon gespeicherten ℓ."],
+            ["ohne Tausch", `$A = LR$ mit $\\ell_{nn} = 1$ existiert <b>genau dann</b>, wenn alle führenden Hauptuntermatrizen $A_{[1:n,1:n]}$ regulär sind. Dann ist sie eindeutig.`],
+            ["mit Tausch", `Zu jeder regulären $A$ gibt es eine Permutation $P$ mit $PA = LR$. Gegenbeispiel ohne Tausch: $\\begin{pmatrix}0&1\\\\2&3\\end{pmatrix}$.`],
+            ["Speicher", "Die Faktoren $\\ell$ landen dort, wo die Nullen entstehen; die Zeilennummern links ergeben $P$. Spätere Tausche vertauschen auch die schon gespeicherten $\\ell$."],
           ])}
-          <p class="small muted">Achtung: manche Programme liefern A = PLR statt PA = LR.</p>
+          <p class="small muted">Achtung: manche Programme liefern $A = PLR$ statt $PA = LR$.</p>
         </div>
         ${pw("lr", `
           ${pseg("set", [["vl", "Vorlesung"], ["ss26", "SS 26"], ["ws2425", "WS 24/25"], ["ws2223", "WS 22/23"], ["x", "Neue Matrix"]], "vl")}
           <div class="lw-btns">${pbtn("prev", "← zurück")}${pbtn("next", "weiter →", "primary")}${pbtn("end", "Ergebnis")}</div>`, { wide: true })}
         ${nmTraps([
-          "Pivot nach dem <b>Betrag</b> wählen: −8 schlägt 4. Bei Gleichstand die obere Zeile.",
-          "Beim Tauschen die schon gespeicherten ℓ mittauschen — sonst stimmt L nicht.",
-          "In L stehen die ℓ mit dem Vorzeichen, mit dem man die Zeile <b>abzieht</b> (Zeile i − ℓ·Zeile k). L hat Einsen auf der Diagonale.",
-          "Erst Pb bilden, dann vorwärts einsetzen. Für Blockmatrizen (SS 22, SS 19) schrittweise vorgehen: erst den Teil mit bekannter Zerlegung lösen.",
+          "Pivot nach dem <b>Betrag</b> wählen: $-8$ schlägt $4$. Bei Gleichstand die obere Zeile.",
+          "Beim Tauschen die schon gespeicherten $\\ell$ mittauschen — sonst stimmt $L$ nicht.",
+          "In $L$ stehen die $\\ell$ mit dem Vorzeichen, mit dem man die Zeile <b>abzieht</b> (Zeile $i$ $-\\,\\ell\\cdot$ Zeile $k$). $L$ hat Einsen auf der Diagonale.",
+          "Erst $Pb$ bilden, dann vorwärts einsetzen. Für Blockmatrizen (SS 22, SS 19) schrittweise vorgehen: erst den Teil mit bekannter Zerlegung lösen.",
         ])}`,
       setup: (root) => nmWLR(root),
       check: [
-        { q: `Spaltenpivotwahl für ${mx([["1", "2"], ["−3", "4"]])}: welche Zeile wird Pivotzeile?`, opts: ["Zeile 2 (|−3| > |1|)", "Zeile 1", "Zeile 2, weil 4 > 2", "Keine, a₁₁ ≠ 0 reicht"], why: "Es zählt der Betrag in der aktuellen Spalte: |−3| = 3 > 1." },
-        { q: "Was kostet die LR-Zerlegung einer N × N-Matrix (führender Term)?", opts: ["N³/3 Operationen", "N²/2 Operationen", "N³/6 Operationen", "2N³/3 Operationen"], why: "Σ n² ≈ N³/3. N³/6 ist Cholesky, 2N³/3 QR (M = N)." },
-        { q: "Wann existiert A = LR ohne Zeilentausch (ℓnn = 1)?", opts: ["Genau dann, wenn alle führenden Hauptuntermatrizen regulär sind", "Für jede reguläre Matrix", "Nur für symmetrische Matrizen", "Wenn det A > 0"], why: "Gegenbeispiel regulär, aber a₁₁ = 0: (0 1; 2 3)." },
-        { q: "PA = LR ist bekannt. Wie löst man Ax = b?", opts: ["Ly = Pb vorwärts, dann Rx = y rückwärts", "Ly = b vorwärts, dann Rx = Py rückwärts", "Rx = Pb rückwärts, dann Lx = y", "x = R⁻¹L⁻¹b ohne P"], why: "Ax = b ⇔ PAx = Pb ⇔ L(Rx) = Pb." },
+        { q: `Spaltenpivotwahl für $\\begin{pmatrix}1&2\\\\-3&4\\end{pmatrix}$: welche Zeile wird Pivotzeile?`, opts: ["Zeile 2 ($|-3| > |1|$)", "Zeile 1", "Zeile 2, weil $4 > 2$", "Keine, $a_{11} \\neq 0$ reicht"], why: "Es zählt der Betrag in der aktuellen Spalte: $|-3| = 3 > 1$." },
+        { q: "Was kostet die LR-Zerlegung einer $N\\times N$-Matrix (führender Term)?", opts: ["$\\tfrac13 N^3$ Operationen", "$\\tfrac12 N^2$ Operationen", "$\\tfrac16 N^3$ Operationen", "$\\tfrac23 N^3$ Operationen"], why: "$\\sum n^2 \\approx \\tfrac13 N^3$. $\\tfrac16 N^3$ ist Cholesky, $\\tfrac23 N^3$ QR ($M = N$)." },
+        { q: "Wann existiert $A = LR$ ohne Zeilentausch ($\\ell_{nn} = 1$)?", opts: ["Genau dann, wenn alle führenden Hauptuntermatrizen regulär sind", "Für jede reguläre Matrix", "Nur für symmetrische Matrizen", "Wenn $\\det A > 0$"], why: "Gegenbeispiel regulär, aber $a_{11} = 0$: $\\begin{pmatrix}0&1\\\\2&3\\end{pmatrix}$." },
+        { q: "$PA = LR$ ist bekannt. Wie löst man $Ax = b$?", opts: ["$Ly = Pb$ vorwärts, dann $Rx = y$ rückwärts", "$Ly = b$ vorwärts, dann $Rx = Py$ rückwärts", "$Rx = Pb$ rückwärts, dann $Lx = y$", "$x = R^{-1}L^{-1}b$ ohne $P$"], why: "$Ax = b \\Leftrightarrow PAx = Pb \\Leftrightarrow L(Rx) = Pb$." },
       ],
     },
     {
       id: "2.2", title: "Cholesky-Zerlegung", short: "Cholesky", about: "A = LLᵀ für spd-Matrizen, Zeile für Zeile, N³/6, Test auf Definitheit",
       html: () => `
         ${nmGist([
-          `Für <b>symmetrisch positiv definite</b> (spd) A: A = LLᵀ mit unterer Dreiecksmatrix L, ℓ<sub>nn</sub> &gt; 0. Dann Ly = b vorwärts, Lᵀx = y rückwärts.`,
-          `A = LLᵀ regulär <b>⇔</b> A spd. Halb so teuer wie LR: <b>N³/6</b>.`,
-          `Kein Pivotisieren — das würde die Symmetrie zerstören. Bricht die Rechnung ab (Wurzel aus ≤ 0), ist A nicht positiv definit.`,
+          `Für <b>symmetrisch positiv definite</b> (spd) $A$: $A = LL^\\top$ mit unterer Dreiecksmatrix $L$, $\\ell_{nn} > 0$. Dann $Ly = b$ vorwärts, $L^\\top x = y$ rückwärts.`,
+          `$A = LL^\\top$ regulär <b>$\\Leftrightarrow$</b> $A$ spd. Halb so teuer wie LR: <b>$\\tfrac16 N^3$</b>.`,
+          `Kein Pivotisieren — das würde die Symmetrie zerstören. Bricht die Rechnung ab (Wurzel aus $\\le 0$), ist $A$ nicht positiv definit.`,
         ])}
         <div class="card">
           <h3>Zeile für Zeile</h3>
-          ${F(`ℓ<sub>nm</sub> = ${frac(`a<sub>nm</sub> − ${sumOf("m−1", "k=1")} ℓ<sub>nk</sub>ℓ<sub>mk</sub>`, "ℓ<sub>mm</sub>")} (m &lt; n),  ℓ<sub>nn</sub> = ${sq(`a<sub>nn</sub> − ${sumOf("n−1", "k=1")} ℓ<sub>nk</sub><sup>2</sup>`)}`)}
+          ${tx(`\\ell_{nm} = \\frac{1}{\\ell_{mm}}\\Big(a_{nm} - \\sum_{k=1}^{m-1}\\ell_{nk}\\ell_{mk}\\Big)\\ (m \\lt n), \\qquad \\ell_{nn} = \\sqrt{a_{nn} - \\sum_{k=1}^{n-1}\\ell_{nk}^2}`)}
           ${pycode(`
             def cholesky(A):                  # spd (N x N)
                 N = A.shape[0]
@@ -600,175 +600,175 @@ NUMA_CHAPTERS.push({
                     L[n,:n] = y
                     L[n,n] = np.sqrt(A[n,n] - np.inner(y, y))
                 return L`, { title: "Implementierung der Vorlesung" })}
-          <p>Für N = 3 (WS 17/18): ℓ<sub>11</sub> = √a<sub>11</sub>, ℓ<sub>21</sub> = a<sub>21</sub>/ℓ<sub>11</sub>, ℓ<sub>22</sub> = √(a<sub>22</sub> − ℓ<sub>21</sub>²), ℓ<sub>31</sub> = a<sub>31</sub>/ℓ<sub>11</sub>, ℓ<sub>32</sub> = (a<sub>32</sub> − ℓ<sub>31</sub>ℓ<sub>21</sub>)/ℓ<sub>22</sub>, ℓ<sub>33</sub> = √(a<sub>33</sub> − ℓ<sub>31</sub>² − ℓ<sub>32</sub>²). Man braucht nur a<sub>nm</sub> mit m ≤ n.</p>
-          <p><b>Determinante</b> (WS 20/21): det A = (ℓ<sub>11</sub>⋯ℓ<sub>NN</sub>)² — nach der Zerlegung fast umsonst. Eine Bandstruktur bleibt in L erhalten (Splines: O(N)).</p>
+          <p>Für $N = 3$ (WS 17/18): $\\ell_{11} = \\sqrt{a_{11}}$, $\\ell_{21} = a_{21}/\\ell_{11}$, $\\ell_{22} = \\sqrt{a_{22} - \\ell_{21}^2}$, $\\ell_{31} = a_{31}/\\ell_{11}$, $\\ell_{32} = (a_{32} - \\ell_{31}\\ell_{21})/\\ell_{22}$, $\\ell_{33} = \\sqrt{a_{33} - \\ell_{31}^2 - \\ell_{32}^2}$. Man braucht nur $a_{nm}$ mit $m \\le n$.</p>
+          <p><b>Determinante</b> (WS 20/21): $\\det A = (\\ell_{11}\\cdots\\ell_{NN})^2$ — nach der Zerlegung fast umsonst. Eine Bandstruktur bleibt in $L$ erhalten (Splines: $O(N)$).</p>
         </div>
         ${pw("chol", `
           ${pseg("set", [["ws1920", "WS 19/20"], ["k3", "3 × 3"], ["bad", "nicht spd"], ["x", "Neue Matrix"]], "ws1920")}
           <div class="lw-btns">${pbtn("prev", "← zurück")}${pbtn("next", "nächste Zeile →", "primary")}</div>`, { wide: true })}
         ${nmTraps([
-          "ℓ<sub>nn</sub> = 1 kann man bei Cholesky <b>nicht</b> fordern — ℓ<sub>nn</sub> &gt; 0 macht die Zerlegung eindeutig.",
-          "Reihenfolge beachten: jedes ℓ braucht nur Einträge links davon und darüber.",
-          "Für die Normalengleichung AᵀAx = Aᵀb braucht man Rang A = N, sonst ist AᵀA nur semidefinit (" + nmSee("2.5") + ").",
+          "$\\ell_{nn} = 1$ kann man bei Cholesky <b>nicht</b> fordern — $\\ell_{nn} > 0$ macht die Zerlegung eindeutig.",
+          "Reihenfolge beachten: jedes $\\ell$ braucht nur Einträge links davon und darüber.",
+          `Für die Normalengleichung $A^\\top Ax = A^\\top b$ braucht man $\\operatorname{Rang} A = N$, sonst ist $A^\\top A$ nur semidefinit (${nmSee("2.5")}).`,
         ])}`,
       setup: (root) => nmWChol(root),
       check: [
-        { q: "Für welche Matrizen existiert eine Cholesky-Zerlegung A = LLᵀ (L regulär)?", opts: ["Genau für symmetrisch positiv definite", "Für alle symmetrischen", "Für alle regulären", "Für alle mit positiver Diagonale"], why: "A = LLᵀ ist symmetrisch und xᵀAx = ‖Lᵀx‖² > 0. Umgekehrt existiert sie für jede spd-Matrix." },
-        { q: "A = (4 2; 2 5). Was ist ℓ₂₂?", opts: ["2", "1", "√5", "4"], why: "ℓ₁₁ = 2, ℓ₂₁ = 2/2 = 1, ℓ₂₂ = √(5 − 1) = 2." },
-        { q: "Warum wird bei Cholesky nicht pivotisiert?", opts: ["Zeilentausch würde die Symmetrie zerstören", "Es gibt keine Nullen auf der Diagonale", "Pivotisieren ist zu teuer", "L wäre sonst keine Dreiecksmatrix"], why: "PA ist im Allgemeinen nicht mehr symmetrisch. Für spd-Matrizen ist es auch nicht nötig." },
-        { q: "Was kostet die Cholesky-Zerlegung?", opts: ["N³/6", "N³/3", "N²/2", "2N³/3"], why: "Halb so viel wie LR, weil nur eine Hälfte berechnet wird." },
+        { q: "Für welche Matrizen existiert eine Cholesky-Zerlegung $A = LL^\\top$ ($L$ regulär)?", opts: ["Genau für symmetrisch positiv definite", "Für alle symmetrischen", "Für alle regulären", "Für alle mit positiver Diagonale"], why: "$A = LL^\\top$ ist symmetrisch und $x^\\top Ax = \\|L^\\top x\\|^2 > 0$. Umgekehrt existiert sie für jede spd-Matrix." },
+        { q: "$A = \\begin{pmatrix}4&2\\\\2&5\\end{pmatrix}$. Was ist $\\ell_{22}$?", opts: ["$2$", "$1$", "$\\sqrt5$", "$4$"], why: "$\\ell_{11} = 2$, $\\ell_{21} = 2/2 = 1$, $\\ell_{22} = \\sqrt{5 - 1} = 2$." },
+        { q: "Warum wird bei Cholesky nicht pivotisiert?", opts: ["Zeilentausch würde die Symmetrie zerstören", "Es gibt keine Nullen auf der Diagonale", "Pivotisieren ist zu teuer", "$L$ wäre sonst keine Dreiecksmatrix"], why: "$PA$ ist im Allgemeinen nicht mehr symmetrisch. Für spd-Matrizen ist es auch nicht nötig." },
+        { q: "Was kostet die Cholesky-Zerlegung?", opts: ["$\\tfrac16 N^3$", "$\\tfrac13 N^3$", "$\\tfrac12 N^2$", "$\\tfrac23 N^3$"], why: "Halb so viel wie LR, weil nur eine Hälfte berechnet wird." },
       ],
     },
     {
       id: "2.3", title: "Householder und QR-Zerlegung", short: "QR", about: "Q = I − 2wwᵀ, auslöschungsfreier Householder-Vektor, A = QR, Aufwand",
       html: () => `
         ${nmGist([
-          `A ∈ ℝ<sup>M×N</sup>, M ≥ N, voller Rang: <b>A = QR</b> mit orthogonalem Q ∈ ℝ<sup>M×M</sup> und R = (R̄; 0), R̄ obere Dreiecksmatrix.`,
-          `Werkzeug: die <b>Householder-Transformation</b> Q = I − 2wwᵀ mit ‖w‖₂ = 1 — eine Spiegelung an der Ebene wᵀy = 0.`,
-          `Sehr stabil, aber (für M ≈ N) doppelt so teuer wie LR: <b>MN² − N³/3</b> Operationen.`,
+          `$A \\in \\R^{M\\times N}$, $M \\ge N$, voller Rang: <b>$A = QR$</b> mit orthogonalem $Q \\in \\R^{M\\times M}$ und $R = \\binom{\\bar R}{0}$, $\\bar R$ obere Dreiecksmatrix.`,
+          `Werkzeug: die <b>Householder-Transformation</b> $Q = I - 2ww^\\top$ mit $\\|w\\|_2 = 1$ — eine Spiegelung an der Ebene $w^\\top y = 0$.`,
+          `Sehr stabil, aber (für $M \\approx N$) doppelt so teuer wie LR: <b>$MN^2 - \\tfrac13 N^3$</b> Operationen.`,
         ])}
         <div class="card">
-          <h3>Eigenschaften von Q = I − 2wwᵀ</h3>
+          <h3>Eigenschaften von $Q = I - 2ww^\\top$</h3>
           ${ppFacts([
-            ["symmetrisch", "Qᵀ = I − 2(wwᵀ)ᵀ = Q."],
-            ["orthogonal", "QᵀQ = I − 4wwᵀ + 4w(wᵀw)wᵀ = I, weil wᵀw = 1."],
-            ["Spiegelung", "Qw = w − 2w = −w, also Q(λw) = −λw; Qy = y für alle y mit wᵀy = 0."],
-            ["Qy berechnen", "Qy = y − 2(wᵀy)w: nur w speichern, 2N Operationen — Q nie als Matrix aufstellen."],
+            ["symmetrisch", "$Q^\\top = I - 2(ww^\\top)^\\top = Q$."],
+            ["orthogonal", "$Q^\\top Q = I - 4ww^\\top + 4w(w^\\top w)w^\\top = I$, weil $w^\\top w = 1$."],
+            ["Spiegelung", "$Qw = w - 2w = -w$, also $Q(\\lambda w) = -\\lambda w$; $Qy = y$ für alle $y$ mit $w^\\top y = 0$."],
+            ["Qy berechnen", "$Qy = y - 2(w^\\top y)\\,w$: nur $w$ speichern, $2N$ Operationen — $Q$ nie als Matrix aufstellen."],
           ])}
           <h3>Spiegeln auf die erste Achse</h3>
-          <p>Gesucht w mit Qv = σe₁. Aus ‖Qv‖ = ‖v‖ folgt |σ| = ‖v‖₂. Allgemein spiegelt w = (v − ṽ)/‖v − ṽ‖ den Vektor v auf ṽ, wenn ‖v‖₂ = ‖ṽ‖₂.</p>
-          ${F(`w = ${frac("v − σe<sub>1</sub>", "‖v − σe<sub>1</sub>‖<sub>2</sub>")},  σ = ${`<span class="nm-cases"><span>−‖v‖<sub>2</sub>, falls v<sub>1</sub> &gt; 0</span><span>+‖v‖<sub>2</sub>, falls v<sub>1</sub> ≤ 0</span></span>`}`)}
-          <p>So haben v₁ und −σ dasselbe Vorzeichen: in v₁ − σ wird nichts ausgelöscht.</p>
+          <p>Gesucht $w$ mit $Qv = \\sigma e_1$. Aus $\\|Qv\\| = \\|v\\|$ folgt $|\\sigma| = \\|v\\|_2$. Allgemein spiegelt $w = (v - \\tilde v)/\\|v - \\tilde v\\|$ den Vektor $v$ auf $\\tilde v$, wenn $\\|v\\|_2 = \\|\\tilde v\\|_2$.</p>
+          ${tx(`w = \\frac{v - \\sigma e_1}{\\|v - \\sigma e_1\\|_2}, \\qquad \\sigma = \\begin{cases} -\\|v\\|_2, & v_1 > 0,\\\\ \\phantom{-}\\|v\\|_2, & v_1 \\le 0.\\end{cases}`)}
+          <p>So haben $v_1$ und $-\\sigma$ dasselbe Vorzeichen: in $v_1 - \\sigma$ wird nichts ausgelöscht.</p>
         </div>
         ${pw("hh", `${pslider("ang", "Winkel von v", -180, 180, 1, 20)}${pseg("sign", [[0, "σ = −sign(v₁)‖v‖ ✓"], [1, "σ = +sign(v₁)‖v‖"]], 0)}`, { wide: true })}
         <div class="card">
           <h3>QR-Zerlegung Spalte für Spalte</h3>
-          <p>Q₁ spiegelt die erste Spalte a₁ auf r₁₁e₁, r₁₁ = −sign(a₁₁)‖a₁‖₂. Dann dasselbe mit der Restmatrix A<sup>(1)</sup> ∈ ℝ<sup>(M−1)×(N−1)</sup> — der Householder-Vektor bekommt vorne Nullen: w₂ = (0, w̃₂), Q₂ = diag(1, Q̃₂). Nach N Schritten Q<sub>N</sub>⋯Q₁A = R, also Q = Q₁⋯Q<sub>N</sub>.</p>
-          <p><b>Beispiel der Vorlesung:</b> a₁ = (−4, −2, 1, 2)ᵀ, ‖a₁‖₂ = 5, a₁₁ ≤ 0 ⇒ σ = 5, w₁ = (−9, −2, 1, 2)ᵀ/√90, Q₁a₁ = 5e₁.</p>
-          <p><b>LGS mit QR:</b> Qc = b durch c = Qᵀb, dann Rx = c rückwärts. Kein Pivotisieren nötig, cond₂(Q) = 1.</p>
+          <p>$Q_1$ spiegelt die erste Spalte $a_1$ auf $r_{11}e_1$, $r_{11} = -\\sign(a_{11})\\|a_1\\|_2$. Dann dasselbe mit der Restmatrix $A^{(1)} \\in \\R^{(M-1)\\times(N-1)}$ — der Householder-Vektor bekommt vorne Nullen: $w_2 = (0, \\tilde w_2)$, $Q_2 = \\diag(1, \\tilde Q_2)$. Nach $N$ Schritten $Q_N\\cdots Q_1A = R$, also $Q = Q_1\\cdots Q_N$.</p>
+          <p><b>Beispiel der Vorlesung:</b> $a_1 = (-4, -2, 1, 2)^\\top$, $\\|a_1\\|_2 = 5$, $a_{11} \\le 0 \\Rightarrow \\sigma = 5$, $w_1 = \\tfrac{1}{\\sqrt{90}}(-9, -2, 1, 2)^\\top$, $Q_1a_1 = 5e_1$.</p>
+          <p><b>LGS mit QR:</b> $Qc = b$ durch $c = Q^\\top b$, dann $Rx = c$ rückwärts. Kein Pivotisieren nötig, $\\cond_2(Q) = 1$.</p>
         </div>
         ${nmTraps([
-          "Das Vorzeichen von σ ist das <b>Gegenteil</b> von sign(v₁). Für v₁ = 0 nimmt man σ = +‖v‖₂.",
-          "w normieren nicht vergessen — oder mit dem unnormierten u = v − σe₁ rechnen: Q = I − 2uuᵀ/(uᵀu).",
-          "Eine Spiegelung ändert die Länge nicht: |σ| = ‖v‖₂ ist eine gute Probe.",
-          "Für die Hessenbergform (" + nmSee("6.3") + ") beginnt der erste Householder-Vektor bei der zweiten Komponente.",
+          "Das Vorzeichen von $\\sigma$ ist das <b>Gegenteil</b> von $\\sign(v_1)$. Für $v_1 = 0$ nimmt man $\\sigma = +\\|v\\|_2$.",
+          "$w$ normieren nicht vergessen — oder mit dem unnormierten $u = v - \\sigma e_1$ rechnen: $Q = I - 2uu^\\top/(u^\\top u)$.",
+          "Eine Spiegelung ändert die Länge nicht: $|\\sigma| = \\|v\\|_2$ ist eine gute Probe.",
+          `Für die Hessenbergform (${nmSee("6.3")}) beginnt der erste Householder-Vektor bei der zweiten Komponente.`,
         ])}`,
       setup: (root) => nmWHouse(root),
       check: [
-        { q: "v = (3, 4)ᵀ. Welches σ ist auslöschungsfrei für Qv = σe₁?", opts: ["σ = −5", "σ = 5", "σ = −3", "σ = 4"], why: "‖v‖₂ = 5, v₁ = 3 > 0 ⇒ σ = −5, v − σe₁ = (8, 4)ᵀ." },
-        { q: "Welche Eigenschaft hat Q = I − 2wwᵀ (‖w‖₂ = 1) nicht?", opts: ["Q ist eine Dreiecksmatrix", "Q ist symmetrisch", "Q ist orthogonal", "Qw = −w"], why: "Q ist eine volle Spiegelungsmatrix, symmetrisch und orthogonal." },
-        { q: "Wie berechnet man Qy effizient?", opts: ["y − 2(wᵀy)w, etwa 2N Operationen", "Q aufstellen und multiplizieren, N²", "Mit einer LR-Zerlegung von Q", "QR-Algorithmus"], why: "Nur ein Skalarprodukt und ein Vektor-Update." },
-        { q: "Was kostet die QR-Zerlegung einer N × N-Matrix (Householder)?", opts: ["≈ 2N³/3, doppelt so viel wie LR", "≈ N³/3", "≈ N³/6", "≈ N²"], why: "MN² − N³/3 mit M = N ergibt 2N³/3." },
+        { q: "$v = (3, 4)^\\top$. Welches $\\sigma$ ist auslöschungsfrei für $Qv = \\sigma e_1$?", opts: ["$\\sigma = -5$", "$\\sigma = 5$", "$\\sigma = -3$", "$\\sigma = 4$"], why: "$\\|v\\|_2 = 5$, $v_1 = 3 > 0 \\Rightarrow \\sigma = -5$, $v - \\sigma e_1 = (8, 4)^\\top$." },
+        { q: "Welche Eigenschaft hat $Q = I - 2ww^\\top$ ($\\|w\\|_2 = 1$) nicht?", opts: ["$Q$ ist eine Dreiecksmatrix", "$Q$ ist symmetrisch", "$Q$ ist orthogonal", "$Qw = -w$"], why: "$Q$ ist eine volle Spiegelungsmatrix, symmetrisch und orthogonal." },
+        { q: "Wie berechnet man $Qy$ effizient?", opts: ["$y - 2(w^\\top y)w$, etwa $2N$ Operationen", "$Q$ aufstellen und multiplizieren, $N^2$", "Mit einer LR-Zerlegung von $Q$", "QR-Algorithmus"], why: "Nur ein Skalarprodukt und ein Vektor-Update." },
+        { q: "Was kostet die QR-Zerlegung einer $N\\times N$-Matrix (Householder)?", opts: ["$\\approx \\tfrac23 N^3$, doppelt so viel wie LR", "$\\approx \\tfrac13 N^3$", "$\\approx \\tfrac16 N^3$", "$\\approx N^2$"], why: "$MN^2 - \\tfrac13 N^3$ mit $M = N$ ergibt $\\tfrac23 N^3$." },
       ],
     },
     {
       id: "2.4", title: "Normen und Kondition von LGS", short: "Kondition", about: "Vektor- und Matrixnormen, cond(A), Störungssatz, gut und schlecht konditionierte Matrizen",
       html: () => `
         ${nmGist([
-          `Zugehörige Matrixnorm: ${nrm("A")} = sup<sub>x≠0</sub> ${nrm("Ax")}/${nrm("x")} — die kleinste Zahl mit ${nrm("Ax")} ≤ ${nrm("A")}${nrm("x")}. Submultiplikativ, ${nrm("I")} = 1.`,
-          `<b>cond(A) = ${nrm("A")} ${nrm("A<sup>−1</sup>")}</b> ≥ 1 misst die Empfindlichkeit von x gegen relative Störungen in A und b.`,
-          `Bei Störung nur von b: ${frac("‖x − x̃‖", "‖x‖")} ≤ cond(A) ${frac("‖b − b̃‖", "‖b‖")}.`,
+          `Zugehörige Matrixnorm: $\\|A\\| = \\sup_{x\\neq0} \\|Ax\\|/\\|x\\|$ — die kleinste Zahl mit $\\|Ax\\| \\le \\|A\\|\\,\\|x\\|$. Submultiplikativ, $\\|I\\| = 1$.`,
+          `<b>$\\cond(A) = \\|A\\|\\,\\|A^{-1}\\|$</b> $\\ge 1$ misst die Empfindlichkeit von $x$ gegen relative Störungen in $A$ und $b$.`,
+          `Bei Störung nur von $b$: $\\dfrac{\\|x - \\tilde x\\|}{\\|x\\|} \\le \\cond(A)\\,\\dfrac{\\|b - \\tilde b\\|}{\\|b\\|}$.`,
         ])}
         <div class="card">
           <h3>Normen</h3>
           ${ppFacts([
-            ["Vektoren", `${nrm("x", 1)} = Σ|x<sub>n</sub>|, ${nrm("x", 2)} = (Σx<sub>n</sub>²)<sup>1/2</sup>, ${nrm("x", "∞")} = max|x<sub>n</sub>|`],
-            ["Spaltensummennorm", `${nrm("A", 1)} = max<sub>m</sub> Σ<sub>n</sub> |a<sub>nm</sub>|`],
-            ["Zeilensummennorm", `${nrm("A", "∞")} = max<sub>n</sub> Σ<sub>m</sub> |a<sub>nm</sub>|`],
-            ["Spektralnorm", `${nrm("A", 2)} = √(größter EW von AᵀA) = σ₁; für symmetrisches A: max |λ|`],
-            ["Frobenius", `${nrm("A", "F")}² = Σ a<sub>mn</sub>² = Spur(AᵀA) — keine zugehörige Norm (‖I‖<sub>F</sub> = √N).`],
+            ["Vektoren", `$\\|x\\|_1 = \\sum|x_n|$, $\\|x\\|_2 = \\big(\\sum x_n^2\\big)^{1/2}$, $\\|x\\|_\\infty = \\max|x_n|$`],
+            ["Spaltensummennorm", `$\\|A\\|_1 = \\max_m \\sum_n |a_{nm}|$`],
+            ["Zeilensummennorm", `$\\|A\\|_\\infty = \\max_n \\sum_m |a_{nm}|$`],
+            ["Spektralnorm", `$\\|A\\|_2 = \\sqrt{\\lambda_{\\max}(A^\\top A)} = \\sigma_1$; für symmetrisches $A$: $\\max|\\lambda|$`],
+            ["Frobenius", `$\\|A\\|_F^2 = \\sum a_{mn}^2 = \\operatorname{Spur}(A^\\top A)$ — keine zugehörige Norm ($\\|I\\|_F = \\sqrt N$).`],
           ])}
-          <h3>Störungen in A und b</h3>
-          <p>Ist ${frac("‖A − Ã‖", "‖A‖")} ≤ ε<sub>A</sub>, ${frac("‖b − b̃‖", "‖b‖")} ≤ ε<sub>b</sub> und ε<sub>A</sub> cond(A) &lt; 1, dann</p>
-          ${F(`${frac("‖x − x̃‖", "‖x‖")} ≤ ${frac("cond(A)", "1 − ε<sub>A</sub> cond(A)")} (ε<sub>A</sub> + ε<sub>b</sub>) = 2ε cond(A) + O(ε²)`)}
+          <h3>Störungen in $A$ und $b$</h3>
+          <p>Ist $\\frac{\\|A - \\tilde A\\|}{\\|A\\|} \\le \\varepsilon_A$, $\\frac{\\|b - \\tilde b\\|}{\\|b\\|} \\le \\varepsilon_b$ und $\\varepsilon_A\\cond(A) < 1$, dann</p>
+          ${tx(`\\frac{\\|x - \\tilde x\\|}{\\|x\\|} \\le \\frac{\\cond(A)}{1 - \\varepsilon_A\\cond(A)}\\,(\\varepsilon_A + \\varepsilon_b) = 2\\varepsilon\\cond(A) + O(\\varepsilon^2)`)}
           <p>Die Abschätzung ist scharf (es gibt Störungen mit Gleichheit), aber oft zu pessimistisch.</p>
           ${ppFacts([
-            ["cond = 1", "αI; orthogonale Q in der 2-Norm (Längen bleiben). cond(αA) = cond(A)."],
-            ["symmetrisch", `cond₂(A) = ${frac("max |λ|", "min |λ|")}`],
-            ["Spline-Matrix", "Tridiagonal (1 4 1): cond∞ ≤ 3, mit der Neumann-Reihe ‖(I + B)⁻¹‖ ≤ Σ‖B‖<sup>k</sup> = 1/(1 − ‖B‖)."],
-            ["schlecht", "Hilbertmatrix (1/(i + j − 1)): cond ≈ 3,5 · 10<sup>13</sup> für N = 10. diag(1, δ): cond∞ = 1/|δ|, obwohl die Gleichungen entkoppelt sind."],
+            ["cond = 1", "$\\alpha I$; orthogonale $Q$ in der 2-Norm (Längen bleiben). $\\cond(\\alpha A) = \\cond(A)$."],
+            ["symmetrisch", `$\\cond_2(A) = \\dfrac{\\max|\\lambda|}{\\min|\\lambda|}$`],
+            ["Spline-Matrix", "Tridiagonal $(1\\ 4\\ 1)$: $\\cond_\\infty \\le 3$, mit der Neumann-Reihe $\\|(I+B)^{-1}\\| \\le \\sum\\|B\\|^k = \\frac{1}{1-\\|B\\|}$."],
+            ["schlecht", "Hilbertmatrix $\\big(\\frac{1}{i+j-1}\\big)$: $\\cond \\approx 3{,}5\\cdot10^{13}$ für $N = 10$. $\\diag(1, \\delta)$: $\\cond_\\infty = 1/|\\delta|$, obwohl die Gleichungen entkoppelt sind."],
           ])}
         </div>
         ${pw("cond", `${pseg("e", [[0, "ε = 1"], [1, "ε = 0,5"], [2, "ε = 0,2"], [3, "ε = 0,1"]], 2)}${pslider("d", "Störung δ (in % von ε)", 0, 100, 1, 10)}`, { wide: true })}
-        <p class="small muted">Das Beispiel der Vorlesung: b̃ = b + δ(1, −1)ᵀ. Für δ = ε wird aus x = (3, 1) die Lösung x̃ = (1 + ε, 3).</p>
+        <p class="small muted">Das Beispiel der Vorlesung: $\\tilde b = b + \\delta(1, -1)^\\top$. Für $\\delta = \\varepsilon$ wird aus $x = (3, 1)$ die Lösung $\\tilde x = (1 + \\varepsilon, 3)$.</p>
         ${nmTraps([
           "Spaltensumme ↔ 1-Norm, Zeilensumme ↔ ∞-Norm — die ∞ „liegt“ wie eine Zeile.",
           "Eine große Konditionszahl ist nur eine obere Schranke: für spezielle Störungen (z. B. nur auf der Diagonale) kann das Problem trotzdem gut konditioniert sein.",
-          "‖veᵀ‖₂ = √N ‖v‖₂ und ‖veᵀ‖₁ = ‖v‖₁ (SS 24, SS 22): erst die Spalten ansehen.",
+          "$\\|ve^\\top\\|_2 = \\sqrt N\\,\\|v\\|_2$ und $\\|ve^\\top\\|_1 = \\|v\\|_1$ (SS 24, SS 22): erst die Spalten ansehen.",
         ])}`,
       setup: (root) => nmWCond(root),
       check: [
-        { q: `${nrm("A", "∞")} für A = (2 0 4; 3 1 −11; 0 5 −2)?`, opts: ["15", "17", "16", "7"], why: "Zeilensummen 6, 15, 7 — das Maximum ist 15 (SS 19). ‖A‖₁ wäre max(5, 6, 17) = 17." },
-        { q: "Welche Aussage über cond(A) ist falsch?", opts: ["cond(αA) = |α| cond(A)", "cond(A) ≥ 1", "cond₂(Q) = 1 für orthogonales Q", "cond₂(A) = |λ|max/|λ|min für symmetrisches A"], why: "cond(αA) = ‖αA‖‖α⁻¹A⁻¹‖ = cond(A)." },
-        { q: "cond(A) = 10⁸ und b hat einen relativen Fehler von 10⁻¹⁶. Wie groß kann der relative Fehler von x sein?", opts: ["etwa 10⁻⁸", "10⁻¹⁶", "10⁻²⁴", "10⁸"], why: "‖Δx‖/‖x‖ ≤ cond(A) · ‖Δb‖/‖b‖ = 10⁸ · 10⁻¹⁶." },
-        { q: "Was ist ‖A‖₂ für symmetrisches A mit Eigenwerten 3, −5, 1?", opts: ["5", "3", "√35", "9"], why: "Für symmetrisches A ist ‖A‖₂ = max |λ|." },
+        { q: `$\\|A\\|_\\infty$ für $A = \\begin{pmatrix}2&0&4\\\\3&1&-11\\\\0&5&-2\\end{pmatrix}$?`, opts: ["$15$", "$17$", "$16$", "$7$"], why: "Zeilensummen $6, 15, 7$ — das Maximum ist $15$ (SS 19). $\\|A\\|_1$ wäre $\\max(5, 6, 17) = 17$." },
+        { q: "Welche Aussage über $\\cond(A)$ ist falsch?", opts: ["$\\cond(\\alpha A) = |\\alpha|\\cond(A)$", "$\\cond(A) \\ge 1$", "$\\cond_2(Q) = 1$ für orthogonales $Q$", "$\\cond_2(A) = |\\lambda|_{\\max}/|\\lambda|_{\\min}$ für symmetrisches $A$"], why: "$\\cond(\\alpha A) = \\|\\alpha A\\|\\,\\|\\alpha^{-1}A^{-1}\\| = \\cond(A)$." },
+        { q: "$\\cond(A) = 10^8$ und $b$ hat einen relativen Fehler von $10^{-16}$. Wie groß kann der relative Fehler von $x$ sein?", opts: ["etwa $10^{-8}$", "$10^{-16}$", "$10^{-24}$", "$10^8$"], why: "$\\|\\Delta x\\|/\\|x\\| \\le \\cond(A)\\cdot\\|\\Delta b\\|/\\|b\\| = 10^8\\cdot10^{-16}$." },
+        { q: "Was ist $\\|A\\|_2$ für symmetrisches $A$ mit Eigenwerten $3, -5, 1$?", opts: ["$5$", "$3$", "$\\sqrt{35}$", "$9$"], why: "Für symmetrisches $A$ ist $\\|A\\|_2 = \\max|\\lambda|$." },
       ],
     },
     {
       id: "2.5", title: "Lineare Ausgleichsrechnung", short: "Ausgleich", about: "‖Ax − b‖₂ = min!, Normalengleichung, Lösung per QR, Tikhonov",
       html: () => `
         ${nmGist([
-          `Mehr Gleichungen als Unbekannte (M &gt; N): suche x mit <b>${nrm("Ax − b", 2)} = min!</b> Dann ist Ax die orthogonale Projektion von b auf Bild(A).`,
-          `<b>Normalengleichung</b> (Gauß): x löst das Ausgleichsproblem ⇔ AᵀAx = Aᵀb. Rang A = N ⇔ AᵀA spd.`,
-          `Besser über <b>QR</b>: Qᵀb = (c; d), dann R̄x = c rückwärts — das Residuum ist ‖d‖₂. Denn cond₂(AᵀA) = cond₂(A)².`,
+          `Mehr Gleichungen als Unbekannte ($M > N$): suche $x$ mit <b>$\\|Ax - b\\|_2 = \\min!$</b> Dann ist $Ax$ die orthogonale Projektion von $b$ auf $\\operatorname{Bild}(A)$.`,
+          `<b>Normalengleichung</b> (Gauß): $x$ löst das Ausgleichsproblem $\\Leftrightarrow A^\\top Ax = A^\\top b$. $\\operatorname{Rang} A = N \\Leftrightarrow A^\\top A$ spd.`,
+          `Besser über <b>QR</b>: $Q^\\top b = \\binom{c}{d}$, dann $\\bar Rx = c$ rückwärts — das Residuum ist $\\|d\\|_2$. Denn $\\cond_2(A^\\top A) = \\cond_2(A)^2$.`,
         ])}
         <div class="card">
           <h3>Aus Messdaten</h3>
-          <p>Messdaten (t<sub>m</sub>, y<sub>m</sub>), m = 1, …, M, und Ansatzfunktionen φ₁, …, φ<sub>N</sub>: gesucht f = Σ x<sub>n</sub>φ<sub>n</sub> mit Σ(y<sub>m</sub> − f(t<sub>m</sub>))² = min!</p>
-          ${F(`A = ${mx([["φ₁(t₁)", "…", "φ<sub>N</sub>(t₁)"], ["⋮", "", "⋮"], ["φ₁(t<sub>M</sub>)", "…", "φ<sub>N</sub>(t<sub>M</sub>)"]])},  b = ${cv(["y₁", "⋮", "y<sub>M</sub>"])}`)}
-          <p>Ausgleichsgerade y = x₁ + x₂t: Spalten (1, …, 1) und (t₁, …, t<sub>M</sub>). Für eine Parabel kommt die Spalte t<sub>m</sub>² dazu (SS 22).</p>
+          <p>Messdaten $(t_m, y_m)$, $m = 1, \\dots, M$, und Ansatzfunktionen $\\varphi_1, \\dots, \\varphi_N$: gesucht $f = \\sum x_n\\varphi_n$ mit $\\sum (y_m - f(t_m))^2 = \\min!$</p>
+          ${tx(`A = \\begin{pmatrix}\\varphi_1(t_1) & \\cdots & \\varphi_N(t_1)\\\\ \\vdots & & \\vdots\\\\ \\varphi_1(t_M) & \\cdots & \\varphi_N(t_M)\\end{pmatrix}, \\qquad b = \\begin{pmatrix}y_1\\\\ \\vdots\\\\ y_M\\end{pmatrix}`)}
+          <p>Ausgleichsgerade $y = x_1 + x_2t$: Spalten $(1, \\dots, 1)$ und $(t_1, \\dots, t_M)$. Für eine Parabel kommt die Spalte $t_m^2$ dazu (SS 22).</p>
           <h3>Warum QR</h3>
-          <p>Mit Qᵀ orthogonal: ${nrm("Ax − b", 2)}² = ${nrm("Qᵀ(Ax − b)", 2)}² = ${nrm("R̄x − c", 2)}² + ${nrm("d", 2)}² ≥ ${nrm("d", 2)}², Gleichheit genau für R̄x = c.</p>
+          <p>Mit $Q^\\top$ orthogonal: $\\|Ax - b\\|_2^2 = \\|Q^\\top(Ax - b)\\|_2^2 = \\|\\bar Rx - c\\|_2^2 + \\|d\\|_2^2 \\ge \\|d\\|_2^2$, Gleichheit genau für $\\bar Rx = c$.</p>
           ${ppFacts([
-            ["QR", "MN² − N³/3 Operationen, stabil, gute Kondition."],
-            ["Normalengleichung", "AᵀA (MN²/2) + Cholesky (N³/6) — billiger, aber cond₂ quadriert. Beispiel A = (1 1; ε 0; 0 ε) mit ε² &lt; eps: AᵀA wird in Gleitpunkt zu (1 1; 1 1), singulär."],
-            ["Tikhonov", "‖Ax − b‖² + α‖x‖² = min!: gute Kondition für großes α, aber großer Approximationsfehler — Kompromiss (Diskrepanzprinzip)."],
-            ["nichtlinear", "‖f(x)‖₂ = min! wird durch eine Folge linearer Ausgleichsprobleme gelöst (" + nmSee("3.3") + ")."],
+            ["QR", "$MN^2 - \\tfrac13 N^3$ Operationen, stabil, gute Kondition."],
+            ["Normalengleichung", "$A^\\top A$ ($\\tfrac12 MN^2$) + Cholesky ($\\tfrac16 N^3$) — billiger, aber $\\cond_2$ quadriert. Beispiel $A = \\begin{pmatrix}1&1\\\\ \\varepsilon&0\\\\0&\\varepsilon\\end{pmatrix}$ mit $\\varepsilon^2 < \\eps$: $A^\\top A$ wird in Gleitpunkt zu $\\begin{pmatrix}1&1\\\\1&1\\end{pmatrix}$, singulär."],
+            ["Tikhonov", "$\\|Ax - b\\|_2^2 + \\alpha\\|x\\|_2^2 = \\min!$: gute Kondition für großes $\\alpha$, aber großer Approximationsfehler — Kompromiss (Diskrepanzprinzip)."],
+            ["nichtlinear", `$\\|f(x)\\|_2 = \\min!$ wird durch eine Folge linearer Ausgleichsprobleme gelöst (${nmSee("3.3")}).`],
           ])}
         </div>
         ${pw("lsq", `${pseg("deg", [[1, "Gerade"], [2, "Parabel"], [3, "kubisch"]], 1)}<div class="lw-btns">${pbtn("ss22", "Daten aus SS 22")}${pbtn("new", "Neue Messdaten")}</div>`, { wide: true })}
         ${nmTraps([
-          "Die Normalengleichung ist <b>immer</b> lösbar (Aᵀb ∈ Bild(AᵀA)), aber nur bei vollem Rang eindeutig.",
-          "Ist (A | b)ᵀ(A | b) nur semidefinit, liegt b in Bild(A): das Residuum ist 0 (WS 22/23).",
-          "Mit gegebener QR-Zerlegung: lösbar ist Ax = b genau dann, wenn d = 0 (WS 17/18).",
+          "Die Normalengleichung ist <b>immer</b> lösbar ($A^\\top b \\in \\operatorname{Bild}(A^\\top A)$), aber nur bei vollem Rang eindeutig.",
+          "Ist $(A\\,|\\,b)^\\top(A\\,|\\,b)$ nur semidefinit, liegt $b$ in $\\operatorname{Bild}(A)$: das Residuum ist $0$ (WS 22/23).",
+          "Mit gegebener QR-Zerlegung: lösbar ist $Ax = b$ genau dann, wenn $d = 0$ (WS 17/18).",
         ])}`,
       setup: (root) => nmWLsq(root),
       check: [
-        { q: "Was ist die Normalengleichung zu ‖Ax − b‖₂ = min!?", opts: ["AᵀAx = Aᵀb", "AAᵀx = b", "Ax = Aᵀb", "AᵀAx = b"], why: "Gradient von ½‖Ax − b‖² ist Aᵀ(Ax − b)." },
-        { q: "Qᵀb = (c; d) mit A = QR. Wie groß ist das minimale Residuum?", opts: ["‖d‖₂", "‖c‖₂", "‖b‖₂ − ‖c‖₂", "0"], why: "‖Ax − b‖² = ‖R̄x − c‖² + ‖d‖², und R̄x = c ist lösbar." },
-        { q: "Warum löst man das Ausgleichsproblem meist mit QR statt mit der Normalengleichung?", opts: ["cond₂(AᵀA) = cond₂(A)²", "QR ist billiger", "Die Normalengleichung hat keine Lösung", "Cholesky ist instabil"], why: "Die Normalengleichung quadriert die Kondition; QR ist etwas teurer, aber stabiler." },
-        { q: "Ausgleichsgerade durch (0, 1), (1, 2), (2, 4): welche Matrix A?", opts: ["(1 0; 1 1; 1 2)", "(0 1; 1 2; 2 4)", "(1 1 1; 0 1 2)", "(0; 1; 2)"], why: "Spalten 1 und t an den Messstellen; b = (1, 2, 4)ᵀ." },
+        { q: "Was ist die Normalengleichung zu $\\|Ax - b\\|_2 = \\min!$?", opts: ["$A^\\top Ax = A^\\top b$", "$AA^\\top x = b$", "$Ax = A^\\top b$", "$A^\\top Ax = b$"], why: "Der Gradient von $\\tfrac12\\|Ax - b\\|^2$ ist $A^\\top(Ax - b)$." },
+        { q: "$Q^\\top b = \\binom{c}{d}$ mit $A = QR$. Wie groß ist das minimale Residuum?", opts: ["$\\|d\\|_2$", "$\\|c\\|_2$", "$\\|b\\|_2 - \\|c\\|_2$", "$0$"], why: "$\\|Ax - b\\|^2 = \\|\\bar Rx - c\\|^2 + \\|d\\|^2$, und $\\bar Rx = c$ ist lösbar." },
+        { q: "Warum löst man das Ausgleichsproblem meist mit QR statt mit der Normalengleichung?", opts: ["$\\cond_2(A^\\top A) = \\cond_2(A)^2$", "QR ist billiger", "Die Normalengleichung hat keine Lösung", "Cholesky ist instabil"], why: "Die Normalengleichung quadriert die Kondition; QR ist etwas teurer, aber stabiler." },
+        { q: "Ausgleichsgerade durch $(0, 1)$, $(1, 2)$, $(2, 4)$: welche Matrix $A$?", opts: ["$\\begin{pmatrix}1&0\\\\1&1\\\\1&2\\end{pmatrix}$", "$\\begin{pmatrix}0&1\\\\1&2\\\\2&4\\end{pmatrix}$", "$\\begin{pmatrix}1&1&1\\\\0&1&2\\end{pmatrix}$", "$\\begin{pmatrix}0\\\\1\\\\2\\end{pmatrix}$"], why: "Spalten $1$ und $t$ an den Messstellen; $b = (1, 2, 4)^\\top$." },
       ],
     },
     {
       id: "2.6", title: "Singulärwertzerlegung", short: "SWZ", about: "A = UΣVᵀ, ‖A‖₂ = σ₁, Rang-k-Bestapproximation, Pseudoinverse",
       html: () => `
         ${nmGist([
-          `Jede A ∈ ℝ<sup>M×N</sup> vom Rang R: <b>A = UΣVᵀ</b> mit orthogonalen U, V und Σ = diag(σ₁, …, σ<sub>R</sub>, 0, …), σ₁ ≥ ⋯ ≥ σ<sub>R</sub> &gt; 0.`,
-          `σ<sub>n</sub> = √λ<sub>n</sub>(AᵀA); die Spalten von V sind normierte EV von AᵀA, u<sub>r</sub> = Av<sub>r</sub>/σ<sub>r</sub>.`,
-          `‖A‖₂ = σ₁, ‖A‖<sub>F</sub>² = σ₁² + ⋯ + σ<sub>R</sub>², und A<sub>k</sub> = Σ<sub>r≤k</sub> σ<sub>r</sub>u<sub>r</sub>v<sub>r</sub>ᵀ ist die beste Rang-k-Näherung: ‖A − A<sub>k</sub>‖₂ = σ<sub>k+1</sub>.`,
+          `Jede $A \\in \\R^{M\\times N}$ vom Rang $R$: <b>$A = U\\Sigma V^\\top$</b> mit orthogonalen $U, V$ und $\\Sigma = \\diag(\\sigma_1, \\dots, \\sigma_R, 0, \\dots)$, $\\sigma_1 \\ge \\cdots \\ge \\sigma_R > 0$.`,
+          `$\\sigma_n = \\sqrt{\\lambda_n(A^\\top A)}$; die Spalten von $V$ sind normierte EV von $A^\\top A$, $u_r = Av_r/\\sigma_r$.`,
+          `$\\|A\\|_2 = \\sigma_1$, $\\|A\\|_F^2 = \\sigma_1^2 + \\cdots + \\sigma_R^2$, und $A_k = \\sum_{r\\le k}\\sigma_ru_rv_r^\\top$ ist die beste Rang-$k$-Näherung: $\\|A - A_k\\|_2 = \\sigma_{k+1}$.`,
         ])}
         ${pw("svd", pseg("m", [[0, "symmetrisch"], [1, "Dreieck"], [2, "fast singulär"], [3, "orthogonal"], [4, "Rang 1"]], 0), { wide: true })}
         <div class="card">
           <h3>Ausgleich mit Rangdefekt</h3>
-          <p>Ist Rang A = R &lt; N, hat ‖Ax − b‖₂ = min! unendlich viele Lösungen. Die mit kleinster Norm ‖x‖₂ ist</p>
-          ${F(`x = ${sumOf("R", "r=1")} ${frac("u<sub>r</sub><sup>⊤</sup>b", "σ<sub>r</sub>")} v<sub>r</sub> = A<sup>+</sup>b,  A<sup>+</sup> = VΣ<sup>+</sup>U<sup>⊤</sup>`)}
-          <p>(Moore-Penrose-Pseudoinverse, Σ<sup>+</sup> = diag(1/σ₁, …, 1/σ<sub>R</sub>, 0, …)ᵀ).</p>
+          <p>Ist $\\operatorname{Rang} A = R < N$, hat $\\|Ax - b\\|_2 = \\min!$ unendlich viele Lösungen. Die mit kleinster Norm $\\|x\\|_2$ ist</p>
+          ${tx(`x = \\sum_{r=1}^{R}\\frac{u_r^\\top b}{\\sigma_r}\\,v_r = A^+b, \\qquad A^+ = V\\Sigma^+U^\\top`)}
+          <p>(Moore-Penrose-Pseudoinverse, $\\Sigma^+ = \\diag(1/\\sigma_1, \\dots, 1/\\sigma_R, 0, \\dots)^\\top$).</p>
           <h3>Berechnung</h3>
-          <p>Nie AᵀA explizit bilden (MN²/2 Operationen und quadrierte Kondition). Stattdessen mit Householder von links und rechts auf <b>Bidiagonalform</b> B bringen: PAQ = (B; 0). A und B haben dieselben Singulärwerte, BᵀB ist tridiagonal, und deren EW liefert der QR-Algorithmus (${nmSee("6.3")}) ohne BᵀB aufzustellen.</p>
+          <p>Nie $A^\\top A$ explizit bilden ($\\tfrac12 MN^2$ Operationen und quadrierte Kondition). Stattdessen mit Householder von links und rechts auf <b>Bidiagonalform</b> $B$ bringen: $PAQ = \\binom{B}{0}$. $A$ und $B$ haben dieselben Singulärwerte, $B^\\top B$ ist tridiagonal, und deren EW liefert der QR-Algorithmus (${nmSee("6.3")}) ohne $B^\\top B$ aufzustellen.</p>
           <p class="small muted">Anwendungen: Bildkompression, Rauschfilterung, PCA, Latent Semantic Analysis.</p>
         </div>
         ${nmTraps([
-          "Singulärwerte sind nicht die Eigenwerte von A — nur für symmetrisch positiv semidefinite A stimmen sie überein (für symmetrische A: σ = |λ|).",
-          "‖A − B‖₂ ≥ σ<sub>k+1</sub> für jede Rang-k-Matrix B (WS 22/23): Gleichheit für B = A<sub>k</sub>.",
-          "U ergänzt man zu einer Orthonormalbasis, wenn R &lt; M.",
+          "Singulärwerte sind nicht die Eigenwerte von $A$ — nur für symmetrisch positiv semidefinite $A$ stimmen sie überein (für symmetrische $A$: $\\sigma = |\\lambda|$).",
+          "$\\|A - B\\|_2 \\ge \\sigma_{k+1}$ für jede Rang-$k$-Matrix $B$ (WS 22/23): Gleichheit für $B = A_k$.",
+          "$U$ ergänzt man zu einer Orthonormalbasis, wenn $R < M$.",
         ])}`,
       setup: (root) => nmWSvd(root),
       check: [
-        { q: "Wie hängen die Singulärwerte von A mit AᵀA zusammen?", opts: ["σₙ² sind die Eigenwerte von AᵀA", "σₙ sind die Eigenwerte von AᵀA", "σₙ sind die Diagonalelemente von A", "σₙ = λₙ(A)²"], why: "AᵀA = VΣᵀΣVᵀ = V diag(σ₁², …) Vᵀ." },
-        { q: "A hat die Singulärwerte 5, 2, 0,1. Was ist ‖A‖₂ und cond₂(A)?", opts: ["5 und 50", "5 und 25", "0,1 und 50", "7,1 und 50"], why: "‖A‖₂ = σ₁, cond₂ = σ₁/σ_N." },
-        { q: "Wie groß ist ‖A − A₁‖₂ für die beste Rang-1-Näherung?", opts: ["σ₂", "σ₁", "σ₁ − σ₂", "√(σ₂² + ⋯)"], why: "In der 2-Norm bleibt der größte weggelassene Singulärwert. In der Frobeniusnorm wäre es √(σ₂² + ⋯)." },
-        { q: "Für welche Matrizen sind Singulärwerte und Eigenwerte gleich?", opts: ["Symmetrisch positiv semidefinite", "Alle quadratischen", "Alle orthogonalen", "Alle Dreiecksmatrizen"], why: "SS 22: dann ist A = VΛVᵀ mit Λ ≥ 0 schon eine SWZ." },
+        { q: "Wie hängen die Singulärwerte von $A$ mit $A^\\top A$ zusammen?", opts: ["$\\sigma_n^2$ sind die Eigenwerte von $A^\\top A$", "$\\sigma_n$ sind die Eigenwerte von $A^\\top A$", "$\\sigma_n$ sind die Diagonalelemente von $A$", "$\\sigma_n = \\lambda_n(A)^2$"], why: "$A^\\top A = V\\Sigma^\\top\\Sigma V^\\top = V\\diag(\\sigma_1^2, \\dots)V^\\top$." },
+        { q: "$A$ hat die Singulärwerte $5$, $2$, $0{,}1$. Was ist $\\|A\\|_2$ und $\\cond_2(A)$?", opts: ["$5$ und $50$", "$5$ und $25$", "$0{,}1$ und $50$", "$7{,}1$ und $50$"], why: "$\\|A\\|_2 = \\sigma_1$, $\\cond_2 = \\sigma_1/\\sigma_N$." },
+        { q: "Wie groß ist $\\|A - A_1\\|_2$ für die beste Rang-1-Näherung?", opts: ["$\\sigma_2$", "$\\sigma_1$", "$\\sigma_1 - \\sigma_2$", "$\\sqrt{\\sigma_2^2 + \\cdots}$"], why: "In der 2-Norm bleibt der größte weggelassene Singulärwert. In der Frobeniusnorm wäre es $\\sqrt{\\sigma_2^2 + \\cdots}$." },
+        { q: "Für welche Matrizen sind Singulärwerte und Eigenwerte gleich?", opts: ["Symmetrisch positiv semidefinite", "Alle quadratischen", "Alle orthogonalen", "Alle Dreiecksmatrizen"], why: "SS 22: dann ist $A = V\\Lambda V^\\top$ mit $\\Lambda \\ge 0$ schon eine SWZ." },
       ],
     },
   ],
@@ -877,105 +877,105 @@ NUMA_CHAPTERS.push({
       id: "3.1", title: "Newton in einer Dimension", short: "Newton 1D", about: "Kondition, Tangente, Wurzelberechnung, quadratische Konvergenz, Divergenz",
       html: () => `
         ${nmGist([
-          `Die Nullstelle der Tangente t<sub>k</sub>(x) = f′(x<sub>k</sub>)(x − x<sub>k</sub>) + f(x<sub>k</sub>) ist die nächste Iterierte: <b>x<sub>k+1</sub> = x<sub>k</sub> − f(x<sub>k</sub>)/f′(x<sub>k</sub>)</b>.`,
-          `Nahe einer einfachen Nullstelle konvergiert es <b>lokal quadratisch</b>: |x* − x<sub>k+1</sub>| ≤ C|x* − x<sub>k</sub>|². Weit weg kann es divergieren.`,
-          `Kondition: |x* − x*(ε)| ≤ |f′(x*)⁻¹| |ε| + O(ε²) — je steiler f in x*, desto besser konditioniert.`,
+          `Die Nullstelle der Tangente $t_k(x) = f'(x_k)(x - x_k) + f(x_k)$ ist die nächste Iterierte: <b>$x_{k+1} = x_k - \\dfrac{f(x_k)}{f'(x_k)}$</b>.`,
+          `Nahe einer einfachen Nullstelle konvergiert es <b>lokal quadratisch</b>: $|x^* - x_{k+1}| \\le C\\,|x^* - x_k|^2$. Weit weg kann es divergieren.`,
+          `Kondition: $|x^* - x^*(\\varepsilon)| \\le |f'(x^*)^{-1}|\\,|\\varepsilon| + O(\\varepsilon^2)$ — je steiler $f$ in $x^*$, desto besser konditioniert.`,
         ])}
         <div class="card">
           <h3>Beispiel der Vorlesung: Quadratwurzel</h3>
-          <p>Für f(x) = x² − a ist x<sub>k+1</sub> = x<sub>k</sub> − (x<sub>k</sub>² − a)/(2x<sub>k</sub>) = ½(x<sub>k</sub> + a/x<sub>k</sub>). Mit der binomischen Formel:</p>
-          ${F(`x<sub>k+1</sub> − √a = ${frac("1", "2x<sub>k</sub>")} (x<sub>k</sub> − √a)²`)}
-          <p>Im Rechner: a = (1 + m<sub>a</sub>) · 2<sup>e<sub>a</sub></sup>, also √a = √(1 + m<sub>a</sub>) · 2<sup>e<sub>a</sub>/2</sup> (e<sub>a</sub> gerade) bzw. √(1 + m<sub>a</sub>)·√2·2<sup>(e<sub>a</sub>−1)/2</sup>. Man braucht nur √b für b ∈ (1, 2) (oder (1, 4), SS 22) — mit x₀ = 1 ist der Fehler nach drei Schritten unter 2⁻¹⁵.</p>
-          <p><b>Umkehrfunktion</b> (WS 24/25): x = f⁻¹(y) ist Nullstelle von g(x) = f(x) − y. Für exp(e − 1) mit f = ln, x₀ = e: x₁ = e − (ln e − (e − 1))·e = e(e − 1) ≈ 4,67.</p>
+          <p>Für $f(x) = x^2 - a$ ist $x_{k+1} = x_k - \\frac{x_k^2 - a}{2x_k} = \\frac12\\big(x_k + \\frac{a}{x_k}\\big)$. Mit der binomischen Formel:</p>
+          ${tx(`x_{k+1} - \\sqrt a = \\frac{1}{2x_k}\\,\\big(x_k - \\sqrt a\\big)^2`)}
+          <p>Im Rechner: $a = (1 + m_a)\\cdot 2^{e_a}$, also $\\sqrt a = \\sqrt{1 + m_a}\\cdot 2^{e_a/2}$ ($e_a$ gerade) bzw. $\\sqrt{1 + m_a}\\,\\sqrt2\\cdot 2^{(e_a-1)/2}$. Man braucht nur $\\sqrt b$ für $b \\in (1, 2)$ (oder $(1, 4)$, SS 22) — mit $x_0 = 1$ ist der Fehler nach drei Schritten unter $2^{-15}$.</p>
+          <p><b>Umkehrfunktion</b> (WS 24/25): $x = f^{-1}(y)$ ist Nullstelle von $g(x) = f(x) - y$. Für $\\exp(e - 1)$ mit $f = \\ln$, $x_0 = e$: $x_1 = e - (\\ln e - (e - 1))\\cdot e = e(e - 1) \\approx 4{,}67$.</p>
         </div>
         ${pw("nt1", `${pseg("fn", Object.entries(NM_NEWTON_FNS).map(([k, v]) => [k, v.name]), "sqrt")}${pslider("x0", "Startwert x₀", 0, 100, 0.2, 100)}`, { wide: true })}
         ${nmTraps([
-          "Quadratische Konvergenz braucht f′(x*) ≠ 0. Bei mehrfachen Nullstellen (x³, x²⁰²⁰ in WS 19/20) nur linear: x<sub>k+1</sub> = (1 − 1/p)x<sub>k</sub>.",
-          "x₀ = 1 bei √a: x₁ = (1 + a)/2 &gt; √a, danach fällt die Folge monoton (Skizze SS 22).",
-          "Für lineares f(x) = Ax − b ist Newton nach <b>einem</b> Schritt exakt (WS 19/20): x₁ = x₀ − A⁻¹(Ax₀ − b) = A⁻¹b.",
+          "Quadratische Konvergenz braucht $f'(x^*) \\neq 0$. Bei mehrfachen Nullstellen ($x^3$, $x^{2020}$ in WS 19/20) nur linear: $x_{k+1} = (1 - \\frac1p)\\,x_k$.",
+          "$x_0 = 1$ bei $\\sqrt a$: $x_1 = \\frac{1 + a}{2} > \\sqrt a$, danach fällt die Folge monoton (Skizze SS 22).",
+          "Für lineares $f(x) = Ax - b$ ist Newton nach <b>einem</b> Schritt exakt (WS 19/20): $x_1 = x_0 - A^{-1}(Ax_0 - b) = A^{-1}b$.",
         ])}`,
       setup: (root) => nmWNewton1(root),
       check: [
-        { q: "Newton für f(x) = x² − 9 mit x₀ = 1. Was ist x₁?", opts: ["5", "3", "4", "−4"], why: "x₁ = ½(1 + 9/1) = 5." },
-        { q: "Was heißt lokal quadratische Konvergenz?", opts: ["‖x* − xₖ₊₁‖ ≤ C‖x* − xₖ‖² für Startwerte nah genug an x*", "Konvergenz für jeden Startwert", "Der Fehler halbiert sich in jedem Schritt", "Nach N Schritten exakt"], why: "Die Zahl richtiger Stellen verdoppelt sich ungefähr — aber nur nahe x*." },
-        { q: "Warum konvergiert Newton für f(x) = x³ nur linear?", opts: ["f′(x*) = 0: die Nullstelle ist mehrfach", "f ist nicht stetig", "Der Startwert ist zu weit weg", "f″ existiert nicht"], why: "xₖ₊₁ = xₖ − xₖ³/(3xₖ²) = ⅔xₖ." },
-        { q: "Für welche Startwerte konvergiert Newton für f(x) = 1/x − 1?", opts: ["x₀ ∈ (0, 2)", "alle x₀ > 0", "alle x₀ ≠ 0", "x₀ ∈ (−1, 1)"], why: "xₖ₊₁ = 2xₖ − xₖ². Übung 1: für x₀ ∉ [0, 2] Divergenz, bei 0 und 2 nicht durchführbar." },
+        { q: "Newton für $f(x) = x^2 - 9$ mit $x_0 = 1$. Was ist $x_1$?", opts: ["$5$", "$3$", "$4$", "$-4$"], why: "$x_1 = \\frac12(1 + 9/1) = 5$." },
+        { q: "Was heißt lokal quadratische Konvergenz?", opts: ["$\\|x^* - x_{k+1}\\| \\le C\\|x^* - x_k\\|^2$ für Startwerte nah genug an $x^*$", "Konvergenz für jeden Startwert", "Der Fehler halbiert sich in jedem Schritt", "Nach $N$ Schritten exakt"], why: "Die Zahl richtiger Stellen verdoppelt sich ungefähr — aber nur nahe $x^*$." },
+        { q: "Warum konvergiert Newton für $f(x) = x^3$ nur linear?", opts: ["$f'(x^*) = 0$: die Nullstelle ist mehrfach", "$f$ ist nicht stetig", "Der Startwert ist zu weit weg", "$f''$ existiert nicht"], why: "$x_{k+1} = x_k - \\frac{x_k^3}{3x_k^2} = \\frac23 x_k$." },
+        { q: "Für welche Startwerte konvergiert Newton für $f(x) = \\frac1x - 1$?", opts: ["$x_0 \\in (0, 2)$", "alle $x_0 > 0$", "alle $x_0 \\neq 0$", "$x_0 \\in (-1, 1)$"], why: "$x_{k+1} = 2x_k - x_k^2$. Übung 1: für $x_0 \\notin [0, 2]$ Divergenz, bei $0$ und $2$ nicht durchführbar." },
       ],
     },
     {
       id: "3.2", title: "Newton in N Dimensionen", short: "Newton ND", about: "Jacobi-Matrix, LGS pro Schritt, Konvergenzsatz, Stoppkriterium, vereinfacht, gedämpft",
       html: () => `
         ${nmGist([
-          `f: D ⊂ ℝ<sup>N</sup> → ℝ<sup>N</sup>. Statt durch f′ zu teilen, löst man in jedem Schritt ein <b>LGS</b>: f′(x<sub>k</sub>)d<sub>k</sub> = −f(x<sub>k</sub>), x<sub>k+1</sub> = x<sub>k</sub> + d<sub>k</sub>.`,
-          `<b>Stopp</b>, wenn ‖d<sub>k</sub>‖ &lt; ε — vorsichtig mit ‖f(x<sub>k</sub>)‖ &lt; ε: λf hat dieselben Nullstellen und dieselben Iterierten.`,
-          `<b>Vereinfacht</b>: A ≈ f′(x₀) nur einmal zerlegen — billiger pro Schritt, aber nur noch lokal linear.`,
+          `$f\\colon D \\subset \\R^N \\to \\R^N$. Statt durch $f'$ zu teilen, löst man in jedem Schritt ein <b>LGS</b>: $f'(x_k)\\,d_k = -f(x_k)$, $x_{k+1} = x_k + d_k$.`,
+          `<b>Stopp</b>, wenn $\\|d_k\\| < \\varepsilon$ — vorsichtig mit $\\|f(x_k)\\| < \\varepsilon$: $\\lambda f$ hat dieselben Nullstellen und dieselben Iterierten.`,
+          `<b>Vereinfacht</b>: $A \\approx f'(x_0)$ nur einmal zerlegen — billiger pro Schritt, aber nur noch lokal linear.`,
         ])}
         <div class="card">
           <h3>Herleitung und Algorithmus</h3>
-          <p>Taylor um x₀ nahe x*: 0 = f(x*) = f(x₀) + f′(x₀)(x* − x₀) + O(‖x₀ − x*‖²). Ohne den quadratischen Rest: x* ≈ x₀ − f′(x₀)⁻¹f(x₀).</p>
+          <p>Taylor um $x_0$ nahe $x^*$: $0 = f(x^*) = f(x_0) + f'(x_0)(x^* - x_0) + O(\\|x_0 - x^*\\|^2)$. Ohne den quadratischen Rest: $x^* \\approx x_0 - f'(x_0)^{-1}f(x_0)$.</p>
           <ol class="nm-ol">
-            <li><b>S0</b> Wähle x₀ ∈ D und eine Toleranz ε, k = 0.</li>
-            <li><b>S1</b> Löse f′(x<sub>k</sub>)d<sub>k</sub> = −f(x<sub>k</sub>) (z. B. LR-Zerlegung), x<sub>k+1</sub> = x<sub>k</sub> + d<sub>k</sub>.</li>
-            <li><b>S2</b> Falls ‖d<sub>k</sub>‖ &lt; ε: STOPP, sonst k um 1 erhöhen, weiter mit S1.</li>
+            <li><b>S0</b> Wähle $x_0 \\in D$ und eine Toleranz $\\varepsilon$, $k = 0$.</li>
+            <li><b>S1</b> Löse $f'(x_k)\\,d_k = -f(x_k)$ (z. B. LR-Zerlegung), $x_{k+1} = x_k + d_k$.</li>
+            <li><b>S2</b> Falls $\\|d_k\\| < \\varepsilon$: STOPP, sonst $k$ um 1 erhöhen, weiter mit S1.</li>
           </ol>
           <h3>Satz: lokal quadratische Konvergenz</h3>
-          <p>D offen, f ∈ C²(D, ℝ<sup>N</sup>), f(x*) = 0 und f′(x*) <b>regulär</b>. Dann gibt es eine Kugel K = {‖x − x*‖ ≤ ρ} ⊂ D, in der x* die einzige Nullstelle ist, alle Iterierten in K bleiben, x<sub>k</sub> → x* und ‖x* − x<sub>k</sub>‖ ≤ C‖x* − x<sub>k−1</sub>‖².</p>
-          <h3>Warum ‖f(x<sub>k</sub>)‖ ein schlechtes Stoppkriterium ist (SS 26)</h3>
-          <p>Aus der Taylorentwicklung: ‖x<sub>k</sub> − x*‖ ≈ ‖f′(x*)⁻¹f(x<sub>k</sub>)‖ ≤ ‖f′(x*)⁻¹‖ ‖f(x<sub>k</sub>)‖. Ist ‖f′(x*)⁻¹‖ groß, sagt ein kleines ‖f(x<sub>k</sub>)‖ nichts über den Fehler.</p>
+          <p>$D$ offen, $f \\in C^2(D, \\R^N)$, $f(x^*) = 0$ und $f'(x^*)$ <b>regulär</b>. Dann gibt es eine Kugel $K = \\{\\|x - x^*\\| \\le \\rho\\} \\subset D$, in der $x^*$ die einzige Nullstelle ist, alle Iterierten in $K$ bleiben, $x_k \\to x^*$ und $\\|x^* - x_k\\| \\le C\\,\\|x^* - x_{k-1}\\|^2$.</p>
+          <h3>Warum $\\|f(x_k)\\|$ ein schlechtes Stoppkriterium ist (SS 26)</h3>
+          <p>Aus der Taylorentwicklung: $\\|x_k - x^*\\| \\approx \\|f'(x^*)^{-1}f(x_k)\\| \\le \\|f'(x^*)^{-1}\\|\\,\\|f(x_k)\\|$. Ist $\\|f'(x^*)^{-1}\\|$ groß, sagt ein kleines $\\|f(x_k)\\|$ nichts über den Fehler.</p>
           ${ppFacts([
-            ["vereinfacht", "A d<sub>k</sub> = −f(x<sub>k</sub>) mit festem A ≈ f′(x₀): eine LR-Zerlegung für alle Schritte, je Schritt nur N² statt N³/3. Lokal linear: ‖x* − x<sub>k</sub>‖ ≤ Cθ<sup>k</sup>‖x* − x₀‖, θ ∈ (0, 1)."],
-            ["gedämpft", "x<sub>k+1</sub> = x<sub>k</sub> − t<sub>k</sub>f′(x<sub>k</sub>)⁻¹f(x<sub>k</sub>) mit t<sub>k</sub> ∈ (0, 1], so dass ‖f(x<sub>k+1</sub>)‖ &lt; ‖f(x<sub>k</sub>)‖: bessere globale Konvergenz, aber nur linear."],
-            ["Homotopie", "f<sub>s</sub>(x) = (1 − s)g(x) + sf(x) mit einfachem g und bekannter Nullstelle; s schrittweise von 0 auf 1."],
-            ["Differenzen", "Ist f′ teuer: (A<sub>k</sub>)<sub>nm</sub> = (f<sub>n</sub>(x<sub>k</sub> + he<sub>m</sub>) − f<sub>n</sub>(x<sub>k</sub>))/h."],
+            ["vereinfacht", "$A\\,d_k = -f(x_k)$ mit festem $A \\approx f'(x_0)$: eine LR-Zerlegung für alle Schritte, je Schritt nur $N^2$ statt $\\tfrac13 N^3$. Lokal linear: $\\|x^* - x_k\\| \\le C\\theta^k\\|x^* - x_0\\|$, $\\theta \\in (0, 1)$."],
+            ["gedämpft", "$x_{k+1} = x_k - t_k f'(x_k)^{-1}f(x_k)$ mit $t_k \\in (0, 1]$, so dass $\\|f(x_{k+1})\\| < \\|f(x_k)\\|$: bessere globale Konvergenz, aber nur linear."],
+            ["Homotopie", "$f_s(x) = (1 - s)\\,g(x) + s\\,f(x)$ mit einfachem $g$ und bekannter Nullstelle; $s$ schrittweise von $0$ auf $1$."],
+            ["Differenzen", "Ist $f'$ teuer: $(A_k)_{nm} = \\frac1h\\big(f_n(x_k + he_m) - f_n(x_k)\\big)$."],
           ])}
         </div>
         ${pw("nt2", `${pseg("s", [[0, "x₀ = (1, −1)"], [1, "(2, 2)"], [2, "(0,4; 0,3)"], [3, "(−1,6; 0,6)"], [4, "(≈0, 1)"]], 0)}${pseg("simp", [[0, "Newton"], [1, "vereinfacht"]], 0)}`, { wide: true })}
-        <p class="small muted">Schnittpunkt von Kreis x² + y² = 2 und Hyperbel x² − y² = 1 (WS 17/18): die Lösungen sind (±√1,5; ±√0,5).</p>
+        <p class="small muted">Schnittpunkt von Kreis $x^2 + y^2 = 2$ und Hyperbel $x^2 - y^2 = 1$ (WS 17/18): die Lösungen sind $\\big(\\pm\\sqrt{1{,}5},\\ \\pm\\sqrt{0{,}5}\\big)$.</p>
         ${nmTraps([
-          "Nie f′(x<sub>k</sub>)⁻¹ berechnen — ein LGS lösen.",
-          "Konvergiert Newton für f ∈ C¹, dann immer gegen eine Lösung.",
-          "Lückentext SS 17: in jedem Schritt muss ein <b>lineares Gleichungssystem</b> gelöst werden; beim vereinfachten Verfahren ersetzt man f′(x<sub>k</sub>) durch f′(x₀) und braucht <b>eine</b> LR-Zerlegung.",
+          "Nie $f'(x_k)^{-1}$ berechnen — ein LGS lösen.",
+          "Konvergiert Newton für $f \\in C^1$, dann immer gegen eine Lösung.",
+          "Lückentext SS 17: in jedem Schritt muss ein <b>lineares Gleichungssystem</b> gelöst werden; beim vereinfachten Verfahren ersetzt man $f'(x_k)$ durch $f'(x_0)$ und braucht <b>eine</b> LR-Zerlegung.",
         ])}`,
       setup: (root) => nmWNewton2(root),
       check: [
-        { q: "Was wird in jedem Schritt des Newton-Verfahrens in N Dimensionen gelöst?", opts: ["f′(xₖ)dₖ = −f(xₖ)", "f(xₖ)dₖ = −f′(xₖ)", "f′(xₖ)⁻¹ wird berechnet", "f(xₖ + dₖ) = 0"], why: "Die Jacobi-Matrix wird nicht invertiert; man löst das lineare System." },
+        { q: "Was wird in jedem Schritt des Newton-Verfahrens in $N$ Dimensionen gelöst?", opts: ["$f'(x_k)\\,d_k = -f(x_k)$", "$f(x_k)\\,d_k = -f'(x_k)$", "$f'(x_k)^{-1}$ wird berechnet", "$f(x_k + d_k) = 0$"], why: "Die Jacobi-Matrix wird nicht invertiert; man löst das lineare System." },
         { q: "Was ist der Nachteil des vereinfachten Newton-Verfahrens?", opts: ["Nur noch lokal lineare Konvergenz", "Mehr LR-Zerlegungen", "Es konvergiert nie", "Es braucht die zweite Ableitung"], why: "Die feste Matrix spart Aufwand, kostet aber die quadratische Konvergenz." },
-        { q: "Welche Voraussetzung braucht der Satz über lokal quadratische Konvergenz?", opts: ["f′(x*) regulär", "f linear", "x₀ = 0", "f′(x) regulär für alle x"], why: "Regulär in der Lösung (f ∈ C²); dann gibt es eine Kugel um x*, in der es klappt." },
-        { q: "f(x) = Ax − b, A regulär. Nach wie vielen Newton-Schritten ist man exakt?", opts: ["nach einem", "nach N", "nie", "nach zwei"], why: "f′ = A, also x₁ = x₀ − A⁻¹(Ax₀ − b) = A⁻¹b." },
+        { q: "Welche Voraussetzung braucht der Satz über lokal quadratische Konvergenz?", opts: ["$f'(x^*)$ regulär", "$f$ linear", "$x_0 = 0$", "$f'(x)$ regulär für alle $x$"], why: "Regulär in der Lösung ($f \\in C^2$); dann gibt es eine Kugel um $x^*$, in der es klappt." },
+        { q: "$f(x) = Ax - b$, $A$ regulär. Nach wie vielen Newton-Schritten ist man exakt?", opts: ["nach einem", "nach $N$", "nie", "nach zwei"], why: "$f' = A$, also $x_1 = x_0 - A^{-1}(Ax_0 - b) = A^{-1}b$." },
       ],
     },
     {
       id: "3.3", title: "Anwendungen", short: "Anwendungen", about: "Minimierung über ∇f = 0, Umkehrfunktion, nichtlineare Ausgleichsrechnung",
       html: () => `
         ${nmGist([
-          `<b>Minimieren</b>: ein Minimum von f: ℝ<sup>N</sup> → ℝ erfüllt ∇f(x*) = 0. Newton auf F(x) = ∇f(x)ᵀ, mit der Hesse-Matrix als Jacobi-Matrix.`,
-          `<b>Umkehrfunktion</b>: f⁻¹(y) als Nullstelle von f(x) − y.`,
-          `<b>Nichtlinearer Ausgleich</b>: ‖f(x)‖₂ = min! durch eine Folge linearer Ausgleichsprobleme (Gauß-Newton).`,
+          `<b>Minimieren</b>: ein Minimum von $f\\colon \\R^N \\to \\R$ erfüllt $\\nabla f(x^*) = 0$. Newton auf $F(x) = \\nabla f(x)^\\top$, mit der Hesse-Matrix als Jacobi-Matrix.`,
+          `<b>Umkehrfunktion</b>: $f^{-1}(y)$ als Nullstelle von $f(x) - y$.`,
+          `<b>Nichtlinearer Ausgleich</b>: $\\|f(x)\\|_2 = \\min!$ durch eine Folge linearer Ausgleichsprobleme (Gauß-Newton).`,
         ])}
         <div class="card">
           <h3>Newton für ein Minimum (WS 19/20, Übung 7)</h3>
-          ${F(`H<sub>f</sub>(x<sub>k</sub>) d<sub>k</sub> = −∇f(x<sub>k</sub>)<sup>⊤</sup>,  x<sub>k+1</sub> = x<sub>k</sub> + d<sub>k</sub>`)}
-          <p>Beispiel f(x) = cos x₁ + x₁ e<sup>x₂</sup>, x₀ = 0: ∇f = (−sin x₁ + e<sup>x₂</sup>, x₁e<sup>x₂</sup>) = (1, 0), H<sub>f</sub> = ${mx([["−cos x₁", "e<sup>x₂</sup>"], ["e<sup>x₂</sup>", "x₁e<sup>x₂</sup>"]])} = ${mx([["−1", "1"], ["1", "0"]])}. Aus H d = −(1, 0)ᵀ folgt d = (0, −1)ᵀ, also x₁ = (0, −1)ᵀ.</p>
+          ${tx(`H_f(x_k)\\,d_k = -\\nabla f(x_k)^\\top, \\qquad x_{k+1} = x_k + d_k`)}
+          <p>Beispiel $f(x) = \\cos x_1 + x_1e^{x_2}$, $x_0 = 0$: $\\nabla f = (-\\sin x_1 + e^{x_2},\\ x_1e^{x_2}) = (1, 0)$, $H_f = \\begin{pmatrix}-\\cos x_1 & e^{x_2}\\\\ e^{x_2} & x_1e^{x_2}\\end{pmatrix} = \\begin{pmatrix}-1&1\\\\1&0\\end{pmatrix}$. Aus $H_f\\,d = -(1, 0)^\\top$ folgt $d = (0, -1)^\\top$, also $x_1 = (0, -1)^\\top$.</p>
           <p class="small muted">Newton findet einen stationären Punkt — ob Minimum, Maximum oder Sattel, entscheidet die Hesse-Matrix dort.</p>
           <h3>Weitere Anwendungen der Vorlesung</h3>
           ${ppFacts([
             ["inverse Kinematik", "Gelenkwinkel eines Roboterarms zu einer gewünschten Position: ein nichtlineares System."],
             ["Teilproblem", "Implizite Verfahren und Ausgleichsprobleme führen auf nichtlineare Systeme."],
-            ["Fast inverse square root", "Übung 2: 1/√y mit einer Bitmanipulation als Startwert und einem Newton-Schritt für f(x) = 1/x² − y."],
-            ["Einheitswurzeln", "Übung 1: z³ = 1 in ℂ als System in ℝ² für (Re z, Im z)."],
+            ["Fast inverse square root", "Übung 2: $1/\\sqrt y$ mit einer Bitmanipulation als Startwert und einem Newton-Schritt für $f(x) = 1/x^2 - y$."],
+            ["Einheitswurzeln", "Übung 1: $z^3 = 1$ in $\\mathbb{C}$ als System in $\\R^2$ für $(\\operatorname{Re} z, \\operatorname{Im} z)$."],
           ])}
           <h3>Lösbarkeit</h3>
-          <p>Keine Lösung (eˣ), mehrere (x² − a) oder unendlich viele (x sin(1/x)) — und selbst eine Formel wie √a hilft dem Rechner nicht. Die Lösung wird approximiert: es bleibt ein Approximationsfehler.</p>
+          <p>Keine Lösung ($e^x$), mehrere ($x^2 - a$) oder unendlich viele ($x\\sin\\frac1x$) — und selbst eine Formel wie $\\sqrt a$ hilft dem Rechner nicht. Die Lösung wird approximiert: es bleibt ein Approximationsfehler.</p>
         </div>
         ${nmTraps([
-          "Beim Minimieren ist die Jacobi-Matrix von ∇f die <b>Hesse-Matrix</b> (symmetrisch) — nicht f′.",
-          "Die Kondition des Nullstellenproblems f(x) = 0 ist |f′(x*)⁻¹|: flache Funktionen sind schlecht konditioniert, f′(x*) = 0 heißt „nicht sachgemäß gestellt“.",
+          "Beim Minimieren ist die Jacobi-Matrix von $\\nabla f$ die <b>Hesse-Matrix</b> (symmetrisch) — nicht $f'$.",
+          "Die Kondition des Nullstellenproblems $f(x) = 0$ ist $|f'(x^*)^{-1}|$: flache Funktionen sind schlecht konditioniert, $f'(x^*) = 0$ heißt „nicht sachgemäß gestellt“.",
         ])}`,
       check: [
-        { q: "Newton für min f(x): welche Gleichung löst man?", opts: ["∇f(x) = 0 mit der Hesse-Matrix als Jacobi-Matrix", "f(x) = 0", "f′(x) = f(x)", "H_f(x) = 0"], why: "Notwendige Bedingung eines Minimums: der Gradient verschwindet." },
-        { q: "Wie berechnet man x = f⁻¹(y) mit Newton, wenn f⁻¹ unbekannt ist?", opts: ["Nullstelle von g(x) = f(x) − y", "Nullstelle von f⁻¹(x) − y", "Fixpunkt von f", "Minimum von f"], why: "g′ = f′, also xₖ₊₁ = xₖ − (f(xₖ) − y)/f′(xₖ)." },
-        { q: "Wie wird ein nichtlineares Ausgleichsproblem ‖f(x)‖₂ = min! gelöst?", opts: ["Iterativ durch lineare Ausgleichsprobleme", "Mit einer Cholesky-Zerlegung von f", "Mit dem QR-Algorithmus", "Gar nicht"], why: "In jedem Schritt wird f linearisiert." },
-        { q: "Was ist |f′(x*)| ≈ 0 für das Nullstellenproblem?", opts: ["schlecht konditioniert", "gut konditioniert", "instabil", "quadratisch konvergent"], why: "|x* − x*(ε)| ≈ |ε|/|f′(x*)|: kleine Störungen verschieben die Nullstelle stark." },
+        { q: "Newton für $\\min f(x)$: welche Gleichung löst man?", opts: ["$\\nabla f(x) = 0$ mit der Hesse-Matrix als Jacobi-Matrix", "$f(x) = 0$", "$f'(x) = f(x)$", "$H_f(x) = 0$"], why: "Notwendige Bedingung eines Minimums: der Gradient verschwindet." },
+        { q: "Wie berechnet man $x = f^{-1}(y)$ mit Newton, wenn $f^{-1}$ unbekannt ist?", opts: ["Nullstelle von $g(x) = f(x) - y$", "Nullstelle von $f^{-1}(x) - y$", "Fixpunkt von $f$", "Minimum von $f$"], why: "$g' = f'$, also $x_{k+1} = x_k - \\frac{f(x_k) - y}{f'(x_k)}$." },
+        { q: "Wie wird ein nichtlineares Ausgleichsproblem $\\|f(x)\\|_2 = \\min!$ gelöst?", opts: ["Iterativ durch lineare Ausgleichsprobleme", "Mit einer Cholesky-Zerlegung von $f$", "Mit dem QR-Algorithmus", "Gar nicht"], why: "In jedem Schritt wird $f$ linearisiert." },
+        { q: "Was ist $|f'(x^*)| \\approx 0$ für das Nullstellenproblem?", opts: ["schlecht konditioniert", "gut konditioniert", "instabil", "quadratisch konvergent"], why: "$|x^* - x^*(\\varepsilon)| \\approx |\\varepsilon|/|f'(x^*)|$: kleine Störungen verschieben die Nullstelle stark." },
       ],
     },
   ],

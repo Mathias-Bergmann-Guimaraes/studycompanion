@@ -3152,3 +3152,5 @@ b.nm-exact, b.nm-approx, b.nm-err, b.nm-piv, b.nm-ell { font-family: "Cambria Ma
 .nm-sheet-f { min-width: 0; overflow-x: auto; overflow-y: hidden; }
 .nm-sheet-f .katex-display { margin: 0; text-align: left; }
 .nm-sheet-f .katex-display > .katex { text-align: left; }
+/* A traps box right before the section check (NuMa) would touch it. */
+.pp-traps + .len-check { margin-top: 16px; }

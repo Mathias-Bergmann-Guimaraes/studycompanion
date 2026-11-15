@@ -281,6 +281,18 @@ added up across days, so the page shows the most people in a single day instead.
 only a feature's name, never what was typed, and sends nothing to a third party. To count a new
 feature, add it to `USAGE_GROUPS` in `server.js` and call `track("its.name")` in the page.
 
+**Old exam PDFs on the server.** They are not in git, so `git pull` never brings them. From a
+Windows PC that has them in `public/len-exams/`, `public/propa-exams/` and `public/numa-exams/`, copy
+them over SSH (overwrites, never deletes; no restart needed):
+
+```
+.\tools\upload-exams.ps1 -Server user@host -RemoteDir /path/to/studycompanion -DryRun
+.\tools\upload-exams.ps1 -Server user@host -RemoteDir /path/to/studycompanion
+```
+
+`-Courses numa` limits it to one course; `-NumaFolder "<downloaded NuMa course folder>"` first
+rebuilds `public/numa-exams/` from the downloaded files under the names the site expects.
+
 Settings via environment variables: `PORT` (default 5173), `HOST` (default 0.0.0.0),
 `ADMIN_PORT` (default 3004) and `DATA_FILE` (default `data/access.json`).
 

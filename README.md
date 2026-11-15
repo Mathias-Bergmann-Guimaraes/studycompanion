@@ -1,7 +1,8 @@
 # Study Companion
 
 A study site with a course picker as its front page. Its courses so far are Japanese, LEN
-(electrical networks), ProPa (programming paradigms) and NuMa (numerical mathematics), see below. Japanese is a visual grammar course: colour-coded sentence blocks, particles, verb conjugation,
+(electrical networks), ProPa (programming paradigms), NuMa (numerical mathematics) and GKI
+(foundations of AI), see below. Japanese is a visual grammar course: colour-coded sentence blocks, particles, verb conjugation,
 adjectives, verb patterns and a Practice tab — plus a 50-lesson course with practice
 sentences, a 5-question check (worth up to three stars) for every grammar point and a test for
 every lesson. After Minna no Nihongo's 50 lessons come extra lessons from the university course
@@ -234,6 +235,43 @@ the server as `<id>.pdf` and `<id>-loesung.pdf` for `17-ss`, `1718-ws`, `19-ss` 
 `1920-ws`, `20-ss`, `2021-ws`, `22-ss`, `2223-ws`, `24-ss`, `2425-ws` and `26-ss` (only
 `26-ss-loesung.pdf`, which contains the tasks).
 
+The fifth course is **GKI** (Grundlagen der Künstlichen Intelligenz, WS 26/27, Schäfer and Neumann),
+in German like the lecture. Like LEN it is **still running**: it has a chapter for each lecture so far
+— VL 1 *Einführung* (successes and risks, the EU AI Act, history, KI ⊃ ML ⊃ DL, agents, modelling,
+learning and reasoning), VL 2 *Lineare Modelle* (the data matrix, the normal equation, R² and
+Anscombe, basis functions and overfitting, ridge, probabilities and Bayes, Monte Carlo and the
+Gaussian, maximum likelihood) and VL 3 *Klassifikation* (confusion matrix, ROC and prevalence,
+linear classifiers and feature maps, logistic regression and cross-entropy, gradient descent and
+mini-batches, softmax) — 18 sections with drawings you can play with (points you drag under a
+least-squares line, a train/validation curve over the polynomial degree, a probability table as an
+area that you condition by clicking, a threshold moving through a confusion matrix, logistic
+regression learning step by step), the slides' self-test questions with answers, traps and a check
+(`gkiChecks`). Exercise sheet 2 is worked through where it belongs. `GKI_VL_DONE` in
+`public/js/gki.js` says how many lectures have been given; topics of later lectures are shown pale
+with "kommt in VL n". The shared parts are in `public/js/gki.js`, the chapters in `gki-k1.js` …
+`gki-k3.js`; later chapters get files of their own, a tab and a panel in `index.html`, and join
+`GKI_CHAPTERS`. Formulas are KaTeX like NuMa's.
+
+GKI's **Altklausuren** tab lists the eight exams from WS 22/23 to SS 26 task by task, summarised and
+tagged by topic (the "Allgemeine Fragen" split by topic), with a points-per-topic grid, done ticks
+(`gkiExamDone`), a switch for only what has been taught, and links into the PDFs
+(`public/js/gki-exams.js`). **Übungsaufgaben** has 37 exam-style tasks with new numbers each time,
+for the whole lecture, not just VL 1–3: the normal equation, R², Bayes with two sensors, MLE,
+confusion-matrix metrics, prevalence, ROC/AUC, a logistic-regression gradient step, softmax, gradient
+descent on a parabola, mini-batches, code-reading tasks in NumPy (new in the exam from WS 26/27), MLP
+parameters, a forward pass, backpropagation, ensembles, PCA, k-means, an EM step, CNN sizes and a
+convolution by hand, RNN parameters, Q-learning, value iteration, discounting, Bayes nets, HMM
+filtering, A*, BFS/DFS, search concepts, logic and mixed "Allgemeine Fragen"
+(`public/js/gki-tasks.js`, `gkiTaskSolved`). It reuses NuMa's task format and marking; answers can be
+fractions, lists separated by `;` or letter sequences like `S A C G`, and since the exam allows no
+calculator, tasks that need σ, e or ln give them as a hint. The **Probeklausur** builds an exam like
+those since SS 24 — "Allgemeine Fragen", search, RL and three more topics, about 75 points at 1.2
+minutes a point — or one on only what has been taught (`public/js/gki-mock.js`, `gkiMock`). The PDFs
+are KIT's and **not in git** (`public/gki-exams/` is ignored): copy them onto the server as
+`2223-ws.pdf`, `23-ss.pdf`, `2324-ws.pdf`, `2324-ws-loesung.pdf`, `24-ss.pdf`, `2425-ws.pdf`,
+`2425-ws-en.pdf`, `25-ss.pdf`, `2526-ws.pdf` and `26-ss.pdf` (`tools/upload-exams.ps1 -GkiFolder`
+renames the downloaded `GKI_*.pdf` files).
+
 The whole site is **private**. Visitors without a login only see a login page. From there they
 can pick a username and password and send an access request, which you approve by hand — or
 use a single-use invite code you gave them, which lets them in straight away. After that they
@@ -282,7 +320,7 @@ only a feature's name, never what was typed, and sends nothing to a third party.
 feature, add it to `USAGE_GROUPS` in `server.js` and call `track("its.name")` in the page.
 
 **Old exam PDFs on the server.** They are not in git, so `git pull` never brings them. From a
-Windows PC that has them in `public/len-exams/`, `public/propa-exams/` and `public/numa-exams/`, copy
+Windows PC that has them in `public/len-exams/`, `public/propa-exams/`, `public/numa-exams/` and `public/gki-exams/`, copy
 them over SSH (overwrites, never deletes; no restart needed):
 
 ```
@@ -291,7 +329,8 @@ them over SSH (overwrites, never deletes; no restart needed):
 ```
 
 `-Courses numa` limits it to one course; `-NumaFolder "<downloaded NuMa course folder>"` first
-rebuilds `public/numa-exams/` from the downloaded files under the names the site expects.
+rebuilds `public/numa-exams/` from the downloaded files under the names the site expects, and
+`-GkiFolder "<folder with the GKI_*.pdf files>"` does the same for `public/gki-exams/`.
 
 Settings via environment variables: `PORT` (default 5173), `HOST` (default 0.0.0.0),
 `ADMIN_PORT` (default 3004) and `DATA_FILE` (default `data/access.json`).

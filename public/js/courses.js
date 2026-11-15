@@ -1,9 +1,9 @@
 // The course picker, where the site opens (an address with no #page, or #courses). Each course is
-// a set of tabs (`tabs`, the first is its Home); picking one opens its Home. Japanese, LEN, ProPa and
-// NuMa can be opened, the rest are placeholders (`soon`). Each course has its own main colour (`color`, a token
+// a set of tabs (`tabs`, the first is its Home); picking one opens its Home. Japanese, LEN, ProPa,
+// NuMa and GKI can be opened, the rest are placeholders (`soon`). Each course has its own main colour (`color`, a token
 // from style.css) and its own line under every page (`footer`). Loaded after home.js and uses its
 // helpers and game.js's; the LEN card comes from len.js, the ProPa card from propa.js, the NuMa card
-// from numa.js.
+// from numa.js, the GKI card from gki.js.
 
 const COURSES = [
   {
@@ -49,8 +49,18 @@ const COURSES = [
     footer: `<span lang="de">Farben bedeuten überall dasselbe — grün ist immer die exakte Lösung, blau eine Näherung, rot ein Fehler.</span>`,
     card: (c) => numaCourseCardHTML(c),
   },
+  {
+    id: "gki",
+    tabs: ["gki-home", "gki-k1", "gki-k2", "gki-k3", "gki-sheet", "gki-exams", "gki-practice", "gki-mock"],
+    mark: "GKI",
+    lang: "de",
+    color: "var(--course-gki)",
+    name: "Grundlagen der Künstlichen Intelligenz",
+    about: "Regression, Wahrscheinlichkeit, Klassifikation und Lernen — mit Zeichnungen zum Ausprobieren.",
+    footer: `<span lang="de">Farben bedeuten überall dasselbe — grün ist die Wahrheit, blau die Vorhersage, rot ein Fehler, gold ein Gradient.</span>`,
+    card: (c) => gkiCourseCardHTML(c),
+  },
   { id: "robotics1", soon: true, mark: "Rob I", lang: "en", color: "var(--course-robotics)", name: "Robotics I", about: "Robot arms: kinematics, dynamics and control." },
-  { id: "gki", soon: true, mark: "GKI", lang: "de", color: "var(--course-gki)", name: "Grundlagen der künstlichen Intelligenz", about: "Search, logic, probability and learning." },
 ];
 
 // The course a tab belongs to, for the top bar (the picker counts as Japanese, whose bar it hides).
@@ -80,6 +90,7 @@ function renderCourses() {
   wireLenCourseCard();
   wirePropaCourseCard();
   wireNumaCourseCard();
+  wireGkiCourseCard();
   const go = $("#courseContinue");
   if (go) go.onclick = () => {
     track("courses.continue");

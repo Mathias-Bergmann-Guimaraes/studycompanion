@@ -464,6 +464,9 @@ const PROGRESS_MERGE = {
   // NuMa: the best score of each section's check ("2.3"), old exam tasks ticked off ("2425-ws/1"),
   // exam tasks fully right per kind, and the best mock exam (best %, how many).
   numaChecks: "scores", numaExamDone: "list", numaTaskSolved: "scores", numaMock: "scores",
+  // GKI: the same four as NuMa — section checks ("2.3"), old exam tasks ticked off ("2526-ws/1"),
+  // exam tasks fully right per kind, and the best mock exam.
+  gkiChecks: "scores", gkiExamDone: "list", gkiTaskSolved: "scores", gkiMock: "scores",
 };
 const MAX_HISTORY_DAYS = 366;
 const MAX_PROGRESS_BODY = 512 * 1024;
@@ -645,15 +648,19 @@ const USAGE_GROUPS = {
     "tab.numa-home": "NuMa Home", "tab.numa-k1": "NuMa 1 Gleitpunkt", "tab.numa-k2": "NuMa 2 LGS direkt", "tab.numa-k3": "NuMa 3 Newton",
     "tab.numa-k4": "NuMa 4 Interpolation", "tab.numa-k5": "NuMa 5 Integration", "tab.numa-k6": "NuMa 6 Eigenwerte", "tab.numa-k7": "NuMa 7 Iterative Verfahren",
     "tab.numa-sheet": "NuMa Formelsammlung", "tab.numa-exams": "NuMa Old exams", "tab.numa-practice": "NuMa Practice", "tab.numa-mock": "NuMa Mock exam",
+    "tab.gki-home": "GKI Home", "tab.gki-k1": "GKI 1 Einführung", "tab.gki-k2": "GKI 2 Lineare Modelle", "tab.gki-k3": "GKI 3 Klassifikation",
+    "tab.gki-sheet": "GKI Formelsammlung", "tab.gki-exams": "GKI Old exams", "tab.gki-practice": "GKI Practice", "tab.gki-mock": "GKI Mock exam",
   },
   Listen: { "listen.open": "Videos opened", "listen.vote": "Likes and dislikes", "listen.save": "Bookmarks changed", "listen.channel": "Favourite channels changed" },
-  "Course picker": { "courses.open": "Courses opened", "courses.continue": "Continue lesson button", "courses.lenContinue": "Continue LEN section button", "courses.propaContinue": "Continue ProPa section button", "courses.numaContinue": "Continue NuMa section button" },
+  "Course picker": { "courses.open": "Courses opened", "courses.continue": "Continue lesson button", "courses.lenContinue": "Continue LEN section button", "courses.propaContinue": "Continue ProPa section button", "courses.numaContinue": "Continue NuMa section button", "courses.gkiContinue": "Continue GKI section button" },
   LEN: { "len.continue": "Continue button on LEN Home", "len.check": "Section checks started", "len.checkDone": "Section checks finished",
     "len.practice": "Practice tasks made", "len.mock": "Mock exams started", "len.mockDone": "Mock exams handed in" },
   ProPa: { "propa.continue": "Continue button on ProPa Home", "propa.check": "Section checks started", "propa.checkDone": "Section checks finished",
     "propa.practice": "Practice drills made", "propa.task": "Exam tasks made", "propa.mock": "Mock exams started", "propa.mockDone": "Mock exams handed in", "propa.pbt": "Property tests run", "propa.examDone": "Old exam tasks ticked" },
   NuMa: { "numa.continue": "Continue button on NuMa Home", "numa.check": "Section checks started", "numa.checkDone": "Section checks finished",
     "numa.task": "Exam tasks made", "numa.mock": "Mock exams started", "numa.mockDone": "Mock exams handed in", "numa.examDone": "Old exam tasks ticked" },
+  GKI: { "gki.continue": "Continue button on GKI Home", "gki.check": "Section checks started", "gki.checkDone": "Section checks finished",
+    "gki.task": "Exam tasks made", "gki.mock": "Mock exams started", "gki.mockDone": "Mock exams handed in", "gki.examDone": "Old exam tasks ticked" },
   Home: { "home.continue": "Continue button", "home.explore": "Explore tiles", "home.stats": "Weak points opened from Your progress" },
   Lessons: {
     "lesson.open": "Lessons opened", "lesson.practice": "Practice questions answered", "lesson.check": "Grammar checks started",

@@ -148,9 +148,11 @@ A Formulas & terms tab collects the formulas and a German–English glossary. Th
 `public/js/len.js`; later chapters get files of their own and join `LEN_CHAPTERS`.
 
 For the exam, LEN has three more tabs. **Altklausuren** lists the ten old exams (2018–2022) task by
-task, tagged by topic (locus, network, AC, Bode, op-amp) and method (star–delta, mesh analysis, …),
-with a filter for both, a tick for the tasks you've done, and links that open the PDF on the task's
-page or its solution's (`public/js/len-exams.js`). **Übungsaufgaben** makes tasks like the exams'
+task, like the NuMa and GKI pages: a table of points per topic and exam, the format and rules from the
+cover pages, and for each task what its parts ask (in German and English), tagged by topic (locus,
+network, AC, Bode, op-amp) and method (star–delta, mesh analysis, …), with a filter for both, a tick
+for the tasks you've done, links that open the PDF on the task's page or its solution's, and a button
+back to the course section where one exists (`public/js/len-exams.js`). **Übungsaufgaben** makes tasks like the exams'
 sub-questions with new numbers each time — mesh and nodal analysis with Cramer's rule, star–delta,
 complex power, compensation, resonance and Q, loci, Bode plots, op-amp circuits and theory questions —
 checks the answers and shows the worked solution (`public/js/len-gen.js`). **Probeklausur** puts

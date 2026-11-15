@@ -6,3 +6,5 @@ public/len-exams/
 public/propa-exams/
 # Old NuMa exams (KIT material): copied onto the server by hand, never committed.
 public/numa-exams/
+# Old GKI exams (KIT material): copied onto the server by hand, never committed.
+public/gki-exams/

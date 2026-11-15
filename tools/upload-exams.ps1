@@ -1,15 +1,17 @@
 <#
 .SYNOPSIS
-  Copies the old exam PDFs (LEN, ProPa, NuMa) onto the server. They are KIT material, so they are
-  not in git (public/*-exams/ is ignored) and a `git pull` on the server never brings them.
+  Copies the old exam PDFs (LEN, ProPa, NuMa, GKI) onto the server. They are KIT material, so they
+  are not in git (public/*-exams/ is ignored) and a `git pull` on the server never brings them.
 
 .DESCRIPTION
-  Uploads public/len-exams, public/propa-exams and public/numa-exams from this computer into the same
-  folders of the site on the server, over SSH (ssh and scp come with Windows). Files already on the
-  server are overwritten; nothing there is deleted.
+  Uploads public/len-exams, public/propa-exams, public/numa-exams and public/gki-exams from this
+  computer into the same folders of the site on the server, over SSH (ssh and scp come with Windows).
+  Files already on the server are overwritten; nothing there is deleted.
 
   With -NumaFolder it first (re)builds public/numa-exams from the downloaded NuMa course folder,
   under the names numa-exams.js expects (17-ss.pdf, 17-ss-loesung.pdf, ..., 26-ss-loesung.pdf).
+  With -GkiFolder it does the same for public/gki-exams from a folder with the GKI_*.pdf files
+  (GKI_WS_22_23.pdf -> 2223-ws.pdf, ..., GKI_WS_23_24_musterloesung.pdf -> 2324-ws-loesung.pdf).
 
 .PARAMETER Server
   Where to copy to: user@host, or a Host alias from ~/.ssh/config.
@@ -18,10 +20,13 @@
   The site's folder on the server (the one with server.js in it). Default: ~/studycompanion
 
 .PARAMETER Courses
-  Which courses' exams to upload. Default: len, propa, numa.
+  Which courses' exams to upload. Default: len, propa, numa, gki.
 
 .PARAMETER NumaFolder
   The downloaded NuMa course folder; when given, public/numa-exams is rebuilt from it first.
+
+.PARAMETER GkiFolder
+  A folder with the downloaded GKI exams (GKI_SS_23.pdf, ...); when given, public/gki-exams is rebuilt from it first.
 
 .PARAMETER DryRun
   Only show what would be copied.
@@ -31,16 +36,37 @@
 
 .EXAMPLE
   .\tools\upload-exams.ps1 -Server me@my-server -Courses numa -NumaFolder "$HOME\Downloads\Numerische Mathematik  fuer die Fachrichtungen Informatik und Ingenieurwesen (SS26)"
+
+.EXAMPLE
+  .\tools\upload-exams.ps1 -Server me@my-server -Courses gki -GkiFolder "$HOME\Downloads\Altklausuren (3)"
 #>
 param(
   [string]$Server,
   [string]$RemoteDir = "~/studycompanion",
-  [ValidateSet("len", "propa", "numa")][string[]]$Courses = @("len", "propa", "numa"),
+  [ValidateSet("len", "propa", "numa", "gki")][string[]]$Courses = @("len", "propa", "numa", "gki"),
   [string]$NumaFolder,
+  [string]$GkiFolder,
   [switch]$DryRun
 )
 $ErrorActionPreference = "Stop"
 $repo = Split-Path -Parent $PSScriptRoot
+
+# GKI: downloaded file name -> name used by the site (gki-exams.js).
+$gkiNames = [ordered]@{ "GKI_WS_22_23.pdf" = "2223-ws.pdf"; "GKI_SS_23.pdf" = "23-ss.pdf"; "GKI_WS_23_24.pdf" = "2324-ws.pdf";
+  "GKI_WS_23_24_musterloesung.pdf" = "2324-ws-loesung.pdf"; "GKI_SS_24.pdf" = "24-ss.pdf"; "GKI_WS_24_25.pdf" = "2425-ws.pdf";
+  "GKI_WS_24_25_english_version.pdf" = "2425-ws-en.pdf"; "GKI_SS_25.pdf" = "25-ss.pdf"; "GKI_WS_25_26.pdf" = "2526-ws.pdf"; "GKI_SS_26.pdf" = "26-ss.pdf" }
+
+if ($GkiFolder) {
+  if (-not (Test-Path -LiteralPath $GkiFolder)) { throw "No folder $GkiFolder" }
+  $dest = Join-Path $repo "public\gki-exams"
+  New-Item -ItemType Directory -Force -Path $dest | Out-Null
+  $n = 0
+  foreach ($k in $gkiNames.Keys) {
+    $src = Join-Path $GkiFolder $k
+    if (Test-Path -LiteralPath $src) { Copy-Item -LiteralPath $src -Destination (Join-Path $dest $gkiNames[$k]) -Force; $n++ } else { Write-Warning "GKI: no $k found" }
+  }
+  Write-Host "Rebuilt public\gki-exams: $n PDFs"
+}
 
 # NuMa: semester in the downloaded file names -> id used by the site.
 $numaIds = [ordered]@{ "ss17" = "17-ss"; "ws1718" = "1718-ws"; "ss19" = "19-ss"; "ws1920" = "1920-ws"; "ss20" = "20-ss";
@@ -66,7 +92,7 @@ if ($NumaFolder) {
 }
 
 if (-not $Server) {
-  if ($NumaFolder) { return }
+  if ($NumaFolder -or $GkiFolder) { return }
   throw "Say where to copy to: -Server user@host (and -RemoteDir if the site isn't in ~/studycompanion)."
 }
 

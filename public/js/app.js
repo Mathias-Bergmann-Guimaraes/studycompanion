@@ -198,6 +198,10 @@ function showTab(id) {
   if (id === "numa-practice" && !$("#numa-practice").innerHTML) renderNumaPractice();
   if (id === "numa-exams") renderNumaExams();
   if (id === "numa-mock" && nmMock.phase === "setup") renderNumaMock();
+  if (id === "gki-home") renderGkiHome();
+  if (id === "gki-practice" && !$("#gki-practice").innerHTML) renderGkiPractice();
+  if (id === "gki-exams") renderGkiExams();
+  if (id === "gki-mock" && gkMock.phase === "setup") renderGkiMock();
 }
 
 /* ---------------------------------------------------------------- Account */
@@ -1559,6 +1563,7 @@ function init() {
   setupLen();
   setupPropa();
   setupNuma();
+  setupGki();
   showTab(location.hash.slice(1));
   setupAccount();
 }

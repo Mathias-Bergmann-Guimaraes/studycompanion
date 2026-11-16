@@ -304,6 +304,24 @@ the exams since WS 24/25 (about 60 points, 2 minutes a point), or one on chapter
 keep their downloaded names (`E22_SS_2026_Exam.pdf`, `…_Sample-Solution.pdf`, `…_Answer-Sheet.pdf`);
 `tools/upload-exams.ps1 -RobFolder "<Previous Exams folder>"` copies them in.
 
+The **Study plan** has its own page (`#plan`), opened from a card beside the courses that sums up
+today: the load, how many sections each course wants and which are behind. The page has three parts.
+**Today** shows a card per course with the sections to do today by name (each opens its section and
+is ticked once its check is passed), the pace and how far it's behind. **Week by week** lists the plan
+from 16 Nov 2026 to the last exam on 31 Mar 2027, this week marked: running lectures (GKI, Robotics I,
+LEN) at the lecture's pace, the finished courses front-loaded (NuMa first, ProPa from 28 Dec), and
+from 15 Feb the days up to each exam. **Where the courses overlap** lists the topics two courses
+share (least squares and the pseudoinverse, ridge and damped least squares, the SVD, Newton and
+numerical IK, A* …), which the plan puts in the same week.
+
+Today's share comes from what isn't passed yet and the days left: a finished course has until the end
+of its last planned week (or, once that has passed, until its exam's run-up starts), a running course
+until the end of this week, and in the run-up until the day before the exam. So the less time is
+left, the more a day. The share is fixed in the morning, so passing a section ticks it off rather
+than bringing up another. The Exam prep card on the picker shows the same pace. The weeks are
+`STUDY_PLAN` and the overlaps `SP_OVERLAPS` in `public/js/study-plan.js`; Robotics' weeks are an
+estimate, so move them when its slides come.
+
 The whole site is **private**. Visitors without a login only see a login page. From there they
 can pick a username and password and send an access request, which you approve by hand — or
 use a single-use invite code you gave them, which lets them in straight away. After that they

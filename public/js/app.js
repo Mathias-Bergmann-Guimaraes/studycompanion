@@ -148,13 +148,14 @@ const barHeight = () => (matchMedia("(min-width: 1024px)").matches ? 0 : $(".top
 
 // "courses" is the course picker (courses.js), where the site opens; each course lists its own tabs
 // there (`tabs`). courses.js loads after this file, so the list is made when it's needed.
-const tabIds = () => ["courses", ...COURSES.flatMap((c) => c.tabs || [])];
+const tabIds = () => ["courses", "plan", ...COURSES.flatMap((c) => c.tabs || [])];
 
 function showTab(id) {
   if (!tabIds().includes(id)) id = "courses";
   if (!$("#" + id).classList.contains("active")) track("tab." + id);
-  // The picker has no tabs or settings, and the top bar stays a bar on every screen.
-  const picking = id === "courses";
+  // The picker and the study plan (study-plan.js) belong to no course: no tabs or settings, and
+  // the top bar stays a bar on every screen.
+  const picking = id === "courses" || id === "plan";
   document.body.classList.toggle("on-courses", picking);
   document.body.classList.remove("booting");
   // The picker offers to go back to the last page you had open in a course (courses.js).
@@ -170,8 +171,9 @@ function showTab(id) {
   $("#brandMark").classList.toggle("short", !picking && course.mark.length > 1);
   $("#brandSub").textContent = picking ? "All courses" : `${course.name} · switch course ▾`;
   $("#brand").title = picking ? "All courses" : "Switch course";
-  document.title = picking ? "Study Companion" : `${course.name} · Study Companion`;
-  if (picking) renderCourses();
+  document.title = id === "plan" ? "Study plan · Study Companion" : picking ? "Study Companion" : `${course.name} · Study Companion`;
+  if (id === "courses") renderCourses();
+  if (id === "plan") renderStudyPlanPage();
   $$("#tabs button").forEach((b) => {
     b.classList.toggle("active", b.dataset.tab === id);
     // On a narrow screen the tabs scroll sideways: keep the open one in view.

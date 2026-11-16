@@ -60,7 +60,17 @@ const COURSES = [
     footer: `<span lang="de">Farben bedeuten überall dasselbe — grün ist die Wahrheit, blau die Vorhersage, rot ein Fehler, gold ein Gradient.</span>`,
     card: (c) => gkiCourseCardHTML(c),
   },
-  { id: "robotics1", soon: true, mark: "Rob I", lang: "en", color: "var(--course-robotics)", name: "Robotics I", about: "Robot arms: kinematics, dynamics and control." },
+  {
+    id: "robotics1",
+    tabs: ["rob-home", "rob-k0", "rob-k1", "rob-k2", "rob-k3", "rob-sheet", "rob-exams", "rob-practice", "rob-mock"],
+    mark: "Rob I",
+    lang: "en",
+    color: "var(--course-robotics)",
+    name: "Robotics I",
+    about: "Robot arms: frames, kinematics and inverse kinematics — with an arm you can move.",
+    footer: "Colours mean the same everywhere — a frame's x axis is red, y green, z blue; gold is a joint angle, pink the target.",
+    card: (c) => robCourseCardHTML(c),
+  },
 ];
 
 // The course a tab belongs to, for the top bar (the picker counts as Japanese, whose bar it hides).
@@ -78,10 +88,10 @@ function renderCourses() {
       <p class="muted">Which course are you studying today?</p>
     </div>
     ${COURSES.filter((c) => !c.soon).map((c) => (c.card ? c.card(c) : courseCardHTML(c))).join("")}
-    <h2 class="courses-cap">Coming soon</h2>
+    ${COURSES.some((c) => c.soon) ? `<h2 class="courses-cap">Coming soon</h2>
     <div class="course-soon-grid">
       ${COURSES.filter((c) => c.soon).map(soonCardHTML).join("")}
-    </div>`;
+    </div>` : ""}`;
   $$("#courses [data-course]").forEach((b) => (b.onclick = () => {
     track("courses.open");
     showTab(COURSES.find((c) => c.id === b.dataset.course).tabs[0]);
@@ -91,6 +101,7 @@ function renderCourses() {
   wirePropaCourseCard();
   wireNumaCourseCard();
   wireGkiCourseCard();
+  wireRobCourseCard();
   const go = $("#courseContinue");
   if (go) go.onclick = () => {
     track("courses.continue");

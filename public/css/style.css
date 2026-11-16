@@ -2605,7 +2605,9 @@ main { max-width: 1080px; margin: 0 auto; padding: 24px; }
 .pm-intro { max-width: 80ch; margin-bottom: 10px; }
 .pm-intro .pp-code { margin: 8px 0; }
 .pm-part { grid-template-columns: 1.6em minmax(0, 1fr) auto; align-items: start; }
-.pm-part > .lp-mc, .pm-part > .pm-in, .pm-part > .pm-ta, .pm-part > .pm-model, .pm-part > .pm-why, .pm-part > .lp-mark { grid-column: 2 / -1; }
+.pm-part > .lp-mc, .pm-part > .pm-in, .pm-part > .pm-ta, .pm-part > .pm-model, .pm-part > .pm-why, .pm-part > .pm-ans, .pm-part > .lp-mark { grid-column: 2 / -1; }
+.pm-ans b { font-weight: 600; }
+.pm-saved { align-self: center; color: var(--good); font-weight: 700; }
 .pm-part .lp-mc { grid-column: 2 / -1; }
 .pm-in input { width: min(100%, 22em); text-align: left; font-family: var(--pp-mono); }
 .pm-ta {
@@ -3314,3 +3316,109 @@ body[data-course="gki"] { --accent: var(--course-gki); }
 .lw-svg .gk-half { fill: color-mix(in srgb, var(--gk-c1) 12%, transparent); }
 .lw-svg .gk-bline { fill: none; stroke: var(--nm-approx); stroke-width: 3; }
 .lw-svg .gk-step { stroke: var(--nm-piv); stroke-width: 2; stroke-dasharray: 4 3; }
+
+/* ------------------------------------------------------------ Robotics I (rob.js and its chapters)
+   Reuses LEN's, ProPa's and NuMa's page parts. Colours: a frame's x axis red, y green, z blue (as on
+   the slides); gold a joint angle or what moves now; pink the target; red and dashed an error. */
+body[data-course="robotics1"] { --accent: var(--course-robotics); }
+:root { --rb-x: var(--c-subject); --rb-y: var(--c-object); --rb-z: var(--c-topic); --rb-th: var(--len-hl); --rb-goal: var(--c-with); --rb-err: var(--c-subject); }
+.rb-x-t { color: var(--rb-x); } .rb-y-t { color: var(--rb-y); } .rb-z-t { color: var(--rb-z); }
+.rb-th-t { color: var(--rb-th); } .rb-goal-t { color: var(--rb-goal); } .rb-err-t { color: var(--rb-err); }
+.rb-j1-t { color: var(--c-time); } .rb-j2-t { color: var(--c-place); }
+/* The semester plan on Home. */
+.rb-plan { display: grid; gap: 4px; margin-top: 10px; }
+/* Flex, not grid: the title takes the room the pills leave and only wraps when it must. */
+.rb-plan-row { display: flex; gap: 8px; align-items: center; padding: 6px 8px; border-radius: 10px; }
+.rb-plan-row > :nth-child(1) { flex: 0 0 2.2em; }
+.rb-plan-row > :nth-child(2) { flex: 0 0 4em; }
+.rb-plan-row > :nth-child(3) { flex: 1 1 auto; min-width: 11em; }
+.rb-plan-row > :nth-child(3) .nm-see { text-align: left; }
+.rb-plan-row > .nm-pills { flex: 0 1 auto; justify-content: flex-end; }
+.rb-plan-row > :last-child { flex: 0 0 7.5em; }
+.rb-plan-row > :last-child { text-align: right; }
+.rb-plan-row .nm-pills .len-topic { font-size: .72rem; }
+.rb-egrid-wrap { overflow-x: auto; contain: inline-size; }
+.rb-egrid-wrap .pp-egrid { min-width: 1500px; grid-template-columns: minmax(15em, auto) repeat(var(--n), minmax(3.6em, 1fr)); overflow: visible; }
+.rb-egrid-wrap .pp-eg-t { position: sticky; left: 0; z-index: 1; background: var(--surface); }
+.rb-plan-row:not(.done) { color: var(--muted); }
+.rb-plan-row.done { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.rb-plan-row .rb-tbd { opacity: .55; }
+.rb-plan-exam { margin-top: 6px; border: 1.5px dashed color-mix(in srgb, var(--accent) 50%, transparent); color: var(--text) !important; }
+@media (max-width: 760px) {
+  .rb-plan-row { flex-wrap: wrap; }
+  .rb-plan-row > :nth-child(2) { flex-basis: 3.6em; }
+  .rb-plan-row > :nth-child(3) { flex-basis: calc(100% - 7em); min-width: 0; }
+  .rb-plan-row > .nm-pills { order: 5; flex-basis: 100%; justify-content: flex-start; }
+  .rb-plan-row > :last-child { flex-basis: auto; margin-left: calc(5.8em + 16px); text-align: left; }
+}
+.rb-ctl-row { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; }
+.rb-steps { display: grid; gap: 6px; align-content: center; }
+.rb-steps .btn { justify-content: flex-start; text-align: left; }
+.rb-ol { margin: 4px 0 8px; padding-left: 1.4em; columns: 2; column-gap: 24px; }
+@media (max-width: 760px) { .rb-ol { columns: 1; } }
+.rb-hk { font-weight: 700; }
+.rb-num { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+.rb-heat { cursor: crosshair; }
+/* Drawings */
+.lw-svg .rb-link { stroke: var(--text); stroke-width: 7; stroke-linecap: round; opacity: .82; }
+.lw-svg .rb-link3 { fill: none; stroke: var(--text); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; opacity: .75; }
+.lw-svg .rb-arm.ghost .rb-link { stroke-width: 4; opacity: .25; }
+.lw-svg .rb-arm.rb-strain .rb-link { stroke: var(--rb-err); opacity: .55; }
+.lw-svg .rb-joint { fill: var(--surface); stroke: var(--rb-th); stroke-width: 3; }
+.lw-svg .rb-arm.ghost .rb-joint { stroke-width: 2; opacity: .4; }
+.lw-svg .rb-eef { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
+.lw-svg .rb-arm.ghost .rb-eef { opacity: .4; }
+.lw-svg .rb-base { fill: var(--surface-2); stroke: var(--muted); stroke-width: 1.5; }
+.lw-svg .rb-ground { stroke: var(--muted); stroke-width: 2; }
+.lw-svg .rb-jl { font-size: 12px; font-weight: 700; fill: var(--text); }
+.lw-svg .rb-jl.rb-err-t { fill: var(--rb-err); }
+.lw-svg .rb-ws { fill: color-mix(in srgb, var(--accent) 5%, transparent); stroke: var(--muted); stroke-width: 1; stroke-dasharray: 4 4; }
+.lw-svg .rb-goal { fill: var(--rb-goal); }
+.lw-svg .rb-goal-ring { fill: none; stroke: var(--rb-goal); stroke-width: 2.5; }
+.lw-svg .rb-orig { fill: var(--muted); }
+.lw-svg .rb-center { fill: var(--rb-th); stroke: var(--surface); stroke-width: 2; }
+.lw-svg .rb-moved { fill: var(--rb-goal); }
+.lw-svg .rb-th { fill: var(--rb-th); stroke: var(--surface); stroke-width: 2; }
+.lw-svg .rb-cspace { fill: var(--surface-2); stroke: var(--border); }
+.arr.rb-ax-x { color: var(--rb-x); } .arr.rb-ax-y { color: var(--rb-y); } .arr.rb-ax-z { color: var(--rb-z); }
+.lw-svg .rb-axt { font-size: 12px; font-weight: 700; }
+.lw-svg .rb-axt-x, .lw-svg .rb-x-t { fill: var(--rb-x); } .lw-svg .rb-axt-y { fill: var(--rb-y); } .lw-svg .rb-axt-z { fill: var(--rb-z); }
+.lw-svg .rb-frame.dim { opacity: .35; }
+.lw-svg .rb-fl { font-size: 12px; font-weight: 700; fill: var(--muted); }
+.lw-svg .rb-axis { stroke: var(--muted); stroke-width: 1.4; stroke-dasharray: 8 5; }
+.lw-svg .rb-trail { fill: none; stroke: var(--rb-th); stroke-width: 2; stroke-dasharray: 4 3; }
+.lw-svg .rb-t { stroke: var(--muted); stroke-width: 1.6; stroke-dasharray: 5 4; }
+.arr.rb-dir { color: var(--rb-goal); }
+.lw-svg .rb-shape { fill: color-mix(in srgb, var(--accent) 22%, transparent); stroke: var(--accent); stroke-width: 2.5; stroke-linejoin: round; }
+.lw-svg .rb-shape.ghost { fill: none; stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.lw-svg .rb-arc { fill: none; stroke: var(--rb-th); stroke-width: 2; }
+.lw-svg .rb-arc2 { fill: none; stroke: var(--rb-err); stroke-width: 2; }
+.lw-svg .rb-plane { fill: color-mix(in srgb, var(--accent) 30%, var(--surface)); stroke: var(--accent); stroke-width: 1.5; stroke-linejoin: round; }
+.lw-svg .rb-plane-b { stroke: var(--accent); stroke-width: 4; stroke-linecap: round; }
+.arr.rb-j1 { color: var(--c-time); } .arr.rb-j2 { color: var(--c-place); } .arr.rb-v { color: var(--rb-th); }
+.arr.rb-force { color: var(--rb-err); }
+.lw-svg .rb-ell { fill: color-mix(in srgb, var(--rb-th) 22%, transparent); stroke: var(--rb-th); stroke-width: 2; }
+.lw-svg .rb-ell.force { fill: color-mix(in srgb, var(--c-time) 18%, transparent); stroke: var(--c-time); }
+.lw-svg .rb-ell.sing { stroke: var(--rb-err); stroke-width: 3; }
+.lw-svg .rb-cell { fill: var(--accent); }
+.lw-svg .rb-hdot { stroke: var(--surface); stroke-width: 2; cursor: pointer; }
+.lw-svg .rb-hdot.on { stroke: var(--text); stroke-width: 2.5; }
+.lw-svg .rb-h-idea { fill: var(--c-with); } .lw-svg .rb-h-ind { fill: var(--c-topic); } .lw-svg .rb-h-mob { fill: var(--c-object); }
+.lw-svg .rb-h-hum { fill: var(--c-time); } .lw-svg .rb-h-now { fill: var(--c-point); }
+.rb-hk.rb-h-idea { color: var(--c-with); } .rb-hk.rb-h-ind { color: var(--c-topic); } .rb-hk.rb-h-mob { color: var(--c-object); }
+.rb-hk.rb-h-hum { color: var(--c-time); } .rb-hk.rb-h-now { color: var(--c-point); }
+.lw-svg .rb-zone { stroke-width: 1.5; }
+.lw-svg .rb-zone.z1 { fill: color-mix(in srgb, var(--c-topic) 12%, transparent); stroke: var(--c-topic); }
+.lw-svg .rb-zone.z2 { fill: color-mix(in srgb, var(--c-object) 10%, transparent); stroke: var(--c-object); }
+.lw-svg .rb-zone.z3 { fill: color-mix(in srgb, var(--c-time) 12%, transparent); stroke: var(--c-time); }
+.lw-svg .rb-kdot { fill: var(--muted); stroke: var(--surface); stroke-width: 2; }
+.lw-svg .rb-kdot.on { fill: var(--accent); stroke: var(--text); }
+.lw-svg .rb-heat-g { stroke: rgba(0, 0, 0, .25); stroke-width: 1; stroke-dasharray: 4 4; }
+.lw-svg .rb-path { fill: none; stroke: #1f5fd1; stroke-width: 2; }
+.lw-svg .rb-pathpt { fill: #1f5fd1; stroke: #fff; stroke-width: 1; }
+.lw-svg .rb-pathpt.start { fill: #fff; stroke: #1f5fd1; stroke-width: 2; }
+.lw-svg .curve.rb-c-pinv { color: var(--rb-err); } .lw-svg .curve.rb-c-dls { color: var(--rb-th); }
+.lw-svg .rb-c-pinv-t { fill: var(--rb-err); } .lw-svg .rb-c-dls-t { fill: var(--rb-th); }
+.lw-svg .rb-grid { stroke: var(--border); stroke-width: 1; }
+.rb-slots { margin: 8px 0 12px; padding-left: 1.4em; display: grid; gap: 4px; }
+.rb-slots .len-topic { font-size: .72rem; margin-left: 4px; }

@@ -278,10 +278,10 @@ function renderPropaHome() {
     <div class="card">
       <h2>Train</h2>
       <div class="home-tiles">
-        ${tile("propa-practice", "✎", "Practice", `${PROPA_TASKS.length} exam tasks and ${PROPA_DRILLS.length} quick drills · ${solved + Object.values(store.get("propaTaskSolved", {})).reduce((a, b) => a + b, 0)}× right`)}
-        ${tile("propa-mock", "⏱", "Mock exam", store.get("propaMock", {}).best !== undefined ? `Best result: ${store.get("propaMock", {}).best} %` : "Ten tasks, a minute a point, like the real one")}
         ${tile("propa-cheat", "λ", "Cheat sheet", "Syntax, terms and complexities at a glance")}
         ${tile("propa-exams", "📄", "Old exams", `${PROPA_EXAMS.length} exams · ${store.get("propaExamDone", []).length} / ${PROPA_EXAMS.flatMap((e) => e.tasks).length} tasks done`)}
+        ${tile("propa-practice", "✎", "Practice", `${PROPA_TASKS.length} exam tasks and ${PROPA_DRILLS.length} quick drills · ${solved + Object.values(store.get("propaTaskSolved", {})).reduce((a, b) => a + b, 0)}× right`)}
+        ${tile("propa-mock", "⏱", "Mock exam", store.get("propaMock", {}).best !== undefined ? `Best result: ${store.get("propaMock", {}).best} %` : "Ten tasks, a minute a point, like the real one")}
       </div>
     </div>
     <div class="card">

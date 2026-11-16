@@ -63,6 +63,7 @@ function pmPartHTML(p, i) {
           </div>
         </div>` : ""}
       <div class="lp-mark"></div>
+      ${p.kind === "write" ? "" : `<div class="pm-ans small" hidden>Answer: <b>${p.kind === "mc" ? p.mc[0] : c(p.ans[0])}</b></div>`}
       ${p.why ? `<div class="pm-why small" hidden>${p.why}</div>` : ""}
     </div>`;
 }
@@ -91,8 +92,10 @@ function pmTaskHTML(t, { exam = false, num = "" } = {}) {
     </div>`;
 }
 
-// Choices toggle; Tab in a text box indents; ticks in the rubric call onTick.
-function pmWire(el, t, onTick) {
+// Choices toggle; Tab in a text box indents; Enter in an answer box goes on to the next answer
+// (in scope: the task, or the whole mock exam), and from the last one presses Check if there is
+// one; ticks in the rubric call onTick.
+function pmWire(el, t, onTick, scope = el) {
   $$(".lp-mc", el).forEach((mc) => $$(".lp-opt", mc).forEach((b) => (b.onclick = () => {
     if (mc.classList.contains("locked")) return;
     $$(".lp-opt", mc).forEach((o) => o.classList.toggle("picked", o === b));
@@ -107,7 +110,10 @@ function pmWire(el, t, onTick) {
   $$(".pm-in input", el).forEach((inp) => (inp.onkeydown = (e) => {
     if (e.key !== "Enter") return;
     e.preventDefault();
-    $('[data-a="check"]', el)?.click();
+    const fields = $$(".pm-in input, .pm-ta", scope).filter((f) => !f.readOnly);
+    const next = fields[fields.indexOf(inp) + 1];
+    if (next) next.focus();
+    else $('[data-a="check"]', el)?.click();
   }));
   $$(".pm-rub input", el).forEach((cb) => (cb.onchange = () => { pmSelfMark(el, t); onTick && onTick(); }));
 }
@@ -163,7 +169,7 @@ function pmGrade(el, t, { lock = false } = {}) {
     $(".lp-mark", row).innerHTML = ok ? `<span class="lp-ok">✓</span>`
       : !answered && !lock ? ""
       : `<span class="lp-no">✗</span> ${p.kind === "mc" ? (lock ? "The right one is marked." : "Not this one.") : lock ? `Right: <b>${c(p.ans[0])}</b>` : "Not quite."}`;
-    if (why) why.hidden = !(ok || lock);
+    if (why) why.hidden = !(ok || lock || t.solOpen);
   });
   const self = pmSelfMark(el, t);
   return { got, max, self: self.got, selfMax: self.max };
@@ -260,7 +266,15 @@ function renderPmPractice() {
   };
   pmWire(el, t, show);
   $('[data-a="check"]', el).onclick = () => { v.marked = pmGrade(el, t); show(); };
-  $('[data-a="sol"]', el).onclick = () => { v.marked = pmGrade(el, t, { lock: true }); show(); $('[data-a="check"]', el).disabled = true; };
+  // Like LEN: the solution opens and closes; your answers stay editable and Check still works.
+  $('[data-a="sol"]', el).onclick = (e) => {
+    t.solOpen = !t.solOpen;
+    $$(".pm-ans, .pm-why", el).forEach((x) => (x.hidden = !t.solOpen));
+    $$(".pm-model", el).forEach((x) => (x.hidden = !t.solOpen && !v.marked));
+    e.currentTarget.textContent = t.solOpen ? "Hide the solution" : "Show the solution";
+    pmSelfMark(el, t);
+    show();
+  };
   $('[data-a="again"]', el).onclick = () => pmNew(t.gen.id);
   $('[data-a="other"]', el).onclick = () => pmNew();
 }
@@ -270,17 +284,24 @@ function renderPmPractice() {
 // The real exams' order; one task per topic. Multiple choice was only in the older exams.
 const PM_MOCK_TOPICS = PROPA_EXAM_TOPIC_IDS.filter((t) => PROPA_TASKS.some((g) => g.topic === t && !g.practiceOnly));
 const pmMock = { phase: "setup", topics: new Set(PM_MOCK_TOPICS), tasks: [], minutes: 0, end: 0, timer: 0, result: null, last: {} };
-// Points of an average task per topic, for the time before the exam is made.
-const pmTypical = (topic) => {
-  const gs = PROPA_TASKS.filter((g) => g.topic === topic && !g.practiceOnly);
-  return gs.reduce((s, g) => s + pmMake(g.id).max, 0) / gs.length;
-};
-const pmMockMinutes = () => Math.round([...pmMock.topics].reduce((s, t) => s + pmTypical(t), 0));
+
+// The exam is drawn on the setup page already, so its start button can say exactly how long it
+// takes: a minute a point. A task used in the last mock exam is avoided for its topic.
+function pmDraw() {
+  const s = pmMock;
+  s.tasks = PM_MOCK_TOPICS.filter((t) => s.topics.has(t)).map((topic) => {
+    const gs = PROPA_TASKS.filter((g) => g.topic === topic && !g.practiceOnly);
+    const fresh = gs.filter((g) => g.id !== s.last[topic]);
+    return pmMake(pick(fresh.length ? fresh : gs).id);
+  });
+  s.minutes = s.tasks.reduce((a, t) => a + t.max, 0);
+}
 
 function renderPropaMock() {
   const s = pmMock;
   if (s.phase === "run") return pmRenderRun();
   if (s.phase === "done") return pmRenderDone();
+  pmDraw();
   const best = store.get("propaMock", {});
   const lean = PM_MOCK_TOPICS.filter((t) => PROPA_EXAM_TOPICS[t].part === "Lean"), reu = PM_MOCK_TOPICS.filter((t) => PROPA_EXAM_TOPICS[t].part === "Reussner");
   const same = (xs) => xs.length === s.topics.size && xs.every((t) => s.topics.has(t));
@@ -303,7 +324,7 @@ function renderPropaMock() {
       </div>
       <div class="chips">${PM_MOCK_TOPICS.map((t) => `<button class="chip ${s.topics.has(t) ? "active" : ""}" data-topic="${t}" style="--gc:${PROPA_EXAM_TOPICS[t].color}">${s.topics.has(t) ? "✓ " : ""}${PROPA_EXAM_TOPICS[t].name}</button>`).join("")}</div>
       <div class="home-actions lm-start">
-        <button class="btn primary" type="button" id="pmStart" ${s.topics.size ? "" : "disabled"}>Start the mock exam · about ${pmMockMinutes()} min</button>
+        <button class="btn primary" type="button" id="pmStart" ${s.topics.size ? "" : "disabled"}>Start the mock exam · ${s.minutes} min</button>
       </div>
       <p class="small muted">As in the real exam, no notes and no Lean: write the code as you would on paper — here or on a sheet.</p>
     </div>`;
@@ -321,14 +342,7 @@ function renderPropaMock() {
 function pmStart() {
   const s = pmMock;
   track("propa.mock");
-  s.tasks = PM_MOCK_TOPICS.filter((t) => s.topics.has(t)).map((topic) => {
-    const gs = PROPA_TASKS.filter((g) => g.topic === topic && !g.practiceOnly);
-    const fresh = gs.filter((g) => g.id !== s.last[topic]);
-    const g = pick(fresh.length ? fresh : gs);
-    s.last[topic] = g.id;
-    return pmMake(g.id);
-  });
-  s.minutes = s.tasks.reduce((a, t) => a + t.max, 0);
+  s.tasks.forEach((t) => (s.last[t.gen.topic] = t.gen.id));
   s.end = Date.now() + s.minutes * 60000;
   s.phase = "run";
   renderPropaMock();
@@ -346,7 +360,7 @@ function pmRenderRun() {
     </div>
     ${s.tasks.map((t, k) => `<div class="card lm-task pm-mock-task">${pmTaskHTML(t, { exam: true, num: `Task ${k + 1} ·` })}</div>`).join("")}
     <div class="home-actions lm-end"><button class="btn primary" type="button" id="pmSubmit2">Hand in</button></div>`;
-  s.tasks.forEach((t) => pmWire($("#" + t.uid), t, pmUpdateResult));
+  s.tasks.forEach((t) => pmWire($("#" + t.uid), t, pmUpdateResult, $("#propa-mock")));
   const submit = () => { if (confirm("Hand in the mock exam now?")) pmFinish(); };
   $("#pmSubmit").onclick = submit;
   $("#pmSubmit2").onclick = submit;
@@ -368,9 +382,13 @@ function pmFinish(timeUp = false) {
   const s = pmMock;
   clearInterval(s.timer);
   track("propa.mockDone");
-  s.result = { timeUp, used: Math.round((s.minutes * 60000 - Math.max(0, s.end - Date.now())) / 60000), per: s.tasks.map((t) => ({ t, ...pmGrade($("#" + t.uid), t, { lock: true }) })) };
+  s.result = { timeUp, saved: false, used: Math.round((s.minutes * 60000 - Math.max(0, s.end - Date.now())) / 60000), per: s.tasks.map((t) => ({ t, ...pmGrade($("#" + t.uid), t, { lock: true }) })) };
+  // Like LEN, the result counts once. The page's own marks are known now; the written parts only
+  // once you finish marking them (pmSaveResult), which may raise it.
+  const max = s.tasks.reduce((a, t) => a + t.max, 0);
+  const autoPct = Math.round((s.result.per.reduce((a, x) => a + x.got, 0) / max) * 100);
   const prev = store.get("propaMock", {});
-  store.set("propaMock", { best: prev.best ?? 0, runs: (prev.runs || 0) + 1 });
+  store.set("propaMock", { best: Math.max(prev.best ?? 0, autoPct), runs: (prev.runs || 0) + 1 });
   s.phase = "done";
   pmRenderDone();
   window.scrollTo({ top: 0 });
@@ -396,8 +414,7 @@ function pmUpdateResult() {
   const auto = r.per.reduce((a, x) => a + x.got, 0), autoMax = r.per.reduce((a, x) => a + x.max, 0);
   const self = r.per.reduce((a, x) => a + x.self, 0), selfMax = r.per.reduce((a, x) => a + x.selfMax, 0);
   const pct = Math.round((got / max) * 100);
-  const prev = store.get("propaMock", {});
-  if (pct > (prev.best ?? -1)) store.set("propaMock", { ...prev, best: pct });
+  r.pct = pct;
   box.innerHTML = `
     <h1>${got} / ${max} points <span class="${pct >= 50 ? "lm-pass" : "lm-fail"}">· ${pct} %</span></h1>
     <p>${r.timeUp ? "Time was up — what was there by then was handed in. " : ""}Time used: ${r.used} of ${s.minutes} min.
@@ -406,7 +423,24 @@ function pmUpdateResult() {
     <div class="lm-per">${r.per.map((x) => `
       <div class="lm-row pm-row">${ppTopicPill(x.t.gen.topic)}<span class="lw-bar"><span style="width:${((x.got + x.self) / x.t.max) * 100}%"></span></span><b>${x.got + x.self} / ${x.t.max}</b>
         <button class="btn small-btn" type="button" data-practise="${x.t.gen.topic}">Practise</button></div>`).join("")}</div>
-    <div class="home-actions"><button class="btn primary" type="button" data-again>New mock exam</button></div>`;
+    <div class="home-actions">
+      ${r.saved ? `<span class="pm-saved small">✓ Marking finished — ${pct} % saved.</span>`
+        : `<button class="btn primary" type="button" id="pmSave">Finish marking · save ${pct} %</button>`}
+      <button class="btn ${r.saved ? "primary" : ""}" type="button" data-again>New mock exam</button>
+    </div>
+    ${r.saved ? "" : `<p class="small muted">Tick the rubric under each written answer first; the result is saved once, when you finish marking.</p>`}`;
+  if (!r.saved) $("#pmSave").onclick = pmSaveResult;
   $$("#pmResult [data-practise]").forEach((b) => (b.onclick = () => openPropaTasks(b.dataset.practise)));
   $$("#pmResult [data-again]").forEach((b) => (b.onclick = () => { s.phase = "setup"; renderPropaMock(); window.scrollTo({ top: 0 }); }));
+}
+
+// Marking done: the rubrics lock and the final result counts towards your best.
+function pmSaveResult() {
+  const r = pmMock.result;
+  if (r.saved) return;
+  r.saved = true;
+  $$("#propa-mock .pm-rub input").forEach((cb) => (cb.disabled = true));
+  pmUpdateResult();
+  const prev = store.get("propaMock", {});
+  store.set("propaMock", { ...prev, best: Math.max(prev.best ?? 0, r.pct) });
 }

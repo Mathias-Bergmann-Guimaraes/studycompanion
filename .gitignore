@@ -8,3 +8,5 @@ public/propa-exams/
 public/numa-exams/
 # Old GKI exams (KIT material): copied onto the server by hand, never committed.
 public/gki-exams/
+# Old Robotics I exams (KIT material): copied onto the server by hand, never committed.
+public/rob-exams/

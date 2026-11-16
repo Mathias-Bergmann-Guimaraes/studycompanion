@@ -467,6 +467,9 @@ const PROGRESS_MERGE = {
   // GKI: the same four as NuMa — section checks ("2.3"), old exam tasks ticked off ("2526-ws/1"),
   // exam tasks fully right per kind, and the best mock exam.
   gkiChecks: "scores", gkiExamDone: "list", gkiTaskSolved: "scores", gkiMock: "scores",
+  // Robotics I: the best score of each section's check ("2.3"), old exam tasks ticked off ("E22_SS_2026/3").
+  // … practice tasks fully right per kind, and the best mock exam (best %, how many).
+  robChecks: "scores", robExamDone: "list", robTaskSolved: "scores", robMock: "scores",
 };
 const MAX_HISTORY_DAYS = 366;
 const MAX_PROGRESS_BODY = 512 * 1024;
@@ -650,9 +653,11 @@ const USAGE_GROUPS = {
     "tab.numa-sheet": "NuMa Formelsammlung", "tab.numa-exams": "NuMa Old exams", "tab.numa-practice": "NuMa Practice", "tab.numa-mock": "NuMa Mock exam",
     "tab.gki-home": "GKI Home", "tab.gki-k1": "GKI 1 Einführung", "tab.gki-k2": "GKI 2 Lineare Modelle", "tab.gki-k3": "GKI 3 Klassifikation",
     "tab.gki-sheet": "GKI Formelsammlung", "tab.gki-exams": "GKI Old exams", "tab.gki-practice": "GKI Practice", "tab.gki-mock": "GKI Mock exam",
+    "tab.rob-home": "Robotics Home", "tab.rob-k0": "Robotics 0 Introduction", "tab.rob-k1": "Robotics 1 Math foundations", "tab.rob-k2": "Robotics 2 Kinematics",
+    "tab.rob-k3": "Robotics 3 Inverse kinematics", "tab.rob-sheet": "Robotics Formula sheet", "tab.rob-exams": "Robotics Old exams", "tab.rob-practice": "Robotics Practice", "tab.rob-mock": "Robotics Mock exam",
   },
   Listen: { "listen.open": "Videos opened", "listen.vote": "Likes and dislikes", "listen.save": "Bookmarks changed", "listen.channel": "Favourite channels changed" },
-  "Course picker": { "courses.open": "Courses opened", "courses.continue": "Continue lesson button", "courses.lenContinue": "Continue LEN section button", "courses.propaContinue": "Continue ProPa section button", "courses.numaContinue": "Continue NuMa section button", "courses.gkiContinue": "Continue GKI section button" },
+  "Course picker": { "courses.open": "Courses opened", "courses.continue": "Continue lesson button", "courses.lenContinue": "Continue LEN section button", "courses.propaContinue": "Continue ProPa section button", "courses.numaContinue": "Continue NuMa section button", "courses.gkiContinue": "Continue GKI section button", "courses.robContinue": "Continue Robotics section button" },
   LEN: { "len.continue": "Continue button on LEN Home", "len.check": "Section checks started", "len.checkDone": "Section checks finished",
     "len.practice": "Practice tasks made", "len.mock": "Mock exams started", "len.mockDone": "Mock exams handed in" },
   ProPa: { "propa.continue": "Continue button on ProPa Home", "propa.check": "Section checks started", "propa.checkDone": "Section checks finished",
@@ -661,6 +666,8 @@ const USAGE_GROUPS = {
     "numa.task": "Exam tasks made", "numa.mock": "Mock exams started", "numa.mockDone": "Mock exams handed in", "numa.examDone": "Old exam tasks ticked" },
   GKI: { "gki.continue": "Continue button on GKI Home", "gki.check": "Section checks started", "gki.checkDone": "Section checks finished",
     "gki.task": "Exam tasks made", "gki.mock": "Mock exams started", "gki.mockDone": "Mock exams handed in", "gki.examDone": "Old exam tasks ticked" },
+  Robotics: { "rob.continue": "Continue button on Robotics Home", "rob.check": "Section checks started", "rob.checkDone": "Section checks finished", "rob.examDone": "Old exam tasks ticked",
+    "rob.task": "Practice tasks made", "rob.mock": "Mock exams started", "rob.mockDone": "Mock exams handed in" },
   Home: { "home.continue": "Continue button", "home.explore": "Explore tiles", "home.stats": "Weak points opened from Your progress" },
   Lessons: {
     "lesson.open": "Lessons opened", "lesson.practice": "Practice questions answered", "lesson.check": "Grammar checks started",

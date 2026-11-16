@@ -298,6 +298,8 @@ function renderRobHome() {
         Exam on <b>${ROB_EXAM.date}</b>, ${ROB_EXAM.time}, ${ROB_EXAM.minutes} minutes, written, in English.</p>
       <div class="home-actions">
         <button class="btn primary" type="button" id="rbGo">${allDone ? "Review from the start" : `Continue with ${next.id}: ${next.title}`} →</button>
+        <button class="btn" type="button" data-go="rob-practice">Practice</button>
+        <button class="btn" type="button" data-go="rob-mock">Mock exam</button>
         <button class="btn" type="button" data-go="rob-exams">Old exams</button>
         <button class="btn" type="button" data-go="rob-sheet">Formula sheet</button>
       </div>

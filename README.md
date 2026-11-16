@@ -292,7 +292,14 @@ chapter gets its number in `ROB_PLAN`, a file `rob-k4.js` …, a tab and a panel
 tab in `courses.js`. The **Old exams** tab lists all 23 exams (the WS 15/16 test exam and WS 15/16 to
 SS 26) task by task, summarised in English, tagged by topic, with a points-per-topic grid, done ticks
 (`robExamDone`) and links to the page of each task in the exam and the sample solution
-(`public/js/rob-exams.js`). The PDFs are KIT's and **not in git** (`public/rob-exams/` is ignored): they
+(`public/js/rob-exams.js`), each with a "Practise" button. **Practice** has 37 exam-style task kinds
+for every exam topic (rotations, quaternions, DH, Jacobian, manipulability, IK, Lagrange dynamics,
+control, RRT/RRT*/A*/potential fields, wrenches and friction, camera model, filters, RANSAC, PbD, STRIPS),
+each modelled on a real exam task but with new numbers and wording every time, so the real tasks stay
+unseen; numbers and choices are checked by the page, explanations marked against a model answer
+(`public/js/rob-tasks.js`, `robTaskSolved`). The **Mock exam** builds six tasks of about 10 points like
+the exams since WS 24/25 (about 60 points, 2 minutes a point), or one on chapters 0–3 only
+(`public/js/rob-practice.js`, `robMock`). The PDFs are KIT's and **not in git** (`public/rob-exams/` is ignored): they
 keep their downloaded names (`E22_SS_2026_Exam.pdf`, `…_Sample-Solution.pdf`, `…_Answer-Sheet.pdf`);
 `tools/upload-exams.ps1 -RobFolder "<Previous Exams folder>"` copies them in.
 

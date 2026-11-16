@@ -3411,3 +3411,5 @@ body[data-course="robotics1"] { --accent: var(--course-robotics); }
 .lw-svg .curve.rb-c-pinv { color: var(--rb-err); } .lw-svg .curve.rb-c-dls { color: var(--rb-th); }
 .lw-svg .rb-c-pinv-t { fill: var(--rb-err); } .lw-svg .rb-c-dls-t { fill: var(--rb-th); }
 .lw-svg .rb-grid { stroke: var(--border); stroke-width: 1; }
+.rb-slots { margin: 8px 0 12px; padding-left: 1.4em; display: grid; gap: 4px; }
+.rb-slots .len-topic { font-size: .72rem; margin-left: 4px; }

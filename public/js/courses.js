@@ -62,7 +62,7 @@ const COURSES = [
   },
   {
     id: "robotics1",
-    tabs: ["rob-home", "rob-k0", "rob-k1", "rob-k2", "rob-k3", "rob-sheet", "rob-exams"],
+    tabs: ["rob-home", "rob-k0", "rob-k1", "rob-k2", "rob-k3", "rob-sheet", "rob-exams", "rob-practice", "rob-mock"],
     mark: "Rob I",
     lang: "en",
     color: "var(--course-robotics)",

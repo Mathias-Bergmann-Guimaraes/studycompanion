@@ -282,7 +282,8 @@ function renderRobExams() {
         since WS 24/25 they are in <b>English, 60 points in six tasks</b> of about 10 points: transformations, kinematics and dynamics, motion planning,
         grasping, robot vision, programming by demonstration.</p>
       <p class="small">The lecture is still running (chapters 0–${ROB_CH_DONE}): in the last four exams, <b>${recentTaught} of ${recentPts}</b> points belong to topics already here.
-        “Task” opens the PDF on the right page, “Solution” the sample solution. Tick what you have done; “Review” takes you to the section.</p>
+        “Task” opens the PDF on the right page, “Solution” the sample solution. Tick what you have done; “Review” takes you to the section,
+        “Practise” to tasks of the same kind with new numbers — to train first and keep the real one for later.</p>
     </div>
     <div class="card">
       <h2>What comes up</h2>
@@ -336,6 +337,7 @@ function renderRobExams() {
                 <a class="btn small-btn" href="${e.solFile}#page=${t.solPage}" target="_blank" rel="noopener">Solution · p. ${t.solPage}</a>
                 ${sec ? `<button class="btn small-btn" type="button" data-sec="${sec.secs[0]}">Review ${sec.secs[0]}</button>` : ""}
                 ${later ? `<span class="small muted gk-soon">${sec ? "partly " : ""}comes with ${rbTopicLater(later)}</span>` : ""}
+                ${ROB_TASKS.some((g) => t.topics.includes(g.topic)) ? `<button class="btn small-btn primary" type="button" data-tasks="${t.topics.find((x) => ROB_TASKS.some((g) => g.topic === x))}">Practise</button>` : ""}
               </span>
             </div>`;
           }).join("")}
@@ -353,4 +355,5 @@ function renderRobExams() {
     renderRobExams();
   }));
   $$("#rob-exams [data-sec]").forEach((b) => (b.onclick = () => openRobSection(b.dataset.sec)));
+  $$("#rob-exams [data-tasks]").forEach((b) => (b.onclick = () => openRobTasks(b.dataset.tasks)));
 }

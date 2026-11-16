@@ -204,6 +204,8 @@ function showTab(id) {
   if (id === "gki-mock" && gkMock.phase === "setup") renderGkiMock();
   if (id === "rob-home") renderRobHome();
   if (id === "rob-exams") renderRobExams();
+  if (id === "rob-practice" && !$("#rob-practice").innerHTML) renderRobPractice();
+  if (id === "rob-mock" && rbMock.phase === "setup") renderRobMock();
 }
 
 /* ---------------------------------------------------------------- Account */

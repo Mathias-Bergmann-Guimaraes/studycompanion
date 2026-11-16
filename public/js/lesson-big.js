@@ -93,6 +93,9 @@ function renderBigHint() {
   const box = $("#lBigHint");
   if (!box) return;
   const b = bigOfLesson(lessonState.n);
+  // An extra lesson can come before there are enough of its kind for a big test.
+  box.hidden = !b;
+  if (!b) return;
   const lessons = bigLessons(b);
   const done = lessons.filter((l) => lessonPassed(l.n)).length;
   const run = bigUI.runs[b.id];

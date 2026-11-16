@@ -318,6 +318,14 @@ const LESSONS = [
     { g: "V dict ように なる", m: "come to do · begin to do", ex: "練習[れんしゅう]して、漢字[かんじ]が読[よ]める{ようになりました}。", en: "With practice, I've become able to read kanji.", role: "verb", link: { tab: "patterns", id: "younaru" } },
     { g: "V dict / V ない ように する", m: "make a point of (not) doing · make sure to", ex: "夜[よる]は甘[あま]い物[もの]を食[た]べない{ようにしています}。", en: "I make a point of not eating sweets at night.", role: "verb", link: { tab: "patterns", id: "younisuru" } },
   ] },
+
+  // ---------------------------------------------------------------- Extra: connectors
+  // From the course handout そうしたら (そしたら カジュアル): one word, three uses.
+  { n: 54, title: "And then, thereupon & in that case", points: [
+    { g: "そうしたら / そしたら (and then)", m: "and then… · what happened next (casual そしたら)", ex: "ドアを開[あ]けた。{そうしたら}猫[ねこ]が入[はい]ってきた。", en: "I opened the door. And then the cat came in.", role: "time" },
+    { g: "すると (thereupon)", m: "thereupon · right at that moment (a bit written; stresses cause and effect)", ex: "ボタンを押[お]した。{すると}、ドアが開[あ]いた。", en: "I pressed the button. Thereupon the door opened.", role: "time" },
+    { g: "そうしたら / それなら (in that case)", m: "in that case · then (answering a “what if…”)", ex: "「雨[あめ]が降[ふ]ったら？」「{そうしたら}、行[い]かない。」", en: "“What if it rains?” “Then we won't go.”", role: "range", link: { tab: "patterns", id: "nara" } },
+  ] },
 ];
 
 // The books, and the extra lessons after them, each shown under its own label in the lesson list.
@@ -325,6 +333,7 @@ const LESSON_BOOKS = [
   { name: "Book I", ja: "初級 Ⅰ", from: 1, to: 25 },
   { name: "Book II", ja: "初級 Ⅱ", from: 26, to: 50 },
   { name: "Extra · Vertiefung W1", ja: "応用", from: 51, to: 53, extra: true },
+  { name: "Extra · Connectors", ja: "接続詞", from: 54, to: 54, extra: true },
 ];
 const MINNA_LAST = 50;
 const bookOf = (n) => LESSON_BOOKS.find((b) => n >= b.from && n <= b.to);

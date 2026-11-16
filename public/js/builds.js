@@ -307,4 +307,11 @@ const BUILDS = {
     [3, "My baby has started to walk.", "赤[あか]ちゃん+が:subject 歩[ある]けるようになりました:verb"],
     [4, "Please make sure not to be late for class.", "授業[じゅぎょう]+に:point 遅[おく]れないようにしてください:verb"],
   ],
+  54: [
+    [0, "I opened the door. And then the cat came in.", "ドアを開[あ]けた。そうしたら:clause 猫[ねこ]+が:subject 入[はい]ってきた:verb"],
+    [0, "I got to the station, and then it turned out the train had already left.", "駅[えき]に着[つ]いた。そうしたら、:clause 電車[でんしゃ]+が:subject もう:time 出[で]ていた:verb"],
+    [1, "I pressed the button. Thereupon the door opened.", "ボタンを押[お]した。すると、:clause ドア+が:subject 開[あ]いた:verb"],
+    [1, "I opened the box. Thereupon a cat came out of it.", "箱[はこ]を開[あ]けた。すると、:clause ~中[なか]+から:range ~猫[ねこ]+が:subject 出[で]てきた:verb"],
+    [2, "In that case, please go home early today.", "それなら、:clause 今日[きょう]+は:topic 早[はや]く:owner 帰[かえ]ってください:verb"],
+  ],
 };

@@ -3327,7 +3327,14 @@ body[data-course="robotics1"] { --accent: var(--course-robotics); }
 .rb-j1-t { color: var(--c-time); } .rb-j2-t { color: var(--c-place); }
 /* The semester plan on Home. */
 .rb-plan { display: grid; gap: 4px; margin-top: 10px; }
-.rb-plan-row { display: grid; grid-template-columns: 2.2em 4em minmax(0, 1fr) auto 7.5em; gap: 8px; align-items: center; padding: 6px 8px; border-radius: 10px; }
+/* Flex, not grid: the title takes the room the pills leave and only wraps when it must. */
+.rb-plan-row { display: flex; gap: 8px; align-items: center; padding: 6px 8px; border-radius: 10px; }
+.rb-plan-row > :nth-child(1) { flex: 0 0 2.2em; }
+.rb-plan-row > :nth-child(2) { flex: 0 0 4em; }
+.rb-plan-row > :nth-child(3) { flex: 1 1 auto; min-width: 11em; }
+.rb-plan-row > :nth-child(3) .nm-see { text-align: left; }
+.rb-plan-row > .nm-pills { flex: 0 1 auto; justify-content: flex-end; }
+.rb-plan-row > :last-child { flex: 0 0 7.5em; }
 .rb-plan-row > :last-child { text-align: right; }
 .rb-plan-row .nm-pills .len-topic { font-size: .72rem; }
 .rb-egrid-wrap { overflow-x: auto; contain: inline-size; }
@@ -3338,9 +3345,11 @@ body[data-course="robotics1"] { --accent: var(--course-robotics); }
 .rb-plan-row .rb-tbd { opacity: .55; }
 .rb-plan-exam { margin-top: 6px; border: 1.5px dashed color-mix(in srgb, var(--accent) 50%, transparent); color: var(--text) !important; }
 @media (max-width: 760px) {
-  .rb-plan-row { grid-template-columns: 2.2em 3.6em minmax(0, 1fr); }
-  .rb-plan-row > .nm-pills { grid-column: 1 / -1; }
-  .rb-plan-row > :last-child { grid-column: 3; text-align: left; }
+  .rb-plan-row { flex-wrap: wrap; }
+  .rb-plan-row > :nth-child(2) { flex-basis: 3.6em; }
+  .rb-plan-row > :nth-child(3) { flex-basis: calc(100% - 7em); min-width: 0; }
+  .rb-plan-row > .nm-pills { order: 5; flex-basis: 100%; justify-content: flex-start; }
+  .rb-plan-row > :last-child { flex-basis: auto; margin-left: calc(5.8em + 16px); text-align: left; }
 }
 .rb-ctl-row { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; }
 .rb-steps { display: grid; gap: 6px; align-content: center; }

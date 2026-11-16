@@ -223,8 +223,11 @@ function examCalHTML() {
     const iso = dayStr(new Date(m.getFullYear(), m.getMonth(), d));
     const on = exams.filter((e) => e.date === iso);
     const cls = ["xc-day", iso === today ? "today" : "", on.length ? "exam" : "", on.length && iso < today ? "past" : ""].join(" ");
+    // An exam day of a course here is a button that opens the course (the first one's, if two share the day).
+    const course = on.map((e) => e.course).find(Boolean);
+    const tag = course ? "button" : "span";
     cells.push(on.length
-      ? `<span class="${cls}" style="--xc:${on[0].color}" title="${on.map((e) => `${e.name} exam${e.tentative ? " (not confirmed)" : ""}`).join(", ")}"><b>${d}</b><i>${on.map((e) => e.mark + (e.tentative ? "?" : "")).join("·")}</i></span>`
+      ? `<${tag} class="${cls}" ${course ? `type="button" data-cw-go="${course.tabs[0]}"` : ""} style="--xc:${on[0].color}" title="${on.map((e) => `${e.name} exam${e.tentative ? " (not confirmed)" : ""}`).join(", ")}"><b>${d}</b><i>${on.map((e) => e.mark + (e.tentative ? "?" : "")).join("·")}</i></${tag}>`
       : `<span class="${cls}"><b>${d}</b></span>`);
   }
   return `
@@ -250,7 +253,7 @@ function nextExamHTML() {
     <div class="card cw cw-next" style="--cc:${next.color}">
       <h2 class="cw-cap">Next exam</h2>
       <div class="cw-big"><b>${n === 0 ? "Today" : n}</b>${n === 0 ? "" : `<span>day${n === 1 ? "" : "s"}</span>`}</div>
-      <p><b>${next.name}</b><br><span class="small muted">${fmtExamDate(next.date)}${next.tentative ? " (not confirmed)" : ""} · ${up.length} exam${up.length === 1 ? "" : "s"} to go</span></p>
+      <p><b>${c ? `<button type="button" class="xc-link" data-cw-go="${c.tabs[0]}">${next.name}</button>` : next.name}</b><br><span class="small muted">${fmtExamDate(next.date)}${next.tentative ? " (not confirmed)" : ""} · ${up.length} exam${up.length === 1 ? "" : "s"} to go</span></p>
       ${c && c.mock ? `<div class="home-actions"><button class="btn primary" type="button" data-cw-go="${c.mock[1]}">Mock exam</button>
         <button class="btn" type="button" data-cw-go="${c.tabs[0]}">Open course</button></div>` : ""}
     </div>`;

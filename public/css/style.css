@@ -1863,6 +1863,9 @@ main { max-width: 1080px; margin: 0 auto; padding: 24px; }
 .xc-day.today b { font-weight: 700; }
 .xc-day.exam { background: color-mix(in srgb, var(--xc) 24%, transparent); }
 .xc-day.exam b { font-weight: 700; }
+/* An exam day of a course here opens it (courses.js). */
+button.xc-day { width: 100%; padding: 0; border: 0; font: inherit; font-size: .85rem; color: inherit; cursor: pointer; }
+button.xc-day:hover { box-shadow: inset 0 0 0 1.5px var(--xc); }
 .xc-day.exam i { font-style: normal; font-size: .6rem; font-weight: 700; color: var(--xc); line-height: 1.1; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .xc-day.past { opacity: .45; }
 

@@ -2605,7 +2605,9 @@ main { max-width: 1080px; margin: 0 auto; padding: 24px; }
 .pm-intro { max-width: 80ch; margin-bottom: 10px; }
 .pm-intro .pp-code { margin: 8px 0; }
 .pm-part { grid-template-columns: 1.6em minmax(0, 1fr) auto; align-items: start; }
-.pm-part > .lp-mc, .pm-part > .pm-in, .pm-part > .pm-ta, .pm-part > .pm-model, .pm-part > .pm-why, .pm-part > .lp-mark { grid-column: 2 / -1; }
+.pm-part > .lp-mc, .pm-part > .pm-in, .pm-part > .pm-ta, .pm-part > .pm-model, .pm-part > .pm-why, .pm-part > .pm-ans, .pm-part > .lp-mark { grid-column: 2 / -1; }
+.pm-ans b { font-weight: 600; }
+.pm-saved { align-self: center; color: var(--good); font-weight: 700; }
 .pm-part .lp-mc { grid-column: 2 / -1; }
 .pm-in input { width: min(100%, 22em); text-align: left; font-family: var(--pp-mono); }
 .pm-ta {

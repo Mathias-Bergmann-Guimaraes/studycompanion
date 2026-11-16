@@ -118,6 +118,12 @@ function renderCourses() {
     showTab(COURSES.find((c) => c.id === b.dataset.course).tabs[0]);
     window.scrollTo({ top: 0 });
   }));
+  // The mark, the name and the description open the course too, like its "Open course" button
+  // (which stays the way in for the keyboard).
+  $$("#courses .course-card").forEach((card) => {
+    const open = $("[data-course]", card);
+    if (open) $$(".course-mark, .course-body", card).forEach((el) => (el.onclick = () => open.click()));
+  });
   wireLenCourseCard();
   wirePropaCourseCard();
   wireNumaCourseCard();

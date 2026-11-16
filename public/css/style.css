@@ -1894,6 +1894,98 @@ button.xc-day:hover { box-shadow: inset 0 0 0 1.5px var(--xc); }
 .xc-link:hover { text-decoration: underline; }
 .xc-soon { color: var(--bad); font-weight: 600; }
 
+/* The study plan's parts, on its page and its card (study-plan.js): sections as chips that tick once passed. */
+.sp-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+.sp-list li { display: grid; grid-template-columns: 46px minmax(0, 1fr); gap: 8px; align-items: baseline; font-size: .88rem; line-height: 1.4; }
+.sp-mark { justify-self: start; font-size: .68rem; font-weight: 700; padding: 1px 5px; border-radius: 4px; color: var(--surface); background: var(--cc); white-space: nowrap; }
+.sp-text { min-width: 0; }
+.sp-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 5px; }
+.sp-chip {
+  padding: 1px 7px; border-radius: 6px; border: 1px solid color-mix(in srgb, var(--cc) 55%, var(--border)); background: var(--surface);
+  font: inherit; font-size: .76rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text); cursor: pointer;
+}
+.sp-chip:hover { border-color: var(--cc); }
+.sp-chip.done { background: color-mix(in srgb, var(--cc) 22%, var(--surface)); border-color: var(--cc); }
+.sp-chip.later { opacity: .5; cursor: default; border-style: dashed; }
+/* Today's share, from the time left and what's passed. */
+.sp-today-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.sp-today-head h3 { margin: 0; font-size: 1rem; }
+.sp-today-head h2 { margin: 0; }
+.sp-load { font-size: .75rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.sp-load.light { background: color-mix(in srgb, var(--good) 18%, transparent); color: var(--good); }
+.sp-load.steady { background: color-mix(in srgb, var(--c-point) 18%, transparent); color: var(--c-point); }
+.sp-load.heavy { background: color-mix(in srgb, var(--bad) 18%, transparent); color: var(--bad); }
+.sp-behind { color: var(--bad); font-weight: 600; }
+.sp-ok { color: var(--good); font-size: .9rem; font-weight: 600; margin: 0; }
+.sp-warn { color: var(--bad); margin: 0; }
+/* The card on the picker: a summary and the way to the page. */
+.sp { display: grid; gap: 10px; }
+.sp .cw-cap { margin-bottom: 2px; }
+.sp .course-bar { margin: 0; }
+.sp-sum { display: flex; flex-wrap: wrap; gap: 6px; }
+.sp-pill { font-size: .8rem; padding: 2px 9px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--cc) 55%, var(--border)); font-variant-numeric: tabular-nums; }
+.sp-pill b { color: var(--cc); }
+.sp-pill.ok { background: color-mix(in srgb, var(--cc) 18%, transparent); }
+.sp .btn { justify-self: start; }
+
+/* The study plan page (#plan). */
+.spp { max-width: 1240px; margin: 0 auto; display: grid; gap: 36px; padding-bottom: 40px; }
+.spp-head { display: grid; gap: 8px; justify-items: start; }
+.spp-head h1 { margin: 6px 0 0; }
+.spp-head p { margin: 0; max-width: 75ch; }
+.spp-sec { display: grid; gap: 12px; }
+.spp-sec > h2, .spp-sec-head h2 { margin: 0; }
+.spp-sec > p { margin: 0; max-width: 80ch; }
+.spp-sec-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.spp-courses { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 14px; }
+.spp-course {
+  display: grid; gap: 10px; align-content: start; padding: 16px 18px; border-radius: 12px; min-width: 0;
+  background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--cc);
+}
+.spp-course.done { background: color-mix(in srgb, var(--good) 6%, var(--surface)); }
+.spp-course p { margin: 0; }
+.spp-course .course-bar { margin: 0; }
+.spp-course-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.spp-name { display: flex; align-items: baseline; gap: 8px; padding: 0; border: 0; background: none; font: inherit; font-weight: 700; color: var(--text); cursor: pointer; text-align: left; min-width: 0; }
+.spp-name:hover { text-decoration: underline; }
+.spp-todo { display: grid; gap: 6px; }
+.sp-chip.named { display: flex; gap: 8px; align-items: baseline; text-align: left; padding: 6px 10px; font-weight: 500; font-size: .88rem; border-radius: 8px; }
+.sp-chip.named b { font-variant-numeric: tabular-nums; }
+.spp-links .sp-chip.named { padding: 2px 8px; font-size: .82rem; }
+
+.spp-weeks { display: grid; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--surface); }
+.spp-phase { margin: 0; padding: 9px 16px; font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); background: var(--surface-2); border-top: 1px solid var(--border); }
+.spp-phase:first-child { border-top: 0; }
+.spp-week { display: grid; grid-template-columns: 150px repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--border); scroll-margin-top: 16px; }
+.spp-week > div { padding: 12px 14px; min-width: 0; }
+.spp-week > div + div { border-left: 1px solid var(--border); }
+.spp-week.past { opacity: .6; }
+.spp-week.brk { background: color-mix(in srgb, var(--surface-2) 60%, var(--surface)); }
+.spp-week.now { background: color-mix(in srgb, var(--c-point) 9%, var(--surface)); opacity: 1; box-shadow: inset 3px 0 0 var(--c-point); }
+.spp-when { display: grid; gap: 3px; align-content: start; }
+.spp-now { justify-self: start; font-size: .72rem; font-weight: 700; color: var(--c-point); }
+.spp-exam { justify-self: start; font-size: .75rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; color: var(--cc); background: color-mix(in srgb, var(--cc) 15%, transparent); }
+.spp-col { display: grid; gap: 6px; align-content: start; }
+.spp-cap { font-size: .7rem; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.spp-bridges li { grid-template-columns: minmax(0, 1fr); }
+.spp-bridges .sp-mark { margin-left: 4px; }
+
+.spp-ovs { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 14px; }
+.spp-ov { display: grid; gap: 10px; align-content: start; padding: 16px 18px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); min-width: 0; }
+.spp-ov p { margin: 0; }
+.spp-ov-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.spp-ov-head h3 { margin: 0; font-size: 1rem; }
+.spp-same { font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--good); white-space: nowrap; }
+.spp-links { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: .88rem; }
+.spp-links li { display: grid; grid-template-columns: 50px minmax(0, 1fr); gap: 8px; align-items: baseline; }
+.spp-links .sp-chips { margin: 0; }
+.spp-false { padding: 14px 16px; border-radius: 12px; background: var(--surface-2); line-height: 1.55; }
+
+@media (max-width: 900px) {
+  .spp-week { grid-template-columns: 1fr; }
+  .spp-week > div + div { border-left: 0; border-top: 1px dashed var(--border); }
+}
+
 /* Exam prep: per course, its progress, best mock exam and days left. */
 .cw-preps { display: grid; gap: 8px; }
 .cw-prep {

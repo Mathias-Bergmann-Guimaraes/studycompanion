@@ -238,9 +238,14 @@ const byExam = (a, b) => { const [ra, da] = examRank(a), [rb, db] = examRank(b);
 const byPin = (a, b) => { const p = store.get("pinnedCourse", ""); return (b.id === p) - (a.id === p) || byExam(a, b); };
 const PIN_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 1.8h4l-.6 4.4 2.6 2.3v1.3H4V8.5l2.6-2.3zM8 9.8v4.6"/></svg>`;
 
-// How fast to go to be through a course's sections a week before its exam (the last week is for
-// mock exams). "" when there's no exam to come.
+// How fast to go: the study plan's pace for its courses, otherwise through a course's sections a
+// week before its exam (the last week is for mock exams). "" when there's no exam to come.
 function examPace(c, done, total) {
+  // Courses in the study plan use its pace (study-plan.js), so the two cards agree.
+  const p = typeof spPace === "function" && spPace(c.id);
+  if (p && p.start) return `Starts ${fmtExamDate(p.start)} in the study plan`;
+  if (p) return p.left.length ? `${p.perDay} section${p.perDay === 1 ? "" : "s"} a day ${spBy(p)}`
+    : p.sprint ? "All sections done — on to mock exams." : "All sections so far done.";
   const left = total - done;
   const n = c.exam ? daysUntil(c.exam) : -1;
   if (n < 0) return "";
@@ -366,7 +371,7 @@ function todayHTML() {
 }
 
 const courseWidgetsHTML = () =>
-  `<aside class="courses-aside" aria-label="Exams and today">${nextExamHTML()}${examCalCardHTML()}${examPrepHTML()}${todayHTML()}</aside>`;
+  `<aside class="courses-aside" aria-label="Exams, study plan and today">${nextExamHTML()}${studyPlanHTML()}${examCalCardHTML()}${examPrepHTML()}${todayHTML()}</aside>`;
 
 function wireCourseWidgets() {
   const box = $(".courses-aside");
@@ -458,6 +463,8 @@ function setupCourseMenu() {
   brand.onclick = (e) => {
     e.preventDefault();
     if (closeCourseMenu()) return;
+    // On the study plan page the brand goes back to the picker.
+    if (location.hash === "#plan") { showTab("courses"); window.scrollTo({ top: 0 }); return; }
     if (document.body.classList.contains("on-courses")) { window.scrollTo({ top: 0 }); return; }
     openCourseMenu();
   };

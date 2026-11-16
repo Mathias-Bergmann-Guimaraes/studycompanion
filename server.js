@@ -641,7 +641,7 @@ function dropVotes(memberId) {
 // The page reports a name with track("name"), and only the name: never what was typed.
 const USAGE_GROUPS = {
   Pages: {
-    "tab.courses": "Course picker", "tab.home": "Home", "tab.lessons": "Lessons", "tab.structure": "Sentences", "tab.particles": "Particles", "tab.verbs": "Verbs",
+    "tab.courses": "Course picker", "tab.plan": "Study plan", "tab.home": "Home", "tab.lessons": "Lessons", "tab.structure": "Sentences", "tab.particles": "Particles", "tab.verbs": "Verbs",
     "tab.adjectives": "Adjectives", "tab.patterns": "Patterns", "tab.practice": "Practice", "tab.listen": "Listen", "tab.mistakes": "Mistakes",
     "tab.len-home": "LEN Home", "tab.len-basics": "LEN Basics", "tab.len-formulas": "LEN Formulas",
     "tab.len-exams": "LEN Old exams", "tab.len-practice": "LEN Practice", "tab.len-mock": "LEN Mock exam",
@@ -657,7 +657,7 @@ const USAGE_GROUPS = {
     "tab.rob-k3": "Robotics 3 Inverse kinematics", "tab.rob-sheet": "Robotics Formula sheet", "tab.rob-exams": "Robotics Old exams", "tab.rob-practice": "Robotics Practice", "tab.rob-mock": "Robotics Mock exam",
   },
   Listen: { "listen.open": "Videos opened", "listen.vote": "Likes and dislikes", "listen.save": "Bookmarks changed", "listen.channel": "Favourite channels changed" },
-  "Course picker": { "courses.open": "Courses opened", "courses.continue": "Continue lesson button", "courses.lenContinue": "Continue LEN section button", "courses.propaContinue": "Continue ProPa section button", "courses.numaContinue": "Continue NuMa section button", "courses.gkiContinue": "Continue GKI section button", "courses.robContinue": "Continue Robotics section button" },
+  "Course picker": { "courses.open": "Courses opened", "courses.continue": "Continue lesson button", "courses.lenContinue": "Continue LEN section button", "courses.propaContinue": "Continue ProPa section button", "courses.numaContinue": "Continue NuMa section button", "courses.gkiContinue": "Continue GKI section button", "courses.robContinue": "Continue Robotics section button", "plan.section": "Study plan: sections opened" },
   LEN: { "len.continue": "Continue button on LEN Home", "len.check": "Section checks started", "len.checkDone": "Section checks finished",
     "len.practice": "Practice tasks made", "len.mock": "Mock exams started", "len.mockDone": "Mock exams handed in" },
   ProPa: { "propa.continue": "Continue button on ProPa Home", "propa.check": "Section checks started", "propa.checkDone": "Section checks finished",

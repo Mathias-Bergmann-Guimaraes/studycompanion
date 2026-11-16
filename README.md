@@ -1,8 +1,8 @@
 # Study Companion
 
 A study site with a course picker as its front page. Its courses so far are Japanese, LEN
-(electrical networks), ProPa (programming paradigms), NuMa (numerical mathematics) and GKI
-(foundations of AI), see below. Japanese is a visual grammar course: colour-coded sentence blocks, particles, verb conjugation,
+(electrical networks), ProPa (programming paradigms), NuMa (numerical mathematics), GKI
+(foundations of AI) and Robotics I, see below. Japanese is a visual grammar course: colour-coded sentence blocks, particles, verb conjugation,
 adjectives, verb patterns and a Practice tab — plus a 50-lesson course with practice
 sentences, a 5-question check (worth up to three stars) for every grammar point and a test for
 every lesson. After Minna no Nihongo's 50 lessons come extra lessons from the university course
@@ -274,6 +274,28 @@ are KIT's and **not in git** (`public/gki-exams/` is ignored): copy them onto th
 `2425-ws-en.pdf`, `25-ss.pdf`, `2526-ws.pdf` and `26-ss.pdf` (`tools/upload-exams.ps1 -GkiFolder`
 renames the downloaded `GKI_*.pdf` files).
 
+The sixth course is **Robotics I** (Introduction to Robotics, WS 26/27, Asfour), in English like the
+lecture and the exam. It is **still running** too: one chapter per slide set so far — 0 *Introduction*
+(terms and definitions, history and the four generations, industrial, service and personal robots),
+1 *Mathematical Foundations* (pose and DoF, 2-D and 3-D rotations, local vs global axes, Euler and
+roll–pitch–yaw angles and gimbal lock, homogeneous transformations, quaternions and SLERP, dual
+quaternions), 2 *Kinematics* (configuration and task space, Denavit–Hartenberg, forward kinematics,
+the Jacobian for velocities and forces, singularities and manipulability, reachability maps and
+geometric models) and 3 *Inverse Kinematics* (the four cases of the 2-DoF arm, the geometric and the
+algebraic method, gradient descent, the pseudoinverse, damped least squares and the SVD) — 22 sections
+with drawings to play with (a frame turned about local or global axes, the four DH steps, a manipulability
+ellipse collapsing at a singularity, numerical IK walking across the slides' error map), traps and a
+check (`robChecks`). **Home** has the semester plan from the "Lecture Content" slide: the slides give no
+dates for single lectures, so that column stays empty until one is announced, and each row shows the
+old-exam topics that belong to it. `ROB_CH_DONE` in `public/js/rob.js` is the last chapter given; a new
+chapter gets its number in `ROB_PLAN`, a file `rob-k4.js` …, a tab and a panel in `index.html` and its
+tab in `courses.js`. The **Old exams** tab lists all 23 exams (the WS 15/16 test exam and WS 15/16 to
+SS 26) task by task, summarised in English, tagged by topic, with a points-per-topic grid, done ticks
+(`robExamDone`) and links to the page of each task in the exam and the sample solution
+(`public/js/rob-exams.js`). The PDFs are KIT's and **not in git** (`public/rob-exams/` is ignored): they
+keep their downloaded names (`E22_SS_2026_Exam.pdf`, `…_Sample-Solution.pdf`, `…_Answer-Sheet.pdf`);
+`tools/upload-exams.ps1 -RobFolder "<Previous Exams folder>"` copies them in.
+
 The whole site is **private**. Visitors without a login only see a login page. From there they
 can pick a username and password and send an access request, which you approve by hand — or
 use a single-use invite code you gave them, which lets them in straight away. After that they
@@ -322,7 +344,7 @@ only a feature's name, never what was typed, and sends nothing to a third party.
 feature, add it to `USAGE_GROUPS` in `server.js` and call `track("its.name")` in the page.
 
 **Old exam PDFs on the server.** They are not in git, so `git pull` never brings them. From a
-Windows PC that has them in `public/len-exams/`, `public/propa-exams/`, `public/numa-exams/` and `public/gki-exams/`, copy
+Windows PC that has them in `public/len-exams/`, `public/propa-exams/`, `public/numa-exams/`, `public/gki-exams/` and `public/rob-exams/`, copy
 them over SSH (overwrites, never deletes; no restart needed):
 
 ```
@@ -332,7 +354,8 @@ them over SSH (overwrites, never deletes; no restart needed):
 
 `-Courses numa` limits it to one course; `-NumaFolder "<downloaded NuMa course folder>"` first
 rebuilds `public/numa-exams/` from the downloaded files under the names the site expects, and
-`-GkiFolder "<folder with the GKI_*.pdf files>"` does the same for `public/gki-exams/`.
+`-GkiFolder "<folder with the GKI_*.pdf files>"` does the same for `public/gki-exams/`;
+`-RobFolder "<Robotics I Previous Exams folder>"` copies those PDFs into `public/rob-exams/`.
 
 Settings via environment variables: `PORT` (default 5173), `HOST` (default 0.0.0.0),
 `ADMIN_PORT` (default 3004) and `DATA_FILE` (default `data/access.json`).

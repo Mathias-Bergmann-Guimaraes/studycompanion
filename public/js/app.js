@@ -202,6 +202,8 @@ function showTab(id) {
   if (id === "gki-practice" && !$("#gki-practice").innerHTML) renderGkiPractice();
   if (id === "gki-exams") renderGkiExams();
   if (id === "gki-mock" && gkMock.phase === "setup") renderGkiMock();
+  if (id === "rob-home") renderRobHome();
+  if (id === "rob-exams") renderRobExams();
 }
 
 /* ---------------------------------------------------------------- Account */
@@ -1564,6 +1566,7 @@ function init() {
   setupPropa();
   setupNuma();
   setupGki();
+  setupRob();
   showTab(location.hash.slice(1));
   setupAccount();
 }

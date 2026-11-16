@@ -1,10 +1,10 @@
 <#
 .SYNOPSIS
-  Copies the old exam PDFs (LEN, ProPa, NuMa, GKI) onto the server. They are KIT material, so they
+  Copies the old exam PDFs (LEN, ProPa, NuMa, GKI, Robotics I) onto the server. They are KIT material, so they
   are not in git (public/*-exams/ is ignored) and a `git pull` on the server never brings them.
 
 .DESCRIPTION
-  Uploads public/len-exams, public/propa-exams, public/numa-exams and public/gki-exams from this
+  Uploads public/len-exams, public/propa-exams, public/numa-exams, public/gki-exams and public/rob-exams from this
   computer into the same folders of the site on the server, over SSH (ssh and scp come with Windows).
   Files already on the server are overwritten; nothing there is deleted.
 
@@ -12,6 +12,8 @@
   under the names numa-exams.js expects (17-ss.pdf, 17-ss-loesung.pdf, ..., 26-ss-loesung.pdf).
   With -GkiFolder it does the same for public/gki-exams from a folder with the GKI_*.pdf files
   (GKI_WS_22_23.pdf -> 2223-ws.pdf, ..., GKI_WS_23_24_musterloesung.pdf -> 2324-ws-loesung.pdf).
+  With -RobFolder it copies the Robotics I exams (E00_..._Exam.pdf, ..._Sample-Solution.pdf,
+  ..._Answer-Sheet.pdf) into public/rob-exams under their own names, as rob-exams.js expects.
 
 .PARAMETER Server
   Where to copy to: user@host, or a Host alias from ~/.ssh/config.
@@ -20,13 +22,16 @@
   The site's folder on the server (the one with server.js in it). Default: ~/studycompanion
 
 .PARAMETER Courses
-  Which courses' exams to upload. Default: len, propa, numa, gki.
+  Which courses' exams to upload. Default: len, propa, numa, gki, rob.
 
 .PARAMETER NumaFolder
   The downloaded NuMa course folder; when given, public/numa-exams is rebuilt from it first.
 
 .PARAMETER GkiFolder
   A folder with the downloaded GKI exams (GKI_SS_23.pdf, ...); when given, public/gki-exams is rebuilt from it first.
+
+.PARAMETER RobFolder
+  The downloaded "Previous Exams" folder of Robotics I (E00_... to E22_...); when given, its PDFs are copied into public/rob-exams first.
 
 .PARAMETER DryRun
   Only show what would be copied.
@@ -39,13 +44,17 @@
 
 .EXAMPLE
   .\tools\upload-exams.ps1 -Server me@my-server -Courses gki -GkiFolder "$HOME\Downloads\Altklausuren (3)"
+
+.EXAMPLE
+  .\tools\upload-exams.ps1 -Server me@my-server -Courses rob -RobFolder "$HOME\Downloads\Previous Exams"
 #>
 param(
   [string]$Server,
   [string]$RemoteDir = "~/studycompanion",
-  [ValidateSet("len", "propa", "numa", "gki")][string[]]$Courses = @("len", "propa", "numa", "gki"),
+  [ValidateSet("len", "propa", "numa", "gki", "rob")][string[]]$Courses = @("len", "propa", "numa", "gki", "rob"),
   [string]$NumaFolder,
   [string]$GkiFolder,
+  [string]$RobFolder,
   [switch]$DryRun
 )
 $ErrorActionPreference = "Stop"
@@ -91,8 +100,18 @@ if ($NumaFolder) {
   Write-Host "Rebuilt public\numa-exams: $n PDFs"
 }
 
+# Robotics I: the files keep their names (rob-exams.js links E22_SS_2026_Exam.pdf etc.).
+if ($RobFolder) {
+  if (-not (Test-Path -LiteralPath $RobFolder)) { throw "No folder $RobFolder" }
+  $dest = Join-Path $repo "public\rob-exams"
+  New-Item -ItemType Directory -Force -Path $dest | Out-Null
+  $pdfs = @(Get-ChildItem -LiteralPath $RobFolder -Filter "E??_*.pdf" -File)
+  $pdfs | Copy-Item -Destination $dest -Force
+  Write-Host "Copied into public\rob-exams: $($pdfs.Count) PDFs"
+}
+
 if (-not $Server) {
-  if ($NumaFolder -or $GkiFolder) { return }
+  if ($NumaFolder -or $GkiFolder -or $RobFolder) { return }
   throw "Say where to copy to: -Server user@host (and -RemoteDir if the site isn't in ~/studycompanion)."
 }
 

@@ -111,7 +111,7 @@ function renderPropaExams() {
   $("#propa-exams").innerHTML = `
     <div class="card hero">
       <h1>Old <span class="accent">exams</span></h1>
-      <p>Six exams from WS 23/24 to SS 26, each with a model solution. An exam lasts <b>120 minutes</b> for <b>120 points</b>.
+      <p>Six exams from WS 23/24 to SS 26, each with a model solution. The exam is on <b>${PROPA_EXAM_DATE}</b> and lasts <b>120 minutes</b> for <b>120 points</b>.
         Since WS 25/26 about two thirds are Lean and one third Reussner — <b>MPI, Java threads and Design by Contract</b> come up in every exam.</p>
       <p class="small">“Task” and “Solution” open the PDF on the right page. Tick off what you've done; “Review” goes to the section, “Practise” to similar tasks with new values.</p>
     </div>

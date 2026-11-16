@@ -13,6 +13,8 @@ let lenLang = store.get("lenLang", "de") === "en" ? "en" : "de";
 // Text in both languages. L() for HTML; lt() for what code writes itself (SVG text, attributes).
 const L = (de, en = de) => `<span class="l-de" lang="de">${de}</span><span class="l-en">${en}</span>`;
 const Lp = (pair) => L(pair[0], pair[1]);
+// The exam date, shown on the home page and the old exams.
+const LEN_EXAM_DATE = { de: "12.03.2027", en: "March 12, 2027" };
 const lt = (de, en = de) => (lenLang === "en" ? en : de);
 // A technical term. In English the German word stays beside it, since lectures and exams are German.
 const T = (de, en) => `<span class="l-de" lang="de"><b>${de}</b></span><span class="l-en"><b>${en}</b> <i class="de-term" lang="de">${de}</i></span>`;
@@ -254,6 +256,7 @@ function renderLenHome() {
         "The lectures to look things up and try them out: every sketch from the lectures as a drawing you can play with — currents flow, arrows flip, equations work themselves out.")}</p>
       <p>${L("Oben links schaltest du zwischen <b>Deutsch</b> und <b>Englisch</b> um. Auf Englisch steht der deutsche Fachbegriff immer daneben, für die Klausur.",
         "Switch between <b>German</b> and <b>English</b> in the bar. In English the German term always stays beside the English one, for the exam.")}</p>
+      <p class="small">${L(`Klausur am <b>${LEN_EXAM_DATE.de}</b>, 120 Minuten.`, `Exam on <b>${LEN_EXAM_DATE.en}</b>, 120 minutes.`)}</p>
       <div class="home-actions">
         <button class="btn primary" type="button" id="lenGo">${allDone ? L("Kapitel 1 wiederholen", "Go over chapter 1") : L(`Weiter mit ${next.id}`, `Continue with ${next.id}`)}: ${Lp(next.title)} →</button>
         <button class="btn" type="button" id="lenFormulasGo">${L("Formeln &amp; Begriffe", "Formulas &amp; terms")}</button>

@@ -6,7 +6,8 @@ A study site with a course picker as its front page. Its courses so far are Japa
 adjectives, verb patterns and a Practice tab — plus a 50-lesson course with practice
 sentences, a 5-question check (worth up to three stars) for every grammar point and a test for
 every lesson. After Minna no Nihongo's 50 lessons come extra lessons from the university course
-*Japanisch: Vertiefung und Praxis* (51–53 for week 1, with their own big test), listed in
+*Japanisch: Vertiefung und Praxis* (51–53 for week 1, with their own big test, and 54 on the connectors そうしたら, すると and
+それなら, which has no big test yet), listed in
 `LESSON_BOOKS` at the end of `public/js/lessons.js`. The Listen tab doesn't spot their grammar yet.
 Right answers earn XP towards levels and a daily streak. Learners can also write
 three sentences of their own with each grammar point for extra XP; the site checks the basics

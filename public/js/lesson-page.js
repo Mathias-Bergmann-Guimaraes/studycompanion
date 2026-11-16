@@ -511,7 +511,7 @@ function finishTest(l, t) {
   const next = LESSONS.find((x) => x.n === l.n + 1);
   // The last lesson of a block leads to its big test, if that's still to do.
   const block = bigOfLesson(l.n);
-  const big = block.to === l.n && !bigPassed(block) ? block : null;
+  const big = block && block.to === l.n && !bigPassed(block) ? block : null;
   const bonus = passed ? (wasPassed ? XP.repass : XP.pass) : 0;
   $("#lTest").innerHTML = `
     <div class="lt-result ${passed ? "pass" : "fail"}">

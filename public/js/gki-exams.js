@@ -162,7 +162,7 @@ function renderGkiExams() {
       <h2>Aufbau und Hinweise</h2>
       <p class="small muted">Von den Deckblättern und aus VL 1, in eigenen Worten.</p>
       ${ppFacts([
-        ["Dauer und Punkte", `Klausur am ${GKI_EXAM_DATE}, 90 Minuten. Zuletzt 75 Punkte, bestanden ab der Hälfte (37,5). Keine Hilfsmittel außer Schreibmaterial — die Klausur findet ohne KI statt.`],
+        ["Dauer und Punkte", `Klausur ${examWhenDE("gki")}, 90 Minuten. Zuletzt 75 Punkte, bestanden ab der Hälfte (37,5). Keine Hilfsmittel außer Schreibmaterial — die Klausur findet ohne KI statt.`],
         ["Rechnen", "Bei Rechnungen zuerst den Ansatz bzw. die Formel angeben, erst dann Zahlen einsetzen. Brüche kürzen, wenn verlangt (SS 24: alle Brüche mit Zahlen unter 50)."],
         ["Erklären", "Begründungen so kurz wie möglich, in wenigen Sätzen oder Stichpunkten. Die Punkte je Teilaufgabe zeigen, wie viele Aspekte erwartet werden."],
         ["Neu ab WS 26/27", "Programmier-Verständnis-Aufgaben: kein eigenes Coden, sondern Code-Auszüge ergänzen und bewerten — geübt in den Übungen (Jupyter, NumPy). Die Übungsaufgaben hier haben deshalb auch Code-Fragen."],

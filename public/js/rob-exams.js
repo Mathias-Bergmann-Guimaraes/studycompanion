@@ -293,7 +293,7 @@ function renderRobExams() {
       <h2>Format and rules</h2>
       <p class="small muted">From the cover sheets of the recent exams, in our own words.</p>
       ${ppFacts([
-        ["Time and points", `Exam on ${ROB_EXAM.date}, ${ROB_EXAM.time} (${ROB_EXAM.minutes} minutes). Since WS 24/25: 60 points.`],
+        ["Time and points", `Exam ${examWhenEN("robotics1")}, ${ROB_EXAM.time} (${ROB_EXAM.minutes} minutes). Since WS 24/25: 60 points.`],
         ["Aids", "Only writing utensils. Pen with permanent black or blue ink — pencil, red or green ink do not count."],
         ["Answers", "Only in the boxes of the answer sheets; the question sheets are not handed in. Keep answers brief — the space does not say how long an answer should be."],
         ["Language", "English or German; you may switch between answers, not within one."],

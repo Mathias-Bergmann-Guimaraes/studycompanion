@@ -360,8 +360,8 @@ function renderLenExams() {
       <h2>${L("Aufbau und Hinweise", "Format and rules")}</h2>
       <p class="small muted">${L("Von den Deckblättern, in eigenen Worten.", "From the cover pages, in our own words.")}</p>
       ${ppFacts([
-        [L("Dauer und Punkte", "Time and points"), L(`Klausur am ${LEN_EXAM_DATE.de}. ` + "2 Stunden, rund 90 Punkte in fünf Aufgaben (anfangs bis zu sieben) — eine je Thema, immer in derselben Reihenfolge. Die Punkte je Teilaufgabe stehen in der Aufgabe.",
-          `Exam on ${LEN_EXAM_DATE.en}. ` + "2 hours, about 90 points in five tasks (up to seven in the early exams) — one per topic, always in the same order. Each part shows its points.")],
+        [L("Dauer und Punkte", "Time and points"), L(`Klausur ${examWhenDE("len")}. ` + "2 Stunden, rund 90 Punkte in fünf Aufgaben (anfangs bis zu sieben) — eine je Thema, immer in derselben Reihenfolge. Die Punkte je Teilaufgabe stehen in der Aufgabe.",
+          `Exam ${examWhenEN("len")}. ` + "2 hours, about 90 points in five tasks (up to seven in the early exams) — one per topic, always in the same order. Each part shows its points.")],
         [L("Hilfsmittel", "Allowed aids"), L("Nur ein nicht programmierbarer Taschenrechner.", "Only a non-programmable calculator.")],
         [L("Lösungsweg", "Working"), L("Der Weg muss vollständig und nachvollziehbar sein: Überlegungen aufschreiben, kurze Kommentare dazu. Bei „Zeigen Sie“ ist das Ergebnis gegeben — es zählt nur der Weg.",
           "Show the full working so it can be followed: write down your reasoning, add short comments. In “show that” parts the result is given — only the working counts.")],

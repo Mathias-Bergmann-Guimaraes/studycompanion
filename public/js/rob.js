@@ -38,7 +38,8 @@ const ROB_PLAN = [
   [null, "", "Task Planning"],
 ];
 // From chapter 0 (Organization).
-const ROB_EXAM = { date: "March 31, 2027", time: "08:00–10:00", minutes: 120, register: "March 21, 2027" };
+// The date is `exam` in COURSES (courses.js).
+const ROB_EXAM = { time: "08:00–10:00", minutes: 120, register: "March 21, 2027" };
 const ROB_TIMES = "Monday 14:00–15:30 (Gerthsen lecture hall) and Wednesday 15:45–17:15 (HS am Fasanengarten)";
 
 /* ---------------------------------------------------------------- Numbers and matrices */
@@ -295,7 +296,7 @@ function renderRobHome() {
         an arm you move joint by joint, frames you rotate about local or global axes, a manipulability ellipse that collapses at a singularity,
         inverse kinematics solved step by step —, the usual traps and a quick check per section.</p>
       <p class="small">The lecture is still running: so far <b>chapters 0–${ROB_CH_DONE}</b> are here, ${done} of the ${ROB_PLAN.length} topics on the plan.
-        Exam on <b>${ROB_EXAM.date}</b>, ${ROB_EXAM.time}, ${ROB_EXAM.minutes} minutes, written, in English.</p>
+        Exam ${examWhenEN("robotics1")}, ${ROB_EXAM.time}, ${ROB_EXAM.minutes} minutes, written, in English.</p>
       <div class="home-actions">
         <button class="btn primary" type="button" id="rbGo">${allDone ? "Review from the start" : `Continue with ${next.id}: ${next.title}`} →</button>
         <button class="btn" type="button" data-go="rob-practice">Practice</button>
@@ -324,7 +325,7 @@ function renderRobHome() {
           </div>`;
         }).join("")}
         <div class="rb-plan-row rb-plan-exam">
-          <span class="len-num">✎</span><span class="small muted">31.03.</span>
+          <span class="len-num">✎</span><span class="small muted">${examDayDE("robotics1")}</span>
           <span><b>Exam</b> · ${ROB_EXAM.time}, ${ROB_EXAM.minutes} minutes, in English</span>
           <span></span><span class="small muted">register by ${ROB_EXAM.register}</span>
         </div>

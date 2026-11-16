@@ -467,6 +467,7 @@ function renderNumaHome() {
         in der Klausur braucht, Zeichnungen, die das Verfahren Schritt für Schritt vorrechnen, die typischen Fallen und ein
         Kurztest pro Abschnitt. <b>Übungsaufgaben</b> macht Aufgaben wie in den Altklausuren, immer mit neuen Zahlen, und die
         <b>Probeklausur</b> stellt sechs davon zu einer Klausur zusammen.</p>
+      <p class="small">Klausur ${examWhenDE("numa")}.</p>
       <div class="home-actions">
         <button class="btn primary" type="button" id="nmGo">${allDone ? "Von vorn wiederholen" : `Weiter mit ${next.id}: ${next.title}`} →</button>
         <button class="btn" type="button" data-go="numa-practice">Übungsaufgaben</button>

@@ -40,7 +40,6 @@ const GKI_PLAN = [
   [14, "08.02.", "Suche, Reasoning und Planung · Symbolische und logikbasierte KI", "BS"],
   [15, "15.02.", "Allgemeine Fragen · Verbindungen und Wiederholung", "BS + GN"],
 ];
-const GKI_EXAM_DATE = "08.03.2027";
 
 /* ---------------------------------------------------------------- Small helpers */
 
@@ -215,7 +214,7 @@ function renderGkiHome() {
         zum Ausprobieren — eine Gerade, die sich an Punkte anpasst, die man verschiebt, eine Schwelle, die Precision und Recall verschiebt,
         Gradientenabstieg Schritt für Schritt —, die typischen Fallen und ein Kurztest pro Abschnitt.</p>
       <p class="small">Die Vorlesung läuft noch: Bisher sind <b>VL 1–${GKI_VL_DONE}</b> da. Die Altklausuren, die Übungsaufgaben und die
-        Probeklausur decken aber schon den ganzen Stoff ab; was noch nicht dran war, ist markiert. Klausur am <b>${GKI_EXAM_DATE}</b>, 90 Minuten.</p>
+        Probeklausur decken aber schon den ganzen Stoff ab; was noch nicht dran war, ist markiert. Klausur ${examWhenDE("gki")}, 90 Minuten.</p>
       <div class="home-actions">
         <button class="btn primary" type="button" id="gkGo">${allDone ? "Von vorn wiederholen" : `Weiter mit ${next.id}: ${next.title}`} →</button>
         <button class="btn" type="button" data-go="gki-practice">Übungsaufgaben</button>

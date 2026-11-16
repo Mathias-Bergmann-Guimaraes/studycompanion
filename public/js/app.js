@@ -156,6 +156,10 @@ function showTab(id) {
   // The picker has no tabs or settings, and the top bar stays a bar on every screen.
   const picking = id === "courses";
   document.body.classList.toggle("on-courses", picking);
+  document.body.classList.remove("booting");
+  // The picker offers to go back to the last page you had open in a course (courses.js).
+  if (!picking) store.set("lastTab", id);
+  closeCourseMenu();
   const course = courseOf(id);
   // Inside a course: only its own tabs and settings (data-course-only), in its own colour.
   document.body.dataset.course = picking ? "" : course.id;
@@ -164,7 +168,8 @@ function showTab(id) {
   $("#brandMark").textContent = picking ? "S" : course.mark;
   $("#brandMark").lang = picking ? "" : course.lang;
   $("#brandMark").classList.toggle("short", !picking && course.mark.length > 1);
-  $("#brandSub").textContent = picking ? "All courses" : `${course.name} · switch course`;
+  $("#brandSub").textContent = picking ? "All courses" : `${course.name} · switch course ▾`;
+  $("#brand").title = picking ? "All courses" : "Switch course";
   document.title = picking ? "Study Companion" : `${course.name} · Study Companion`;
   if (picking) renderCourses();
   $$("#tabs button").forEach((b) => {
@@ -1559,7 +1564,7 @@ function init() {
 
   $$("#tabs button").forEach((b) => (b.onclick = () => { showTab(b.dataset.tab); window.scrollTo({ top: 0 }); }));
   window.addEventListener("hashchange", () => showTab(location.hash.slice(1)));
-  $("#brand").onclick = (e) => { e.preventDefault(); showTab("courses"); window.scrollTo({ top: 0 }); };
+  setupCourseMenu();
 
   renderHome();
   renderLessons();

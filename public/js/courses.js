@@ -11,10 +11,11 @@ const COURSES = [
     tabs: ["home", "lessons", "structure", "particles", "verbs", "adjectives", "patterns", "practice", "listen", "mistakes"],
     mark: "文",
     lang: "ja",
-    color: "var(--accent)",
+    color: "var(--course-japanese)",
     name: "Japanese",
     about: "Grammar you can see: colour-coded sentence blocks, 50 lessons, daily practice and real Japanese to listen to.",
     footer: "Colours mean the same thing on every page — a green block is always the object, a blue block is always the topic.",
+    progress: () => [LESSONS.filter((l) => lessonPassed(l.n)).length, LESSONS.length],
   },
   {
     id: "len",
@@ -26,6 +27,9 @@ const COURSES = [
     about: "Circuits from the ground up, with drawings you can play with — in German or English.",
     footer: `<span class="l-de" lang="de">Farben bedeuten überall dasselbe — rot ist immer ein Strom, blau immer eine Spannung.</span><span class="l-en">Colours mean the same thing everywhere — red is always a current, blue is always a voltage.</span>`,
     card: (c) => lenCourseCardHTML(c),
+    exam: "2027-03-12",
+    progress: () => [lenSections().filter(lenPassed).length, lenSections().length],
+    mock: ["lenMock", "len-mock"],
   },
   {
     id: "propa",
@@ -37,6 +41,9 @@ const COURSES = [
     about: "Lean and Reussner for review, with drawings that run the code step by step.",
     footer: "Colours mean the same in every code block and drawing — blue is a type, red an effect, green what #eval prints.",
     card: (c) => propaCourseCardHTML(c),
+    exam: "2027-03-23",
+    progress: () => [ppSections().filter(ppPassed).length, ppSections().length],
+    mock: ["propaMock", "propa-mock"],
   },
   {
     id: "numa",
@@ -48,6 +55,11 @@ const COURSES = [
     about: "Numerische Mathematik für Informatik und Ingenieurwesen, mit Zeichnungen, die jedes Verfahren vorrechnen.",
     footer: `<span lang="de">Farben bedeuten überall dasselbe — grün ist immer die exakte Lösung, blau eine Näherung, rot ein Fehler.</span>`,
     card: (c) => numaCourseCardHTML(c),
+    // Not confirmed yet: shown with a "?" until it is (examTentative).
+    exam: "2027-02-24",
+    examTentative: true,
+    progress: () => [nmSections().filter(nmPassed).length, nmSections().length],
+    mock: ["numaMock", "numa-mock"],
   },
   {
     id: "gki",
@@ -59,6 +71,9 @@ const COURSES = [
     about: "Regression, Wahrscheinlichkeit, Klassifikation und Lernen — mit Zeichnungen zum Ausprobieren.",
     footer: `<span lang="de">Farben bedeuten überall dasselbe — grün ist die Wahrheit, blau die Vorhersage, rot ein Fehler, gold ein Gradient.</span>`,
     card: (c) => gkiCourseCardHTML(c),
+    exam: "2027-03-08",
+    progress: () => [gkSections().filter(gkPassed).length, gkSections().length],
+    mock: ["gkiMock", "gki-mock"],
   },
   {
     id: "robotics1",
@@ -70,6 +85,9 @@ const COURSES = [
     about: "Robot arms: frames, kinematics and inverse kinematics — with an arm you can move.",
     footer: "Colours mean the same everywhere — a frame's x axis is red, y green, z blue; gold is a joint angle, pink the target.",
     card: (c) => robCourseCardHTML(c),
+    exam: "2027-03-31",
+    progress: () => [rbSections().filter(rbPassed).length, rbSections().length],
+    mock: ["robMock", "rob-mock"],
   },
 ];
 
@@ -83,20 +101,46 @@ function englishGreeting() {
 
 function renderCourses() {
   $("#courses").innerHTML = `
+    <div class="courses-layout"><div class="courses-main">
     <div class="courses-head">
       <h1>${englishGreeting()}</h1>
       <p class="muted">Which course are you studying today?</p>
     </div>
-    ${COURSES.filter((c) => !c.soon).map((c) => (c.card ? c.card(c) : courseCardHTML(c))).join("")}
+    ${continueHTML()}
+    ${COURSES.filter((c) => !c.soon).sort(byPin).map((c) => (c.card ? c.card(c) : courseCardHTML(c))).join("")}
     ${COURSES.some((c) => c.soon) ? `<h2 class="courses-cap">Coming soon</h2>
     <div class="course-soon-grid">
       ${COURSES.filter((c) => c.soon).map(soonCardHTML).join("")}
-    </div>` : ""}`;
+    </div>` : ""}
+    </div>${courseWidgetsHTML()}</div>`;
+  wireCourseWidgets();
   $$("#courses [data-course]").forEach((b) => (b.onclick = () => {
     track("courses.open");
     showTab(COURSES.find((c) => c.id === b.dataset.course).tabs[0]);
     window.scrollTo({ top: 0 });
   }));
+  // The mark, the name and the description open the course too, like its "Open course" button
+  // (which stays the way in for the keyboard).
+  $$("#courses .course-card").forEach((card) => {
+    const open = $("[data-course]", card);
+    if (open) $$(".course-mark, .course-body", card).forEach((el) => (el.onclick = () => open.click()));
+    // A pin beside the name keeps one course at the top; pinning another moves the pin.
+    const h2 = $(".course-body h2", card);
+    if (!open || !h2) return;
+    const id = open.dataset.course;
+    const pinned = store.get("pinnedCourse", "") === id;
+    card.classList.toggle("pinned", pinned);
+    h2.insertAdjacentHTML("beforeend", `<button type="button" class="course-pin" aria-pressed="${pinned}"
+      title="${pinned ? "Unpin" : "Pin to the top"}" aria-label="${pinned ? "Unpin" : "Pin to the top"}">${PIN_ICON}</button>`);
+    $(".course-pin", h2).onclick = (e) => {
+      e.stopPropagation();
+      track("courses.pin");
+      store.set("pinnedCourse", pinned ? "" : id);
+      renderCourses();
+    };
+  });
+  const resume = $("#courseResume");
+  if (resume) resume.onclick = () => { track("courses.resume"); showTab(resume.dataset.tab); window.scrollTo({ top: 0 }); };
   wireLenCourseCard();
   wirePropaCourseCard();
   wireNumaCourseCard();
@@ -149,4 +193,275 @@ function soonCardHTML(c) {
       <h3 lang="${c.lang}">${c.name}</h3>
       <p class="small muted">${c.about}</p>
     </div>`;
+}
+
+/* ---------------------------------------------------------------- Widgets beside the courses */
+// On a wide screen they sit in a column to the right of the course cards, below them (in two columns) otherwise.
+// Each course's exam date is its `exam` above; OTHER_EXAMS are exams with no course here.
+
+const OTHER_EXAMS = [
+  { name: "Computergrafik", mark: "CG", date: "2027-03-01" },
+  { name: "Signale und Systeme", mark: "SuS", date: "2027-03-17" },
+];
+
+// "2027-03-12" as a local date at midnight. Days to it: daysUntil (lesson-review.js; 0 today, < 0 past).
+const examDay = (s) => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+const shortExamDate = (s) => examDay(s).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+const fmtExamDate = (s) => examDay(s).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+const examIn = (n) => (n === 0 ? "today" : n === 1 ? "tomorrow" : n < 0 ? "done" : `in ${n} days`);
+const examInDE = (n) => (n === 0 ? "heute" : n === 1 ? "morgen" : n < 0 ? "vorbei" : `in ${n} Tagen`);
+
+// A course's exam date as its own pages write it — the one place each date lives is `exam` in
+// COURSES. "Klausur ${examWhenDE("gki")}" → "Klausur am <b>08.03.2027</b> (in 112 Tagen)"; an exam
+// not confirmed yet (examTentative) says so. "" when the course has no date.
+const courseExam = (id) => COURSES.find((c) => c.id === id && c.exam);
+function examWhenDE(id) {
+  const c = courseExam(id);
+  if (!c) return "";
+  const d = examDay(c.exam).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" });
+  return `${c.examTentative ? "voraussichtlich " : ""}am <b>${d}</b> (${c.examTentative ? "noch nicht bestätigt, " : ""}${examInDE(daysUntil(c.exam))})`;
+}
+function examWhenEN(id) {
+  const c = courseExam(id);
+  if (!c) return "";
+  const d = examDay(c.exam).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+  return `on <b>${d}</b> (${c.examTentative ? "not confirmed, " : ""}${examIn(daysUntil(c.exam))})`;
+}
+// "31.03." for a plan table.
+const examDayDE = (id) => { const c = courseExam(id); return c ? examDay(c.exam).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" }) : ""; };
+
+// Soonest exam first: courses with an exam still to come by date, then those whose exam is past,
+// then those with none (Japanese).
+const examRank = (c) => (!c.exam ? [2, ""] : daysUntil(c.exam) < 0 ? [1, c.exam] : [0, c.exam]);
+const byExam = (a, b) => { const [ra, da] = examRank(a), [rb, db] = examRank(b); return ra - rb || da.localeCompare(db); };
+// The course cards: the pinned one first (the pin on each card), then by exam.
+const byPin = (a, b) => { const p = store.get("pinnedCourse", ""); return (b.id === p) - (a.id === p) || byExam(a, b); };
+const PIN_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 1.8h4l-.6 4.4 2.6 2.3v1.3H4V8.5l2.6-2.3zM8 9.8v4.6"/></svg>`;
+
+// How fast to go to be through a course's sections a week before its exam (the last week is for
+// mock exams). "" when there's no exam to come.
+function examPace(c, done, total) {
+  const left = total - done;
+  const n = c.exam ? daysUntil(c.exam) : -1;
+  if (n < 0) return "";
+  if (!left) return "All sections done — on to mock exams.";
+  const days = Math.max(1, n - 7);
+  if (left >= days) { const k = Math.ceil(left / days); return `${k} section${k === 1 ? "" : "s"} a day to be done a week early`; }
+  const every = Math.floor(days / left);
+  return `1 section ${every === 1 ? "a day" : `every ${every} days`} to be done a week early`;
+}
+
+// Every exam with a date, soonest first: the courses' own and the others.
+function allExams() {
+  return [
+    ...COURSES.filter((c) => c.exam).map((c) => ({ name: c.name, mark: c.mark, date: c.exam, tentative: c.examTentative, color: c.color, course: c })),
+    ...OTHER_EXAMS.map((e) => ({ ...e, color: "var(--muted)" })),
+  ].sort((a, b) => a.date.localeCompare(b.date));
+}
+const upcomingExams = () => allExams().filter((e) => daysUntil(e.date) >= 0);
+
+// The month the calendar opens on: the next exam's (this month once an exam is in it).
+const examCal = { month: null };
+function examCalStart() {
+  const next = upcomingExams()[0];
+  const d = next ? examDay(next.date) : new Date();
+  return new Date(d.getFullYear(), d.getMonth(), 1);
+}
+
+// A month as a grid, weeks starting on Monday, each exam day filled in its course's colour.
+function examCalHTML() {
+  const m = examCal.month || (examCal.month = examCalStart());
+  const exams = allExams();
+  const lead = (m.getDay() + 6) % 7;
+  const len = new Date(m.getFullYear(), m.getMonth() + 1, 0).getDate();
+  const today = dayStr();
+  const cells = [];
+  for (let i = 0; i < lead; i++) cells.push(`<span></span>`);
+  for (let d = 1; d <= len; d++) {
+    const iso = dayStr(new Date(m.getFullYear(), m.getMonth(), d));
+    const on = exams.filter((e) => e.date === iso);
+    const cls = ["xc-day", iso === today ? "today" : "", on.length ? "exam" : "", on.length && iso < today ? "past" : ""].join(" ");
+    // An exam day of a course here is a button that opens the course (the first one's, if two share the day).
+    const course = on.map((e) => e.course).find(Boolean);
+    const tag = course ? "button" : "span";
+    cells.push(on.length
+      ? `<${tag} class="${cls}" ${course ? `type="button" data-cw-go="${course.tabs[0]}"` : ""} style="--xc:${on[0].color}" title="${on.map((e) => `${e.name} exam${e.tentative ? " (not confirmed)" : ""}`).join(", ")}"><b>${d}</b><i>${on.map((e) => e.mark + (e.tentative ? "?" : "")).join("·")}</i></${tag}>`
+      : `<span class="${cls}"><b>${d}</b></span>`);
+  }
+  return `
+    <div class="xc-head">
+      <button class="xc-nav" type="button" data-cal="-1" aria-label="Previous month">‹</button>
+      <b>${m.toLocaleDateString("en-GB", { month: "long", year: "numeric" })}</b>
+      <button class="xc-nav" type="button" data-cal="1" aria-label="Next month">›</button>
+    </div>
+    <div class="xc-grid">
+      ${["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map((w) => `<span class="xc-wd">${w}</span>`).join("")}
+      ${cells.join("")}
+    </div>`;
+}
+
+// The soonest exam still to come, as a big countdown, with that course's mock exam.
+function nextExamHTML() {
+  const up = upcomingExams();
+  const next = up[0];
+  if (!next) return `<div class="card cw"><h2 class="cw-cap">Next exam</h2><p class="muted small">No exams coming up.</p></div>`;
+  const n = daysUntil(next.date);
+  const c = next.course;
+  return `
+    <div class="card cw cw-next" style="--cc:${next.color}">
+      <h2 class="cw-cap">Next exam</h2>
+      <div class="cw-big"><b>${n === 0 ? "Today" : n}</b>${n === 0 ? "" : `<span>day${n === 1 ? "" : "s"}</span>`}</div>
+      <p><b>${c ? `<button type="button" class="xc-link" data-cw-go="${c.tabs[0]}">${next.name}</button>` : next.name}</b><br><span class="small muted">${fmtExamDate(next.date)}${next.tentative ? " (not confirmed)" : ""} · ${up.length} exam${up.length === 1 ? "" : "s"} to go</span></p>
+      ${c && c.mock ? `<div class="home-actions"><button class="btn primary" type="button" data-cw-go="${c.mock[1]}">Mock exam</button>
+        <button class="btn" type="button" data-cw-go="${c.tabs[0]}">Open course</button></div>` : ""}
+    </div>`;
+}
+
+// The calendar, then every exam as a list with its countdown.
+function examCalCardHTML() {
+  const row = (e, n) => `<li class="${n !== null && n < 0 ? "past" : ""}" style="--xc:${e.color}">
+      <span class="xc-dot"></span>
+      <span class="xc-name" title="${e.name}">${e.course ? `<button type="button" class="xc-link" data-cw-go="${e.course.tabs[0]}">${e.name}</button>` : e.name}</span>
+      <span class="small ${n !== null && n >= 0 && n <= 14 ? "xc-soon" : "muted"}">${e.date ? `${shortExamDate(e.date)}${e.tentative ? "?" : ""} · ${examIn(n)}` : "no date yet"}</span></li>`;
+  return `
+    <div class="card cw">
+      <h2 class="cw-cap">Exam calendar</h2>
+      <div id="examCal">${examCalHTML()}</div>
+      <ul class="xc-list">
+        ${allExams().map((e) => row(e, daysUntil(e.date))).join("")}
+        ${COURSES.filter((c) => c.mock && !c.exam).map((c) => row({ name: c.name, color: c.color, course: c }, null)).join("")}
+      </ul>
+    </div>`;
+}
+
+// Per course with an exam: how much of it is done, the best mock exam, and the days left.
+function examPrepHTML() {
+  const rows = COURSES.filter((c) => c.mock)
+    .sort(byExam)
+    .map((c) => {
+      const [done, total] = c.progress();
+      const best = store.get(c.mock[0], {}).best;
+      const pace = examPace(c, done, total);
+      return `<button type="button" class="cw-prep" style="--cc:${c.color}" data-cw-go="${c.tabs[0]}">
+        <span class="cw-prep-top"><b>${c.mark}</b><span class="small muted">${c.exam ? examIn(daysUntil(c.exam)) + (c.examTentative ? " (not confirmed)" : "") : "no date"}</span></span>
+        <span class="lmastery-bar course-bar"><span style="width:${total ? (done / total) * 100 : 0}%"></span></span>
+        <span class="small muted">${done} / ${total} sections · mock ${best === undefined ? "not tried yet" : `best ${best} %`}</span>
+        ${pace ? `<span class="small cw-pace">${pace}</span>` : ""}
+      </button>`;
+    });
+  return `<div class="card cw"><h2 class="cw-cap">Exam prep</h2><div class="cw-preps">${rows.join("")}</div></div>`;
+}
+
+// Today's XP toward the daily goal and the streak (game.js; every course earns XP).
+function todayHTML() {
+  const xp = todayXp();
+  const streak = liveStreak();
+  return `
+    <div class="card cw">
+      <h2 class="cw-cap">Today</h2>
+      <div class="course-stats small"><span><b>${xp}</b> / ${DAILY_GOAL} XP</span><span>🔥 <b>${streak}</b> day${streak === 1 ? "" : "s"} in a row</span></div>
+      <span class="lmastery-bar course-bar"><span style="width:${Math.min(100, (xp / DAILY_GOAL) * 100)}%"></span></span>
+      <p class="small muted">${xp >= DAILY_GOAL ? "Daily goal reached." : `${DAILY_GOAL - xp} XP to go for today's goal.`}</p>
+    </div>`;
+}
+
+const courseWidgetsHTML = () =>
+  `<aside class="courses-aside" aria-label="Exams and today">${nextExamHTML()}${examCalCardHTML()}${examPrepHTML()}${todayHTML()}</aside>`;
+
+function wireCourseWidgets() {
+  const box = $(".courses-aside");
+  box.addEventListener("click", (e) => {
+    const nav = e.target.closest("[data-cal]");
+    if (nav) {
+      const m = examCal.month;
+      examCal.month = new Date(m.getFullYear(), m.getMonth() + Number(nav.dataset.cal), 1);
+      $("#examCal").innerHTML = examCalHTML();
+      return;
+    }
+    const go = e.target.closest("[data-cw-go]");
+    if (go) { track("courses.widget"); showTab(go.dataset.cwGo); window.scrollTo({ top: 0 }); }
+  });
+}
+
+/* ---------------------------------------------------------------- Back to where you were */
+
+// The page you had open last in a course (showTab keeps it), offered at the top of the picker.
+// A tab's name is its button in the bar, without the icon, in LEN's language where it has two.
+function tabLabel(id) {
+  const b = $(`#tabs button[data-tab="${id}"]`);
+  if (!b) return "";
+  if ($(".l-de", b) && $(".l-en", b)) return $(lenLang === "en" ? ".l-en" : ".l-de", b).textContent.trim();
+  return [...b.childNodes].filter((n) => !(n.classList && n.classList.contains("tab-mark"))).map((n) => n.textContent).join("").trim();
+}
+
+function continueHTML() {
+  const id = store.get("lastTab", "");
+  const c = id && COURSES.find((x) => x.tabs && x.tabs.includes(id));
+  if (!c) return "";
+  return `
+    <button type="button" class="course-continue" id="courseResume" data-tab="${id}" style="--cc:${c.color}">
+      <span class="course-mark short" lang="${c.lang}" aria-hidden="true">${c.mark}</span>
+      <span class="course-continue-text"><span class="small muted">Continue where you left off</span><b>${c.name} · ${tabLabel(id)}</b></span>
+      <span class="course-continue-go" aria-hidden="true">→</span>
+    </button>`;
+}
+
+/* ---------------------------------------------------------------- Switching course from the bar */
+
+// Inside a course the brand opens a menu of every course (and the picker), instead of going
+// straight back to the picker. On the picker it just scrolls up. Same order as the cards (byPin).
+function openCourseMenu() {
+  const brand = $("#brand");
+  const here = courseOf(location.hash.slice(1));
+  const menu = document.createElement("div");
+  menu.id = "courseMenu";
+  menu.className = "course-menu";
+  menu.setAttribute("role", "menu");
+  menu.innerHTML = `
+    ${COURSES.filter((c) => !c.soon).sort(byPin).map((c) => `
+      <button type="button" role="menuitem" class="${c === here ? "here" : ""}" data-menu-course="${c.id}" style="--cc:${c.color}">
+        <span class="course-mark short" lang="${c.lang}" aria-hidden="true">${c.mark}</span>
+        <span lang="${c.lang}">${c.name}</span>
+        <span class="small muted">${c.exam && daysUntil(c.exam) >= 0 ? examIn(daysUntil(c.exam)) : ""}</span>
+      </button>`).join("")}
+    <button type="button" role="menuitem" data-menu-course="" class="course-menu-all"><span>All courses</span></button>`;
+  document.body.appendChild(menu);
+  const r = brand.getBoundingClientRect();
+  menu.style.top = `${r.bottom + 6}px`;
+  menu.style.left = `${Math.max(8, Math.min(r.left, innerWidth - menu.offsetWidth - 8))}px`;
+  brand.setAttribute("aria-expanded", "true");
+  menu.onclick = (e) => {
+    const b = e.target.closest("[data-menu-course]");
+    if (!b) return;
+    closeCourseMenu();
+    const c = COURSES.find((x) => x.id === b.dataset.menuCourse);
+    track("courses.menu");
+    showTab(c ? c.tabs[0] : "courses");
+    window.scrollTo({ top: 0 });
+  };
+  (menu.querySelector(".here") || menu.querySelector("button")).focus();
+}
+
+// Closes the menu if it's open; says whether it was.
+function closeCourseMenu() {
+  const m = $("#courseMenu");
+  if (!m) return false;
+  m.parentNode.removeChild(m);
+  $("#brand").setAttribute("aria-expanded", "false");
+  return true;
+}
+
+function setupCourseMenu() {
+  const brand = $("#brand");
+  brand.setAttribute("aria-haspopup", "menu");
+  brand.setAttribute("aria-expanded", "false");
+  brand.onclick = (e) => {
+    e.preventDefault();
+    if (closeCourseMenu()) return;
+    if (document.body.classList.contains("on-courses")) { window.scrollTo({ top: 0 }); return; }
+    openCourseMenu();
+  };
+  document.addEventListener("click", (e) => { if (!e.target.closest("#courseMenu, #brand")) closeCourseMenu(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && closeCourseMenu()) brand.focus(); });
+  window.addEventListener("resize", closeCourseMenu);
 }

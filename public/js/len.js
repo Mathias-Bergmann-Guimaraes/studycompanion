@@ -254,6 +254,7 @@ function renderLenHome() {
         "The lectures to look things up and try them out: every sketch from the lectures as a drawing you can play with — currents flow, arrows flip, equations work themselves out.")}</p>
       <p>${L("Oben links schaltest du zwischen <b>Deutsch</b> und <b>Englisch</b> um. Auf Englisch steht der deutsche Fachbegriff immer daneben, für die Klausur.",
         "Switch between <b>German</b> and <b>English</b> in the bar. In English the German term always stays beside the English one, for the exam.")}</p>
+      <p class="small">${L(`Klausur ${examWhenDE("len")}, 120 Minuten.`, `Exam ${examWhenEN("len")}, 120 minutes.`)}</p>
       <div class="home-actions">
         <button class="btn primary" type="button" id="lenGo">${allDone ? L("Kapitel 1 wiederholen", "Go over chapter 1") : L(`Weiter mit ${next.id}`, `Continue with ${next.id}`)}: ${Lp(next.title)} →</button>
         <button class="btn" type="button" id="lenFormulasGo">${L("Formeln &amp; Begriffe", "Formulas &amp; terms")}</button>

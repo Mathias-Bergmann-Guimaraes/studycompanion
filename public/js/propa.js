@@ -267,6 +267,7 @@ function renderPropaHome() {
       <p>The lecture's two parts, Lean and Reussner, for going over them again: every topic in short, the code that matters,
         drawings that run the code step by step, the traps to avoid, and a check per section.
         Then <b>Practice</b> makes new tasks like the exam's, as many as you like, and the <b>Mock exam</b> puts ten of them together against the clock.</p>
+      <p class="small">Exam ${examWhenEN("propa")}, 120 minutes for 120 points.</p>
       <div class="home-actions">
         <button class="btn primary" type="button" id="ppGo">${allDone ? "Go over the Lean part again" : `Continue with ${next.id}: ${next.title}`} →</button>
         <button class="btn" type="button" data-go="propa-practice">Practice</button>

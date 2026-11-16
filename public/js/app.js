@@ -156,6 +156,7 @@ function showTab(id) {
   // The picker has no tabs or settings, and the top bar stays a bar on every screen.
   const picking = id === "courses";
   document.body.classList.toggle("on-courses", picking);
+  document.body.classList.remove("booting");
   const course = courseOf(id);
   // Inside a course: only its own tabs and settings (data-course-only), in its own colour.
   document.body.dataset.course = picking ? "" : course.id;

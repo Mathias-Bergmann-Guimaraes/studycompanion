@@ -21,6 +21,9 @@
   </script>
 </head>
 <body>
+  <!-- Before the scripts run, look like the page that will open: the course picker (no tabs) for an
+       address with no #page, otherwise the bar with its tabs hidden until showTab picks the course's own. -->
+  <script>document.body.classList.add(/^#?(courses)?$/.test(location.hash) ? "on-courses" : "booting");</script>
   <header class="topbar">
     <a class="brand" id="brand" href="#courses" title="All courses">
       <span class="brand-mark" id="brandMark" aria-hidden="true">S</span>

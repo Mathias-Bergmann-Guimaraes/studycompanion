@@ -319,6 +319,8 @@ body.on-courses .brand:focus-visible { outline-color: var(--brand); }
 /* The course picker: no tabs, no furigana switch and no Japanese footer, and the bar stays a bar on
    wide screens too (these rules beat the sidebar ones above). */
 body.on-courses .tabs, body.on-courses .switch, body.on-courses .footer { display: none; }
+/* Until the first showTab: every course's tabs are still in the bar, so none are shown (index.html). */
+body.booting .tabs, body.booting .switch { visibility: hidden; }
 body.on-courses .brand { margin-right: auto; }
 @media (min-width: 1024px) {
   body.on-courses { padding-left: 0; }

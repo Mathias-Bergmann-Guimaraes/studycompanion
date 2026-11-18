@@ -170,8 +170,9 @@ const spSec = (course, id) => (SP_COURSES[course] ? SP_COURSES[course].secs().fi
 // - a running course (GKI, Robotics I, LEN): every section on the site by the end of this week,
 //   at the lecture's pace (only taught sections are on the site);
 // - in its exam's run-up: the day before the exam.
-// So the less time is left, the more a day. The day's share is fixed when the day starts (spDay
-// in the store), so passing a section ticks it off instead of bringing up the next one.
+// So the less time is left, the more a day. A day has room for two courses (spTodayPlan picks
+// them). The day's share is fixed when the day starts (spToday in the store), so passing a
+// section ticks it off instead of bringing up the next one.
 
 const spAdd = (s, n) => { const d = examDay(s); d.setDate(d.getDate() + n); return dayStr(d); };
 const spRunning = (c) => STUDY_PLAN.some((w) => !w.exam && w.lec.some(([x]) => x === c));
@@ -204,7 +205,7 @@ function spPace(c) {
   const hard = spAdd(sprint, -1);
   // A finished course waits for its first planned week (ProPa after NuMa), unless it's behind.
   const start = spRunning(c) ? "" : STUDY_PLAN.find((w) => !w.exam && w.main.some(([x, , secs]) => x === c && secs && secs.length))?.from || "";
-  if (today < start) return { c, left, days: 0, target: start, why: "later", perDay: 0, behind: 0, sprint: false, start };
+  if (today < start) return { c, left, days: 0, target: start, why: "later", behind: 0, sprint: false, start };
   let target, why;
   if (today >= sprint) { target = spAdd(course.exam, -1); why = "exam"; }
   else if (spRunning(c)) { const w = STUDY_PLAN[spToday()]; target = !w.exam && w.to < hard ? w.to : hard; why = "week"; }
@@ -215,7 +216,7 @@ function spPace(c) {
   const days = Math.max(1, daysUntil(target) + 1);
   // Sections the plan had finished by now: their week is over, or (running) their lecture was earlier.
   const behind = left.filter(({ due }) => (due ? due < today : spRunning(c))).length;
-  return { c, left, days, target, why, perDay: Math.ceil(left.length / days), behind, sprint: today >= sprint };
+  return { c, left, days, target, why, behind, sprint: today >= sprint };
 }
 
 // "by Sun 22 Nov" and why that day.
@@ -227,21 +228,45 @@ function spBy(p) {
     : `by ${d}, the day before the exam`;
 }
 
-// Every course's pace, soonest exam first, with today's share fixed at the start of the day.
+// How much fits in a day: at most this many courses, and this many sections of one course.
+const SP_COURSES_A_DAY = 2;
+const SP_SECTIONS_A_COURSE = 3;
+
+// A course's pressure: the sections it still needs a day to make its deadline.
+const spPressure = (p) => p.left.length / p.days;
+
+// Every course's pace, soonest exam first, with today's share fixed at the start of the day:
+// the SP_COURSES_A_DAY courses under the most pressure get today, the rest wait. A course that
+// only gets every few days does more on its day, up to SP_SECTIONS_A_COURSE. Doing a course
+// lowers its pressure and waiting raises it, so the courses take turns, and the nearer a
+// deadline, the more often its course comes up.
 function spTodayPlan() {
   const paces = COURSES.filter((c) => SP_COURSES[c.id]).sort(byExam).map((c) => spPace(c.id)).filter(Boolean);
   const today = dayStr();
-  let day = store.get("spDay", null);
+  let day = store.get("spToday", null);
   if (!day || day.day !== today) {
-    day = { day: today, start: Object.fromEntries(paces.map((p) => [p.c, [p.left.length, p.perDay]])) };
-    store.set("spDay", day);
+    const active = paces.filter((p) => p.left.length && !p.start);
+    // Most pressure first; on a tie, the sooner exam (paces are in exam order, and sort is stable).
+    const picked = [...active].sort((x, y) => spPressure(y) - spPressure(x)).slice(0, SP_COURSES_A_DAY);
+    // With n courses to share the days, each comes up about every n / SP_COURSES_A_DAY days.
+    const every = Math.max(1, active.length / SP_COURSES_A_DAY);
+    const quota = (p) => (picked.includes(p) ? Math.min(SP_SECTIONS_A_COURSE, p.left.length, Math.ceil(spPressure(p) * every)) : 0);
+    day = { day: today, start: Object.fromEntries(paces.map((p) => [p.c, [p.left.length, quota(p)]])) };
+    store.set("spToday", day);
   }
   return paces.map((p) => {
-    const [startLeft, fixed] = day.start[p.c] || [p.left.length, p.perDay];
+    const [startLeft, fixed] = day.start[p.c] || [p.left.length, 0];
     const quota = p.start ? 0 : fixed;
     const doneToday = Math.max(0, Math.min(quota, startLeft - p.left.length));
     return { ...p, quota, doneToday, todo: p.left.slice(0, quota - doneToday) };
   });
+}
+
+// "18 left by Sun 22 Nov" within a week, otherwise "about 4 a week by Sun 3 Jan".
+function spRate(p) {
+  if (p.days <= 7) return `${p.left.length} left ${spBy(p)}`;
+  const k = Math.ceil((p.left.length / p.days) * 7);
+  return `about ${k} a week ${spBy(p)}`;
 }
 
 // Where courses teach the same thing: [course, sections] (chips) or [course, "text"].
@@ -297,7 +322,7 @@ function spRowHTML([course, text, secs]) {
 function spLoad(rows) {
   const quota = rows.reduce((n, r) => n + r.quota, 0);
   const done = rows.reduce((n, r) => n + r.doneToday, 0);
-  const load = quota <= 3 ? ["light", "Light"] : quota <= 6 ? ["steady", "Steady"] : ["heavy", "Heavy"];
+  const load = quota <= 2 ? ["light", "Light"] : quota <= 4 ? ["steady", "Steady"] : ["heavy", "Heavy"];
   return { quota, done, load };
 }
 const spLoadHTML = ({ quota, done, load }) => (quota ? `<span class="sp-load ${load[0]}">${load[1]} · ${done} / ${quota} done</span>` : `<span class="sp-load light">Nothing due</span>`);
@@ -339,7 +364,8 @@ function renderStudyPlanPage() {
     const [passed, total] = c.progress();
     const status = r.start ? `Starts ${fmtExamDate(r.start)}, after the course before it in the plan.`
       : !r.left.length ? (r.sprint && c.mock ? `Every section done: <button type="button" class="xc-link" data-cw-go="${c.mock[1]}">on to mock exams</button>.` : "Caught up with every section on the site.")
-      : `${r.perDay} a day ${spBy(r)}.`;
+      : r.quota ? `${spRate(r)}.`
+      : `Not today: ${spRate(r)}. It comes up as its deadline gets closer.`;
     return `
       <div class="spp-course ${r.quota && r.doneToday >= r.quota ? "done" : ""}" style="--cc:${c.color}">
         <div class="spp-course-head">
@@ -388,9 +414,10 @@ function renderStudyPlanPage() {
       <section class="spp-sec">
         <div class="sp-today-head"><h2>Today</h2>${spLoadHTML(L)}</div>
         ${L.quota ? `<span class="lmastery-bar course-bar"><span style="width:${(L.done / L.quota) * 100}%"></span></span>` : ""}
-        ${L.quota > 6 ? `<p class="small sp-warn">More than a day's work: start with the exam that comes first, top left.</p>` : ""}
-        <div class="spp-courses">${rows.map(card).join("")}</div>
-        <p class="small muted">Today's share is fixed in the morning from the sections left and the days to each course's deadline: a running course catches up by Sunday, a finished one finishes by the end of its last planned week (or, once behind, before its exam's run-up), and in the run-up everything is due the day before the exam.</p>
+        <div class="spp-courses">${rows.filter((r) => r.quota).map(card).join("")}</div>
+        ${rows.some((r) => !r.quota) ? `<h3 class="spp-later-cap">Not today</h3>
+        <div class="spp-courses spp-later">${rows.filter((r) => !r.quota).map(card).join("")}</div>` : ""}
+        <p class="small muted">A day has room for ${SP_COURSES_A_DAY} courses and up to ${SP_SECTIONS_A_COURSE} sections of each. Each morning the two that need the most a day to make their deadline get it: a running course should catch up by Sunday, a finished one by the end of its last planned week (or, once behind, before its exam's run-up), and in the run-up everything is due the day before the exam. Doing a course lowers its need and waiting raises it, so the courses take turns.</p>
       </section>
 
       <section class="spp-sec">

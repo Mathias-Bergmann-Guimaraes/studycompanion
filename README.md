@@ -317,8 +317,11 @@ numerical IK, A* …), which the plan puts in the same week.
 Today's share comes from what isn't passed yet and the days left: a finished course has until the end
 of its last planned week (or, once that has passed, until its exam's run-up starts), a running course
 until the end of this week, and in the run-up until the day before the exam. So the less time is
-left, the more a day. The share is fixed in the morning, so passing a section ticks it off rather
-than bringing up another. The Exam prep card on the picker shows the same pace. The weeks are
+left, the more a day. A day has room for two courses and up to three sections of each
+(`SP_COURSES_A_DAY` and `SP_SECTIONS_A_COURSE`): each morning the two courses that need the most a
+day to make their deadline get it, and the rest are listed under "Not today". Doing a course lowers
+its need and waiting raises it, so the courses take turns. The share is fixed in the morning, so
+passing a section ticks it off rather than bringing up another. The Exam prep card on the picker shows the same pace. The weeks are
 `STUDY_PLAN` and the overlaps `SP_OVERLAPS` in `public/js/study-plan.js`; Robotics' weeks are an
 estimate, so move them when its slides come.
 

@@ -1943,6 +1943,9 @@ button.xc-day:hover { box-shadow: inset 0 0 0 1.5px var(--xc); }
   background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--cc);
 }
 .spp-course.done { background: color-mix(in srgb, var(--good) 6%, var(--surface)); }
+/* Courses whose turn isn't today: quieter, below today's. */
+.spp-later-cap { margin: 8px 0 0; font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.spp-later .spp-course { background: var(--surface-2); border-top-color: color-mix(in srgb, var(--cc) 45%, var(--border)); }
 .spp-course p { margin: 0; }
 .spp-course .course-bar { margin: 0; }
 .spp-course-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }

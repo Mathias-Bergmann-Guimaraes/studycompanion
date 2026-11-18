@@ -244,7 +244,7 @@ function examPace(c, done, total) {
   // Courses in the study plan use its pace (study-plan.js), so the two cards agree.
   const p = typeof spPace === "function" && spPace(c.id);
   if (p && p.start) return `Starts ${fmtExamDate(p.start)} in the study plan`;
-  if (p) return p.left.length ? `${p.perDay} section${p.perDay === 1 ? "" : "s"} a day ${spBy(p)}`
+  if (p) return p.left.length ? spRate(p).replace(/^./, (x) => x.toUpperCase())
     : p.sprint ? "All sections done — on to mock exams." : "All sections so far done.";
   const left = total - done;
   const n = c.exam ? daysUntil(c.exam) : -1;

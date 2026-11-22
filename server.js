@@ -446,10 +446,12 @@ function touch(id) {
 //            one sticks.
 //   days   — { [YYYY-MM-DD]: number } (XP per day, for the member's own chart on Home): each day
 //            only ever goes up, and days older than MAX_HISTORY_DAYS are dropped.
+//   answers — { [name]: string } (the chatbot's answer pasted under a point's own sentences): the
+//            browser sends only the names that changed, and "" removes one.
 // The page gets this list too (in progress.js), so adding a key here is all it takes.
 const PROGRESS_MERGE = {
   lesson: "latest", lessonTests: "scores", pointStars: "scores", best: "max", game: "latest", sentences: "texts",
-  mistakes: "notes", roulette: "latest", review: "dated", reviewDay: "latest", xpDays: "days", bigTests: "scores",
+  mistakes: "notes", aiFeedback: "answers", roulette: "latest", review: "dated", reviewDay: "latest", xpDays: "days", bigTests: "scores",
   bigWeak: "latest", certs: "latest", listenSaved: "list", listenChannels: "list",
   // LEN: the best score of each section's check, by section ("1.4").
   lenChecks: "scores",
@@ -480,6 +482,7 @@ const MAX_LIST_ENTRY = 150; // characters per entry
 const MAX_TEXTS = 5; // strings per name
 const MAX_TEXT = 200; // characters per string
 const MAX_NOTES = 10; // mistakes per name
+const MAX_ANSWER = 20000; // characters per pasted answer (app.js has the same limit)
 const SCORE_NAME_RE = /^[\w.-]{1,20}$/;
 const isText = (t, min = 0) => typeof t === "string" && t.length >= min && t.length <= MAX_TEXT;
 const isNote = (o) => o && typeof o === "object" && !Array.isArray(o) &&
@@ -518,6 +521,14 @@ function mergeProgress(how, saved, v) {
     for (const [name, entry] of Object.entries(v)) {
       if (!SCORE_NAME_RE.test(name) || !isDated(entry)) return undefined;
       if (!out[name] || entry.last >= out[name].last) out[name] = entry;
+    }
+    return Object.keys(out).length <= MAX_SCORES ? out : undefined;
+  }
+  if (how === "answers") {
+    for (const [name, t] of Object.entries(v)) {
+      if (!SCORE_NAME_RE.test(name) || typeof t !== "string" || t.length > MAX_ANSWER) return undefined;
+      if (t) out[name] = t;
+      else delete out[name];
     }
     return Object.keys(out).length <= MAX_SCORES ? out : undefined;
   }

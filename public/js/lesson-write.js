@@ -8,7 +8,7 @@
 // The last three sentences written for each point, keyed "lesson.point". Saved per account.
 const written = store.get("sentences", {});
 const writeDrafts = {}; // unsent sentences, so closing the box doesn't lose them
-// The chatbot's answer pasted back for each point. Kept in this browser only (it can be long).
+// The chatbot's answer pasted back for each point. Saved per account.
 const feedback = store.get("aiFeedback", {});
 const WRITE_COUNT = 3;
 const WRITE_MAX = 120;

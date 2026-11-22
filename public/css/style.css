@@ -541,7 +541,13 @@ main { max-width: 1080px; margin: 0 auto; padding: 24px; }
   top: calc(var(--topbar-h, 58px) + 12px);
   max-height: calc(100vh - var(--topbar-h, 58px) - 24px);
   overflow-y: auto;
-  padding: 10px;
+  /* The scrollbar is drawn just inside the border, so a transparent border keeps it clear of the
+     edge and the rounded corners; the visible edge is the 1px shadow (as on the select menus). */
+  border: 6px solid transparent;
+  box-shadow: 0 0 0 1px var(--border), var(--shadow);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+  padding: 4px;
   margin: 0;
 }
 .book-label {

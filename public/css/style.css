@@ -246,6 +246,11 @@ body.on-courses .brand:focus-visible { outline-color: var(--brand); }
 }
 .tabs button:hover { color: var(--text); background: var(--surface-2); }
 .tabs button.active { color: var(--surface); background: var(--text); }
+/* Lessons' sub-menus (lesson-page.js): the open set is marked while the Lessons page is open. On a
+   narrow screen they only show then, as smaller pills after Lessons. */
+.tabs .tab-sub { font-size: .85rem; padding: 6px 12px; }
+.tabs [data-tab="lessons"]:not(.active) ~ .tab-sub { display: none; }
+.tabs [data-tab="lessons"].active ~ .tab-sub.current { color: var(--text); background: var(--surface-2); }
 
 /* Toggle switch */
 .switch { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600; font-size: .85rem; white-space: nowrap; }
@@ -311,6 +316,10 @@ body.on-courses .brand:focus-visible { outline-color: var(--brand); }
   .tabs button { width: 100%; padding: 6px 10px; border-radius: 10px; text-align: left; }
   .tabs button.active { color: var(--text); background: var(--surface-2); }
   .tabs button.active .tab-mark { color: var(--accent); }
+  /* In the sidebar the sub-menus always show, indented under Lessons with a line down their left. */
+  .tabs [data-tab="lessons"]:not(.active) ~ .tab-sub { display: block; }
+  .tabs .tab-sub { width: auto; margin-left: 18px; padding: 4px 10px; border-left: 2px solid var(--border); border-radius: 0 8px 8px 0; font-weight: 500; }
+  .tabs [data-tab="lessons"].active ~ .tab-sub.current { color: var(--text); background: var(--surface-2); border-left-color: var(--accent); font-weight: 600; }
   .account, .switch { padding: 0 6px; }
   .account { justify-content: space-between; border-top: 1px solid var(--border); padding-top: 12px; }
   .account:empty ~ .switch { border-top: 1px solid var(--border); padding-top: 12px; }

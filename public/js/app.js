@@ -174,7 +174,7 @@ function showTab(id) {
   document.title = id === "plan" ? "Study plan · Study Companion" : picking ? "Study Companion" : `${course.name} · Study Companion`;
   if (id === "courses") renderCourses();
   if (id === "plan") renderStudyPlanPage();
-  $$("#tabs button").forEach((b) => {
+  $$("#tabs [data-tab]").forEach((b) => {
     b.classList.toggle("active", b.dataset.tab === id);
     // On a narrow screen the tabs scroll sideways: keep the open one in view.
     if (b.dataset.tab === id) b.scrollIntoView({ block: "nearest", inline: "nearest" });
@@ -1564,7 +1564,7 @@ function init() {
   setBarHeight();
   window.addEventListener("resize", setBarHeight);
 
-  $$("#tabs button").forEach((b) => (b.onclick = () => { showTab(b.dataset.tab); window.scrollTo({ top: 0 }); }));
+  $$("#tabs [data-tab]").forEach((b) => (b.onclick = () => { showTab(b.dataset.tab); window.scrollTo({ top: 0 }); }));
   window.addEventListener("hashchange", () => showTab(location.hash.slice(1)));
   setupCourseMenu();
 

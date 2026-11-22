@@ -51,7 +51,8 @@ function blockBtn(x, wrong) {
 // mode asks for, by default those sentences to translate. mode: "blocks" or "text" (this browser's
 // choice). tried: this sentence has been counted in the score. colour: show the role colours on
 // blocks (this browser's choice). order: the colour order hint is showing. run: the round of free
-// text sentences (see newTextRun).
+// text sentences (see newTextRun). results: this round's block sentences, [{ b, ok }]; finished: the
+// round is over and its result is showing, until "Do it again".
 // Options for a builder inside something else: textOnly (no switch to blocks), bare (no score bar),
 // promptAbout (what its chatbot prompt checks), onCount(right) (a sentence was scored), onNext and
 // nextLabel (what its Next button does), onClose and closeLabel (a way out of free text),
@@ -60,7 +61,7 @@ let buildState = null;
 
 function newBuilder(box, options) {
   const s = {
-    box, deck: [], b: null, placed: [], bank: [], tried: false, done: false, wrong: [], score: 0, total: 0,
+    box, deck: [], b: null, placed: [], bank: [], tried: false, done: false, wrong: [], score: 0, total: 0, results: [], finished: false,
     mode: store.get("buildMode", "blocks"), colour: store.get("buildColour", true), order: false, run: null, ...options,
   };
   if (!s.guides) s.guides = () => shuffle(s.source()).slice(0, TEXT_ROUND).map(buildGuide);
@@ -111,7 +112,9 @@ function wireBuildTop(box) {
     s.mode = b.dataset.mode;
     store.set("buildMode", s.mode);
     // A finished block sentence has nothing left to show when coming back to it.
-    if (s.mode === "blocks" && s.done) nextBuild();
+    // The round's last sentence goes on to the result, not into a new round.
+    if (s.mode === "blocks" && s.done && !s.finished && !s.deck.length) s.finished = true;
+    if (s.mode === "blocks" && s.done && !s.finished) nextBuild();
     else drawBuild();
     focusBuildText();
   }));
@@ -126,6 +129,7 @@ function countBuild(ok) {
   s.tried = true;
   s.total++;
   if (ok) s.score++;
+  s.results.push({ b: s.b, ok });
   const score = sb(".sb-score");
   if (score) score.textContent = `${s.score} / ${s.total}`;
   if (ok) addXP(XP.build, score || sb(".sb-msg"));
@@ -138,6 +142,7 @@ function drawBuild() {
   box.classList.toggle("sb-live", s.mode === "blocks" && !s.done);
   box.classList.toggle("sb-plain", s.mode === "blocks" && !s.done && !s.colour);
   if (s.mode === "text") return drawBuildText();
+  if (s.finished) return drawBlocksResult();
   const count = s.source().length;
   box.innerHTML = `
     ${buildTop(`<span>Sentence <b>${count - s.deck.length} / ${count}</b></span>
@@ -154,7 +159,7 @@ function drawBuild() {
     <div class="q-actions sb-actions">
       <button class="btn primary sb-check" ${s.bank.length || s.done ? "hidden" : ""}>Check</button>
       <button class="btn sb-show" ${s.tried && !s.done ? "" : "hidden"}>Show the answer</button>
-      <button class="btn primary sb-next" ${s.done ? "" : "hidden"}>${s.nextLabel || (s.deck.length ? "Next sentence →" : "Go round again →")}</button>
+      <button class="btn primary sb-next" ${s.done ? "" : "hidden"}>${s.nextLabel || (s.deck.length ? "Next sentence →" : "See my result →")}</button>
       ${s.done ? "" : `<span class="sb-helpers">
         ${s.order ? "" : '<button type="button" class="sb-tx-edit small sb-order">💡 Show the colour order</button>'}
         <button type="button" class="sb-tx-edit small sb-colour">${s.colour ? "Hide colours" : "Show colours"}</button>
@@ -173,7 +178,10 @@ function drawBuild() {
   sb(".sb-show").onclick = showBuild;
   sb(".sb-next").onclick = () => {
     if (s.onNext) return s.onNext();
-    nextBuild();
+    // The last sentence of the round: its result, not another round.
+    if (!s.deck.length) s.finished = true;
+    if (s.finished) drawBuild();
+    else nextBuild();
     scrollIfAbove(box);
   };
   const order = sb(".sb-order");
@@ -185,6 +193,40 @@ function drawBuild() {
     keepMessage();
   };
   wireBuildTop(box);
+}
+
+// The end of a round of blocks: how many were right first time, each sentence, and a way to go
+// round again (a fresh shuffle, with the score back at zero).
+function drawBlocksResult() {
+  const s = buildState;
+  const box = s.box;
+  const xp = s.score * XP.build;
+  box.innerHTML = `
+    ${buildTop("<span><b>Round finished</b></span>")}
+    <div class="sb-tx-score">
+      ${s.total ? `<b>${s.score}</b> / ${s.total} right first time` : "Nothing scored this round"}
+      ${xp ? `<span class="xp-chip">+${xp} XP</span>` : ""}
+    </div>
+    <div class="sb-rows">${s.results.map(({ b, ok }) => `
+      <div class="sb-tx-row">
+        <div class="sb-tx-head">
+          <span class="small muted">${b.en}</span>
+          <span class="sb-tx-mark small ${ok ? "ok" : "bad"}">${ok ? "✓ First time" : "✗ Needed another go"}</span>
+        </div>
+        <div class="sb-tx-ja" lang="ja">${builtSentence(b)}</div>
+      </div>`).join("")}</div>
+    <div class="q-actions sb-actions"><button class="btn primary sb-again">Do it again →</button></div>`;
+  wireBuildTop(box);
+  sb(".sb-again").onclick = () => {
+    Object.assign(s, { deck: [], score: 0, total: 0, results: [], finished: false, celebrated: false });
+    nextBuild();
+    scrollIfAbove(box);
+  };
+  sb(".sb-again").focus({ preventScroll: true });
+  if (s.total && s.score === s.total && !s.celebrated) {
+    s.celebrated = true;
+    burst($(".sb-tx-score", box));
+  }
 }
 
 // Redraws without losing what the last check said.

@@ -31,6 +31,7 @@
   --good: #1a9a52;
   --bad: #d63a3a;
   --gold: #e0a100;
+  --silver: #8d97a3;
   /* Study Companion's own colour, on the course picker and the login page: KIT green. Each course
      has its own main colour below (Japanese keeps --accent). */
   --brand: #009682;
@@ -79,6 +80,7 @@
   --good: #3ccf7f;
   --bad: #ff6b6b;
   --gold: #ffc83d;
+  --silver: #c3ccd6;
   --brand: #2bb8a2;
 }
 
@@ -595,6 +597,12 @@ main { max-width: 1080px; margin: 0 auto; padding: 24px; }
     conic-gradient(var(--gold) var(--p, 0%), var(--border) 0) border-box;
 }
 .lnode.done .lnum { background: var(--good); border-color: var(--good); color: var(--surface); }
+/* A finished lesson's tier: a silver ring with every star, gold with its sentences checked too. */
+.lnode.silver .lnum, .lnode.gold .lnum { --tier: var(--silver); box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--tier); }
+.lnode.gold .lnum { --tier: var(--gold); }
+/* The open lesson's row has the text colour as its background: a ring mixed with the page colour
+   stands out against it in both themes. */
+.lnode.active.silver .lnum, .lnode.active.gold .lnum { box-shadow: 0 0 0 2px var(--text), 0 0 0 4px color-mix(in srgb, var(--tier) 60%, var(--surface)); }
 .lnode.active { background: var(--text); }
 .lnode.active .ltitle { color: var(--surface); font-weight: 600; }
 .lnode.active .lnum { border-color: var(--surface); }
@@ -872,6 +880,10 @@ main { max-width: 1080px; margin: 0 auto; padding: 24px; }
 }
 .lstatus:hover { background: var(--accent); color: var(--surface); }
 .lstatus.done { border-color: var(--good); color: var(--good); background: color-mix(in srgb, var(--good) 10%, var(--surface)); cursor: default; }
+.lstatus.tier { --tier: var(--silver); border-color: var(--tier); color: var(--text); background: color-mix(in srgb, var(--tier) 12%, var(--surface)); cursor: default; display: inline-flex; align-items: center; gap: 8px; }
+.lstatus.tier.gold { --tier: var(--gold); }
+.lstatus.tier:hover { background: color-mix(in srgb, var(--tier) 12%, var(--surface)); color: var(--text); }
+.tier-dot { flex: none; width: 12px; height: 12px; border-radius: 50%; background: var(--good); box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--tier); margin: 0 2px; }
 .lsection { margin: 28px 0 10px; }
 .lsection h3 { margin: 0 0 2px; font-size: 1.25rem; }
 .lsection p { margin: 0; }

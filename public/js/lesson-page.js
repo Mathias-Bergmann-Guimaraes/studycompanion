@@ -14,6 +14,10 @@ const lessonTestPassed = (n) => (lessonState.tests[n] || 0) >= PASS_MARK;
 const lessonPassed = (n) => lessonTestPassed(n) || !!finishedByBig(n);
 const pointStars = (n, i) => lessonState.stars[`${n}.${i}`] || 0;
 const lessonStars = (l) => l.points.reduce((s, _, i) => s + pointStars(l.n, i), 0);
+// A finished lesson's ring in the lesson list: "silver" with every star, "gold" when every point's
+// sentences are also written and checked by the chatbot (see isChecked in lesson-write.js).
+const lessonTier = (l) => (!lessonPassed(l.n) || lessonStars(l) < l.points.length * 3 ? ""
+  : l.points.every((_, i) => isChecked(l.n, i)) ? "gold" : "silver");
 
 // XP per right answer, and bonuses for finishing things.
 const XP = { practice: 2, combo: 4, check: 5, star: 10, test: 3, pass: 50, repass: 10, write: 20, rewrite: 6, build: 4, compose: 6, two: 10, big: 100, book: 300, rebig: 20 };
@@ -194,6 +198,11 @@ function updateLessonPath() {
     b.classList.toggle("done", lessonPassed(n));
     // The ring around the number fills up with the lesson's stars.
     $(".lnum", b).style.setProperty("--p", `${(lessonStars(l) / (l.points.length * 3)) * 100}%`);
+    const tier = lessonTier(l);
+    b.classList.toggle("silver", tier === "silver");
+    b.classList.toggle("gold", tier === "gold");
+    b.title = tier === "gold" ? "Gold: every star, and every point's sentences checked"
+      : tier === "silver" ? "Silver: every star. Write and check every point's sentences for gold." : "";
   });
   const count = LESSONS.filter((l) => lessonPassed(l.n)).length;
   $("#lProgressBar").style.width = `${(count / LESSONS.length) * 100}%`;
@@ -240,6 +249,15 @@ function openLessonTab(l) {
   if (l.n !== lessonState.n || bigUI.open) showLesson(l.n);
 }
 
+// With every star: the lesson's ring, and what's left for gold.
+function tierStatus(l) {
+  const tier = lessonTier(l);
+  if (tier === "gold") return '<span class="lstatus tier gold"><span class="tier-dot"></span>Gold · every star, every point\'s sentences checked</span>';
+  if (tier !== "silver") return '<span class="lstatus done">★ Every point at three stars</span>';
+  const checked = l.points.filter((_, i) => isChecked(l.n, i)).length;
+  return `<span class="lstatus tier silver"><span class="tier-dot"></span>Silver · for gold, write each point's sentences and paste your chatbot's check (${checked} / ${l.points.length})</span>`;
+}
+
 // Stars so far, plus one button for the most useful next step.
 function renderLessonStatus(l) {
   const best = lessonState.tests[l.n];
@@ -256,7 +274,7 @@ function renderLessonStatus(l) {
     <div class="lstatus-row">
       ${lessonTestPassed(l.n) ? `<span class="lstatus done">✓ Lesson finished · best test score ${best} / ${TEST_LEN}</span>`
         : lessonPassed(l.n) ? `<span class="lstatus done">✓ Lesson finished by passing ${finishedByBig(l.n).name}</span>` : ""}
-      ${next ? `<button class="lstatus" id="toNext">${next.text} ↓</button>` : `<span class="lstatus done">★ Every point at three stars</span>`}
+      ${next ? `<button class="lstatus" id="toNext">${next.text} ↓</button>` : tierStatus(l)}
     </div>`;
   const btn = $("#toNext");
   if (btn) btn.onclick = () => goToNextStep(l, next);

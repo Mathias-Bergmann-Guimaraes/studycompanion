@@ -22,15 +22,6 @@ const COMBO_AT = 5;
 function renderLessons() {
   const node = (l) => `<button class="lnode" data-l="${l.n}"><span class="lnum">${l.n}</span><span class="ltitle">${l.title}</span></button>`;
   $("#lessons").innerHTML = `
-    <div class="card hero">
-      <h1>Grammar in <span class="accent">Minna no Nihongo</span> order</h1>
-      <p>All 50 lessons of <span lang="ja">みんなの日本語 初級 Ⅰ・Ⅱ</span>, one after another, then extra lessons from the
-      course <i>Japanisch: Vertiefung und Praxis</i>. Each grammar point comes with an example,
-      and <b>See it →</b> jumps to the picture that explains it. <b>Check</b> each point with 5 quick questions to earn up to
-      three stars, <b>write</b> three sentences of your own for extra XP, then pass the lesson test to finish the
-      lesson. Every few lessons a <b>big test</b> covers everything since the last one, and passing it finishes all of
-      those lessons at once. Each book ends with a final. Every right answer earns XP.</p>
-    </div>
     <div class="lessons-layout">
       <nav class="card lpath" aria-label="Lessons">
         ${LESSON_SETS.map((s) => `

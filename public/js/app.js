@@ -18,9 +18,11 @@ const store = {
     try { const v = localStorage.getItem("jpg." + k); return v === null ? d : JSON.parse(v); } catch { return d; }
   },
   set(k, v) {
-    const changed = progress.sync && progress.merge[k] && JSON.stringify(v) !== JSON.stringify(store.get(k));
+    const how = progress.sync && progress.merge[k];
+    const old = how ? store.get(k) : undefined;
+    const changed = how && JSON.stringify(v) !== JSON.stringify(old);
     try { localStorage.setItem("jpg." + k, JSON.stringify(v)); } catch { /* ignore */ }
-    if (changed) queueProgress({ [k]: v });
+    if (changed) queueProgress({ [k]: how === "answers" ? answersPatch(v, old) : v });
   },
   del(k) {
     try { localStorage.removeItem("jpg." + k); } catch { /* ignore */ }
@@ -36,13 +38,28 @@ const store = {
 // marked with whose progress it holds ("progressOwner"), so a second account on this browser
 // starts clean. Without server.js (the page opened as a file) progress stays in this browser.
 const progress = { sync: false, merge: {}, pending: null, sending: false };
-// Chatbot answers pasted into the site can be long, so they stay in this browser — but they still
-// belong to the account, so they go with it on log out or when someone else logs in here.
-// A big test in progress stays in this browser too.
-const LOCAL_PROGRESS = ["aiFeedback", "aiAnswers", "mistakesRead", "writeLog", "bigRun", "bigOpen", "certName"];
+// These stay in this browser, but they still belong to the account, so they go with it on log out
+// or when someone else logs in here: the other chatbot answers pasted into the site, a big test in
+// progress, and a few small things.
+const LOCAL_PROGRESS = ["aiAnswers", "mistakesRead", "writeLog", "bigRun", "bigOpen", "certName"];
+// The answers pasted under a point's own sentences ("answers" keys) are saved per account. They can
+// be long, so only the ones that changed are sent, and one longer than this stays in this browser
+// (server.js has the same limit).
+const MAX_ANSWER = 20000;
+
+// The changed answers of `v`: "" for one that was removed.
+function answersPatch(v, old = {}) {
+  const out = {};
+  for (const [n, t] of Object.entries(v)) if (t !== old[n] && t.length <= MAX_ANSWER) out[n] = t;
+  for (const n of Object.keys(old)) if (!(n in v)) out[n] = "";
+  return out;
+}
 
 function queueProgress(patch) {
-  progress.pending = Object.assign(progress.pending || {}, patch);
+  const p = progress.pending || {};
+  // Answers are sent one by one, so two quick changes both have to go.
+  for (const [k, v] of Object.entries(patch)) p[k] = progress.merge[k] === "answers" ? { ...p[k], ...v } : v;
+  progress.pending = p;
   setTimeout(sendProgress, 300); // gathers quick bursts of saves into one request
 }
 
@@ -83,11 +100,13 @@ addEventListener("pagehide", () => {
       for (const [n, score] of Object.entries(here)) {
         if (score > (v[n] ?? -1)) { v[n] = score; upload[k] = here; }
       }
-    } else if (here !== undefined && (how === "texts" || how === "notes")) {
+    } else if (here !== undefined && (how === "texts" || how === "notes" || how === "answers")) {
       // Only entries the server doesn't have yet go up: it keeps the latest of each.
       v = { ...there };
       for (const [n, t] of Object.entries(here)) {
-        if (!(n in v)) { v[n] = t; upload[k] = { ...upload[k], [n]: t }; }
+        if (n in v || (how === "answers" && !t)) continue;
+        v[n] = t;
+        if (how !== "answers" || t.length <= MAX_ANSWER) upload[k] = { ...upload[k], [n]: t };
       }
     } else if (here !== undefined && how === "dated") {
       // The entry reviewed most recently wins, on either side.

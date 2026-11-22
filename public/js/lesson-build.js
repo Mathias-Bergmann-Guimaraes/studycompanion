@@ -457,13 +457,13 @@ ${list((x) => x.guide.ask)}`].join("\n\n");
 /* ------------------------------------------------- Drawing the list */
 
 const TEXT_MARKS = {
-  right: ["ok", "✓ Right"], ok: ["ok", "✓ Right"], bad: ["bad", "✗ Not quite"],
+  right: ["ok", "✓ Right"], ok: ["ok", "✓ Right"], bad: ["bad", "✗ Not quite"], typo: ["typo", "✎ Just a typo"],
   wait: ["", "For your chatbot"], sent: ["", "With your chatbot"], skip: ["", "Skipped"], unchecked: ["", "Not checked"],
 };
 
 // What was written, with the chatbot's correction if it gave one, or the site's version.
 function textRowBody(x) {
-  if (x.status === "bad" && x.fix) {
+  if (["bad", "typo"].includes(x.status) && x.fix) {
     return mistakePairHTML({ w: x.typed.trim(), r: x.fix });
   }
   const typed = x.typed.trim() && x.status !== "skip" ? `<div class="sb-tx-ja" lang="ja">${escHTML(x.typed.trim())}</div>` : "";
@@ -668,7 +668,7 @@ function drawChatbotPanel(run) {
     </div>
     <div class="q-actions sb-actions sb-panel-actions"></div>`;
   wireCopyPrompt(panel, () => buildPrompt(buildState, run.batch));
-  setupAiReader($(".ar", panel), "", (text) => { if (text) readChatbotAnswer(run, text); });
+  setupAiReader($(".ar", panel), "", (text) => { if (text) readChatbotAnswer(run, text); }, {});
   drawPanelActions(run);
 }
 
@@ -719,9 +719,16 @@ function readChatbotAnswer(run, text) {
   const fresh = [];
   batch.forEach((x, j) => {
     const ok = verdicts[j + 1];
-    if (x.status !== "sent" || ok === undefined) return;
-    x.status = ok ? "ok" : "bad";
+    // A typo waits for "Fix typo" or "It's a mistake", which come back here with the answer changed.
+    if (!["sent", "typo"].includes(x.status) || ok === undefined) return;
     const c = corrections.find((y) => y.n === j + 1);
+    const typo = c && c.right ? c.typo : undefined;
+    if (x.status === "typo" && typo === "yes") return;
+    if (typo === "fixed") {
+      x.typed = matchEnd(x.typed.trim(), c.right);
+      delete x.fix;
+    }
+    x.status = ok ? "ok" : typo === "yes" ? "typo" : "bad";
     if (!ok && c && c.right) x.fix = matchEnd(x.typed.trim(), c.right);
     fresh.push(x);
   });

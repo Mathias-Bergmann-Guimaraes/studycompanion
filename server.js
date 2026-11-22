@@ -687,6 +687,7 @@ const USAGE_GROUPS = {
   "Writing and chatbot": {
     "write.open": "Writing box opened", "write.done": "Written sentences saved",
     "chatbot.copy": "Chatbot prompts copied", "chatbot.answer": "Chatbot answers pasted",
+    "chatbot.typoFix": "Typos fixed", "chatbot.typoMistake": "Typos counted as mistakes",
   },
   "Sentence builder": { "build.blocks": "Block sentences checked", "build.text": "Free text sentences entered" },
   "Review and mistakes": {

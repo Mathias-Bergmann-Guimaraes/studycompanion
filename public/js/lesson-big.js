@@ -798,7 +798,7 @@ function drawBigChatbot(b, t) {
     </div>
     <div class="q-actions sb-actions" id="bigChatActions"></div>`;
   wireCopyPrompt(box, () => bigPrompt(b, t));
-  setupAiReader($(".ar", box), "", (text) => { if (text) readBigAnswer(b, t, text); });
+  setupAiReader($(".ar", box), "", (text) => { if (text) readBigAnswer(b, t, text); }, {});
   drawBigChatActions(b, t);
   if (box.getBoundingClientRect().top < 0) scrollBelowBar(box);
 }
@@ -824,9 +824,15 @@ function readBigAnswer(b, t, text) {
   const verdicts = aiVerdicts(text);
   const corrections = aiCorrections(text);
   const fresh = [];
+  let typos = 0;
   t.batch.forEach((j, k) => {
     const ok = verdicts[k + 1];
     if (t.results[j] !== "wait" || ok === undefined) return;
+    // A typo is counted once "Fix typo" (right) or "It's a mistake" (wrong) is pressed.
+    const c = corrections.find((y) => y.n === k + 1);
+    const typo = c && c.right ? c.typo : undefined;
+    if (typo === "yes") { typos++; return; }
+    if (typo === "fixed") t.typed[j] = matchEnd(t.typed[j].trim(), c.right);
     t.results[j] = ok;
     fresh.push({ j, k });
     if (ok && !t.exam) addXP(XP.test, $("#bigChatRows"));
@@ -852,7 +858,9 @@ function readBigAnswer(b, t, text) {
   note.className = `small sb-verdict${open ? " bad" : " ok"}`;
   note.textContent = !open
     ? "All checked."
-    : open === t.batch.length
+    : typos === open
+      ? `Your chatbot says ${open === 1 ? "one is" : `${open} are`} just a typo. Press Fix typo or It's a mistake on ${open === 1 ? "it" : "each"} to count ${open === 1 ? "it" : "them"}.`
+      : open === t.batch.length
       ? "Can't find a ✓ or ✗ on your sentences in this answer, so nothing is counted. Did you paste all of it?"
       : `${open} still ${open === 1 ? "has" : "have"} no ✓ or ✗ in this answer. Paste the rest, or count ${open === 1 ? "it" : "them"} as wrong.`;
   drawBigChatActions(b, t);

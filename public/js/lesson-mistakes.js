@@ -1,4 +1,5 @@
 // "Your mistakes": sentences the chatbot marked ✗, with its correction, kept per grammar point.
+// One the chatbot calls just a typo is left out, unless "It's a mistake" was pressed on it.
 // They're saved when an answer is pasted into a writing box, listed on the lesson page with the
 // difference highlighted, and come back as questions in the point's check (and in practice)
 // until they're answered right twice. Loaded after lesson-write.js and uses its helpers.
@@ -43,6 +44,8 @@ function saveCorrections(l, i, text, mine, corrections = aiCorrections(text)) {
   const old = list.filter((m) => mine.includes(m.w));
   const found = [];
   for (const c of corrections) {
+    // A typo isn't a mistake, unless the learner said it is ("Typo: mistake").
+    if (c.typo === "yes" || c.typo === "fixed") continue;
     // The sentence as it was typed: the chatbot may have added furigana or punctuation.
     const w = mine.find((s) => normJa(s) === normJa(c.text)) || mine[c.n - 1] || c.text;
     const r = matchEnd(w, c.right);

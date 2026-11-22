@@ -117,6 +117,9 @@ function spotsFor(l, i) {
   if (key in spotCache) return spotCache[key];
   const fromEx = [...l.points[i].ex.matchAll(/\{([^}]+)\}/g)].flatMap((m) => [spotCore(plain(m[1])), spotCore(kana(m[1]))]);
   const list = [...new Set(SPOT[key] || fromEx)].filter(Boolean);
+  // Forms cut short by spotCore (じゃありません → じゃあり): the colouring takes the ending back.
+  if (!SPOT[key]) list.trimmed = new Set([...l.points[i].ex.matchAll(/\{([^}]+)\}/g)]
+    .flatMap((m) => [plain(m[1]), kana(m[1])]).filter((s) => spotCore(s) !== s).map(spotCore));
   const drills = DRILLS[l.n].filter((d) => d[2] === i).map((d) => normJa(drillText(d)));
   const hits = drills.filter((s) => list.some((c) => s.includes(normJa(c)))).length;
   const ok = list.length && drills.length && hits >= drills.length * 0.85;
@@ -274,8 +277,11 @@ function markSpots(s, spots) {
   let out = "";
   let last = 0;
   for (const m of s.matchAll(re)) {
-    out += `${escHTML(s.slice(last, m.index))}<span class="hl">${escHTML(m[0])}</span>`;
-    last = m.index + m[0].length;
+    let hit = m[0];
+    if (spots.trimmed?.has(hit)) hit += POLITE_ENDS.find((e) => s.startsWith(e, m.index + hit.length)) || "";
+    if (m.index < last) continue; // already inside the previous, extended highlight
+    out += `${escHTML(s.slice(last, m.index))}<span class="hl">${escHTML(hit)}</span>`;
+    last = m.index + hit.length;
   }
   return out + escHTML(s.slice(last));
 }
@@ -315,10 +321,12 @@ function showWritten(l, i, xp = 0, first = false) {
   // The chatbot's verdicts show up next to the sentences too.
   const markVerdicts = (text) => {
     const v = aiVerdicts(text || "");
+    const typos = aiTypos(text || "");
     $$(".lw-mine li", box).forEach((li, j) => {
       const ok = v[j + 1];
-      li.className = ok === undefined ? "" : ok ? "ok" : "bad";
-      $(".lw-mark", li).textContent = ok === undefined ? "" : ok ? " ✓" : " ✗";
+      const typo = !ok && typos[j + 1] === "yes";
+      li.className = ok === undefined ? "" : ok ? "ok" : typo ? "typo" : "bad";
+      $(".lw-mark", li).textContent = ok === undefined ? "" : ok ? " ✓" : typo ? " ✎" : " ✗";
     });
   };
   setupAiReader($(".ar", box), feedback[key], (text) => {
@@ -329,6 +337,15 @@ function showWritten(l, i, xp = 0, first = false) {
     // The ✗ sentences and their corrections go to "Your mistakes".
     saveCorrections(l, i, text, mine);
     drawSavedNote(l, i);
+  }, {
+    // "Fix typo" puts the corrected sentence in place of the one with the typo.
+    onTypo: (n, choice, fix) => {
+      if (choice !== "fixed" || !fix || !mine[n - 1]) return;
+      mine[n - 1] = matchEnd(mine[n - 1], fix);
+      store.set("sentences", written);
+      const li = $$(".lw-mine li", box)[n - 1];
+      if (li) li.innerHTML = `${markSpots(mine[n - 1], spots)}<span class="lw-mark"></span>`;
+    },
   });
   $(".ar-in", box).addEventListener("input", (e) => markVerdicts(e.target.value));
   markVerdicts(feedback[key]);

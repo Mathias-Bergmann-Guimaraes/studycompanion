@@ -76,6 +76,7 @@ Rules for the layout:
 - The first line is only the number, my sentence exactly as I wrote it, and ✓ if it's correct or ✗ if not.
 - Use the labels Correct:, Why:, Natural: and Words: word for word, each at the start of its own line. Don't replace them with ✅ or anything else.
 - The Correct: and Natural: lines hold only the Japanese sentence, with its English or any note in brackets on the next line.
+- If the only problem is a typo (a slip of the keyboard or a misspelled word or name I clearly meant, like でうす for です, a wrong or missing kana, or a missing ー) and the grammar, particles, forms and word choice are all right, still mark it ✗, and put the line Typo: yes right after the first line. Never use Typo: yes for any other kind of mistake.
 - If the sentence is correct, leave out Correct: and start with the blocks.
 - Leave out Natural: if there's no better way to say it.
 - More than one thing to explain? Add "- " points under Why:.

@@ -14,6 +14,15 @@ const WRITE_COUNT = 3;
 const WRITE_MAX = 120;
 
 const isWritten = (n, i) => !!written[`${n}.${i}`];
+// The sentences are written and the chatbot's answer pasted under them has a ✓ or ✗ for each one.
+// Right or wrong doesn't matter here.
+function isChecked(n, i) {
+  const mine = written[`${n}.${i}`];
+  const answer = feedback[`${n}.${i}`];
+  if (!mine || !answer) return false;
+  const v = aiVerdicts(answer);
+  return mine.every((_, j) => j + 1 in v);
+}
 const writtenCount = (l) => l.points.filter((_, i) => isWritten(l.n, i)).length;
 
 /* ---------------------------------------------------------------- Spotting the pattern */
@@ -265,6 +274,7 @@ function finishWrite(l, i, sentences) {
   if (changed && feedback[key]) { delete feedback[key]; store.set("aiFeedback", feedback); }
   showWritten(l, i, xp, !before);
   renderLessonStatus(l);
+  updateLessonPath();
 }
 
 const escHTML = (s) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
@@ -337,6 +347,9 @@ function showWritten(l, i, xp = 0, first = false) {
     // The ✗ sentences and their corrections go to "Your mistakes".
     saveCorrections(l, i, text, mine);
     drawSavedNote(l, i);
+    // A checked set of sentences counts towards the lesson's gold ring.
+    renderLessonStatus(l);
+    updateLessonPath();
   }, {
     // "Fix typo" puts the corrected sentence in place of the one with the typo.
     onTypo: (n, choice, fix) => {

@@ -33,13 +33,25 @@ function renderLessons() {
     </div>
     <div class="lessons-layout">
       <nav class="card lpath" aria-label="Lessons">
-        ${LESSON_BOOKS.map((b) => `
-          <div class="book-label">${b.name} · <span lang="ja">${b.ja}</span></div>
-          <div class="lnodes">${bookNodesHTML(b.from, b.to, node)}</div>`).join("")}
+        ${LESSON_SETS.map((s) => `
+          <div class="lset" data-set-list="${s.id}" hidden>
+            ${LESSON_BOOKS.filter((b) => b.set === s.id).map((b) => `
+              <div class="book-label">${b.name} · <span lang="ja">${b.ja}</span></div>
+              <div class="lnodes">${bookNodesHTML(b.from, b.to, node)}</div>`).join("")}
+          </div>`).join("")}
       </nav>
       <div id="lessonDetail"></div>
       <div id="bigDetail" hidden></div>
     </div>`;
+  // The sets are sub-menus under Lessons in the sidebar (top bar on narrow screens).
+  $("#tabs [data-tab='lessons']").insertAdjacentHTML("afterend", LESSON_SETS.map((s) =>
+    `<button class="tab-sub" data-lset="${s.id}" title="${s.title}">${s.name}</button>`).join(""));
+  $$("#tabs [data-lset]").forEach((b) => (b.onclick = () => {
+    showTab("lessons");
+    showLessonSet(b.dataset.lset);
+    window.scrollTo({ top: 0 });
+  }));
+  lessonPathNode = null;
   $$("#lessons [data-l]").forEach((b) => (b.onclick = () => showLesson(+b.dataset.l, true)));
   $$("#lessons [data-big]").forEach((b) => (b.onclick = () => showBig(b.dataset.big, true)));
   // Reloaded in the middle of a big test: back to that test. Its tab only opens after this.
@@ -175,6 +187,14 @@ function showLesson(n, scroll) {
   if (scroll && (top < 0 || top > window.innerHeight * 0.5)) scrollBelowBar(d);
 }
 
+// Which sub-menu of the lesson list is open. Opening a lesson or a big test switches to its set;
+// the other sets can be looked through without leaving the open lesson.
+let lessonPathNode = null;
+function showLessonSet(id) {
+  $$("#tabs [data-lset]").forEach((b) => b.classList.toggle("current", b.dataset.lset === id));
+  $$("#lessons [data-set-list]").forEach((list) => (list.hidden = list.dataset.setList !== id));
+}
+
 function updateLessonPath() {
   $$("#lessons [data-l]").forEach((b) => {
     const n = +b.dataset.l;
@@ -193,6 +213,10 @@ function updateLessonPath() {
   // Keep the selected lesson visible inside the scrollable lesson list.
   const path = $(".lpath");
   const node = bigUI.open ? $(`#lessons [data-big="${bigUI.open}"]`) : $(`#lessons [data-l="${lessonState.n}"]`);
+  if (node !== lessonPathNode) {
+    lessonPathNode = node;
+    showLessonSet(node.closest("[data-set-list]").dataset.setList);
+  }
   if (path.scrollHeight > path.clientHeight &&
       (node.offsetTop < path.scrollTop || node.offsetTop > path.scrollTop + path.clientHeight - 40)) {
     path.scrollTop = node.offsetTop - path.clientHeight / 2;

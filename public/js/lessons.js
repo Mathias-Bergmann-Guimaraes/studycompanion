@@ -328,12 +328,18 @@ const LESSONS = [
   ] },
 ];
 
+// The lesson list's sub-menus: each shows the books of its set, one at a time.
+const LESSON_SETS = [
+  { id: "mnn1", name: "MnN 1", title: "Minna no Nihongo, Book I" },
+  { id: "mnn2", name: "MnN 2", title: "Minna no Nihongo, Book II" },
+  { id: "ws2526", name: "WS 25/26", title: "Extra lessons from the course Japanisch: Vertiefung und Praxis, WS 25/26" },
+];
 // The books, and the extra lessons after them, each shown under its own label in the lesson list.
 const LESSON_BOOKS = [
-  { name: "Book I", ja: "初級 Ⅰ", from: 1, to: 25 },
-  { name: "Book II", ja: "初級 Ⅱ", from: 26, to: 50 },
-  { name: "Extra · Vertiefung W1", ja: "応用", from: 51, to: 53, extra: true },
-  { name: "Extra · Connectors", ja: "接続詞", from: 54, to: 54, extra: true },
+  { name: "Book I", ja: "初級 Ⅰ", from: 1, to: 25, set: "mnn1" },
+  { name: "Book II", ja: "初級 Ⅱ", from: 26, to: 50, set: "mnn2" },
+  { name: "Extra · Vertiefung W1", ja: "応用", from: 51, to: 53, extra: true, set: "ws2526" },
+  { name: "Extra · Connectors", ja: "接続詞", from: 54, to: 54, extra: true, set: "ws2526" },
 ];
 const MINNA_LAST = 50;
 const bookOf = (n) => LESSON_BOOKS.find((b) => n >= b.from && n <= b.to);

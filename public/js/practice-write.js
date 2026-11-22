@@ -309,7 +309,7 @@ function closeWriting() {
 
 function logRound(run) {
   run.logged = true;
-  const fresh = run.items.filter((x) => x.typed.trim() && ["right", "ok", "bad", "unchecked", "wait", "sent"].includes(x.status)).map((x) => ({
+  const fresh = run.items.filter((x) => x.typed.trim() && ["right", "ok", "bad", "typo", "unchecked", "wait", "sent"].includes(x.status)).map((x) => ({
     ja: x.typed.trim(), task: x.guide.short, mark: x.status, fix: x.fix || undefined, day: dayStr(),
   }));
   if (!fresh.length) return;
@@ -323,7 +323,7 @@ const writtenToday = () => writeLog.filter((x) => x.day === dayStr()).length;
 
 function writeLogHTML() {
   if (!writeLog.length) return "";
-  const marks = { right: ["ok", "✓"], ok: ["ok", "✓"], bad: ["bad", "✗"] };
+  const marks = { right: ["ok", "✓"], ok: ["ok", "✓"], bad: ["bad", "✗"], typo: ["typo", "✎"] };
   return `
     <details class="card pr-log">
       <summary><b>Your last sentences</b> <span class="small muted">${writeLog.length}, kept in this browser</span></summary>

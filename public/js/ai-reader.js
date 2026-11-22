@@ -60,13 +60,42 @@ function aiVerdictLine(line) {
   return { n: +m[1], text: m[3].replace(/^[「"]|[」"]$/g, ""), ok: VERDICT_OK.includes(mark) };
 }
 
-// The verdicts in an answer, by sentence number: { 1: true, 2: false, … }.
+// "Typo: yes" under a ✗ sentence: the only problem is a typo. The site writes the learner's choice
+// back into the answer: "Typo: fixed" (the sentence was corrected, so it counts as right) or
+// "Typo: mistake" (it counts as a mistake after all).
+const AI_TYPO_RE = /^typo\s*[:：]\s*(yes|fixed|mistake)\b/i;
+
+// The typo lines in an answer, by sentence number: { 3: "yes" | "fixed" | "mistake" }.
+function aiTypos(text) {
+  const out = {};
+  let n = null;
+  for (const line of text.split(/\r?\n/)) {
+    const v = aiVerdictLine(line);
+    if (v) { n = v.ok ? null : v.n; continue; }
+    const m = n !== null && aiBare(line).match(AI_TYPO_RE);
+    if (m && !(n in out)) out[n] = m[1].toLowerCase();
+  }
+  return out;
+}
+
+// The answer with sentence n's typo line changed to `state` ("fixed" or "mistake").
+function aiSetTypo(text, n, state) {
+  let cur = null;
+  return text.split(/\r?\n/).map((line) => {
+    const v = aiVerdictLine(line);
+    if (v) { cur = v.n; return line; }
+    return cur === n && AI_TYPO_RE.test(aiBare(line)) ? `Typo: ${state}` : line;
+  }).join("\n");
+}
+
+// The verdicts in an answer, by sentence number: { 1: true, 2: false, … }. A fixed typo is right.
 function aiVerdicts(text) {
   const out = {};
   for (const line of text.split(/\r?\n/)) {
     const v = aiVerdictLine(line);
     if (v && !(v.n in out)) out[v.n] = v.ok;
   }
+  for (const [n, t] of Object.entries(aiTypos(text))) if (t === "fixed") out[n] = true;
   return out;
 }
 
@@ -100,7 +129,7 @@ function aiEnglishLine(s) {
 
 const AI_FIX_HEAD_RE =/^(fix|option|version|alternative)\s*\w{0,2}\s*[—–:-]/i;
 
-// Each ✗ sentence in an answer with its correction: [{ n, text, right, en }]. The correction is
+// Each ✗ sentence in an answer with its correction: [{ n, text, right, en, typo? }]. The correction is
 // the first "Correct:" line, else the first sentence under a "Fix A —" heading, else a "Natural:"
 // line. The English comes from a "(…)" at its end or a line of English right below it.
 function aiCorrections(text) {
@@ -129,6 +158,8 @@ function aiCorrections(text) {
     }
     if (!cur) return;
     const bare = aiBare(line);
+    const typo = bare.match(AI_TYPO_RE);
+    if (typo) { cur.typo = cur.typo || typo[1].toLowerCase(); return; }
     const m = bare.match(AI_FIX_RE);
     if (m && JA_CHAR.test(m[2])) { offer(/natural|better/i.test(m[1]) ? 3 : 1, m[2], i); return; }
     const tick = bare.match(AI_TICK_RE);
@@ -213,21 +244,32 @@ function aiWords(line) {
     `<span class="ar-word"><span lang="ja">${aiInline(ja)}</span><span>${aiInline(en)}</span></span>`).join("")}</div>`;
 }
 
-// The whole answer as HTML.
-function renderAiAnswer(text) {
+// The whole answer as HTML. With `typoButtons`, a sentence that only has a typo gets a button to fix
+// it and one to count it as a mistake (setupAiReader handles them).
+function renderAiAnswer(text, { typoButtons = false } = {}) {
   const lines = text.replace(/\r\n?/g, "\n").replace(/ /g, " ").split("\n");
   const out = [];
   let card = null; // the ✓ / ✗ card being filled
   const emit = (html) => (card ? card.body : out).push(html);
   const closeCard = () => {
     if (!card) return;
-    out.push(`<section class="ar-card ${card.ok ? "ok" : "bad"}">
+    // A typo that was fixed shows the fixed sentence, as right.
+    const fixed = card.typo === "fixed" && card.fix;
+    const typo = card.typo === "yes" && card.fix;
+    const cls = card.ok || fixed ? "ok" : typo ? "bad typo" : "bad";
+    const verdict = card.ok ? "✓ Correct" : fixed ? "✓ Typo fixed" : typo ? "✎ Just a typo" : "✗ Needs a fix";
+    out.push(`<section class="ar-card ${cls}">
       <div class="ar-card-head">
         <span class="ar-num">${card.n}</span>
-        <span class="ar-sent" lang="ja">${aiInline(card.text)}</span>
-        <span class="ar-verdict">${card.ok ? "✓ Correct" : "✗ Needs a fix"}</span>
+        <span class="ar-sent" lang="ja">${aiInline(fixed ? card.fix : card.text)}</span>
+        <span class="ar-verdict">${verdict}</span>
       </div>
       ${card.body.length ? `<div class="ar-card-body">${card.body.join("")}</div>` : ""}
+      ${typo && typoButtons ? `<div class="ar-typo">
+        <button class="btn primary" data-typo-fix="${card.n}">✎ Fix typo</button>
+        <button class="btn" data-typo-mistake="${card.n}">✗ It's a mistake</button>
+        <span class="small muted">Typos don't go to your mistakes.</span>
+      </div>` : ""}
     </section>`);
     card = null;
   };
@@ -288,11 +330,15 @@ function renderAiAnswer(text) {
     }
 
     const bare = aiBare(line);
+    // "Typo: yes" is for the site, not to read: it turns the card into a typo card.
+    const typo = card && !card.ok && bare.match(AI_TYPO_RE);
+    if (typo) { closeList(); card.typo = card.typo || typo[1].toLowerCase(); continue; }
     // "Correct: …", or "✅ …" under a ✗ sentence: the fixed sentence, with its English below.
     const correct = bare.match(AI_FIX_RE);
     const tick = card && !card.ok && bare.match(AI_TICK_RE);
     if ((correct && JA_CHAR.test(correct[2])) || tick) {
       closeList();
+      if (card && !card.ok && !card.fix && (tick || !/natural|better/i.test(correct[1]))) card.fix = correct ? correct[2] : tick[1];
       const en = aiEnglishLine(next);
       if (en) i++;
       emit(`<div class="ar-fix"><div class="ar-fix-label">${aiEsc(correct ? correct[1] : "Correct")}</div>
@@ -360,7 +406,9 @@ function renderAiAnswer(text) {
 const AI_MAX = 20000;
 
 // A paste box with the drawn answer below it. `saved` is the text to start with; `onChange(text)`
-// runs (debounced) as it changes, so the caller can save it.
+// runs (debounced) as it changes, so the caller can save it. With `typos`, a typo card has its
+// buttons: pressing one writes the choice into the answer ("Typo: fixed" / "Typo: mistake"), calls
+// typos.onTypo(n, choice, the corrected sentence) if given, then onChange with the new answer.
 function aiReaderHTML(placeholder) {
   return `<div class="ar">
     <textarea class="ai-text ar-in" rows="4" maxlength="${AI_MAX}" spellcheck="false"
@@ -374,7 +422,7 @@ function aiReaderHTML(placeholder) {
   </div>`;
 }
 
-function setupAiReader(root, saved, onChange) {
+function setupAiReader(root, saved, onChange, typos = null) {
   const ta = $(".ar-in", root);
   const outBox = $(".ar-out", root);
   const clear = $(".ar-clear", root);
@@ -385,7 +433,7 @@ function setupAiReader(root, saved, onChange) {
   let timer;
   const draw = () => {
     const text = ta.value.trim();
-    outBox.innerHTML = text ? renderAiAnswer(text) : "";
+    outBox.innerHTML = text ? renderAiAnswer(text, { typoButtons: !!typos }) : "";
     clear.hidden = !text || ta.hidden;
     toggle.hidden = !text;
   };
@@ -411,6 +459,19 @@ function setupAiReader(root, saved, onChange) {
     setTimeout(() => { if (ta.value.trim()) fold(true); }, 0);
   });
   toggle.onclick = () => { fold(!ta.hidden); if (!ta.hidden) ta.focus(); };
+  if (typos) outBox.onclick = (e) => {
+    const b = e.target.closest("[data-typo-fix], [data-typo-mistake]");
+    if (!b) return;
+    const choice = "typoFix" in b.dataset ? "fixed" : "mistake";
+    const n = +(b.dataset.typoFix || b.dataset.typoMistake);
+    const c = aiCorrections(ta.value).find((x) => x.n === n);
+    track(choice === "fixed" ? "chatbot.typoFix" : "chatbot.typoMistake");
+    ta.value = aiSetTypo(ta.value, n, choice);
+    clearTimeout(timer);
+    if (typos.onTypo) typos.onTypo(n, choice, c ? c.right : "");
+    draw();
+    if (onChange) onChange(ta.value.trim());
+  };
   clear.onclick = () => {
     ta.value = "";
     draw();

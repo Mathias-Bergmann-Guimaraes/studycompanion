@@ -287,8 +287,50 @@ function tooMany(key, limit, windowMs) {
 }
 const note = (key) => hits.get(key).push(Date.now());
 
+// Drop counters that have gone quiet, so the map doesn't grow with every address ever seen.
+setInterval(() => {
+  const since = Date.now() - 60 * 60 * 1000;
+  for (const [key, times] of hits) if (!times.some((t) => t > since)) hits.delete(key);
+}, 10 * 60 * 1000).unref();
+
+// The visitor's address, for rate limits. The site runs behind a Cloudflare tunnel, so every
+// request arrives from cloudflared on this machine; the real address is in CF-Connecting-IP
+// (X-Forwarded-For as a fallback). Those headers are only trusted from loopback: anyone who
+// reaches the port directly could make them up. IPv6 addresses are bucketed by their /64,
+// which is what one home connection usually gets, so rotating within it doesn't help.
+function clientIp(req) {
+  let ip = req.socket.remoteAddress || "";
+  if (LOOPBACK.has(ip)) {
+    const fwd = req.headers["cf-connecting-ip"] || String(req.headers["x-forwarded-for"] || "").split(",")[0];
+    if (fwd && fwd.trim()) ip = fwd.trim();
+  }
+  ip = ip.replace(/^::ffff:/, "");
+  if (ip.includes(":")) ip = ip.split(":").slice(0, 4).join(":") + "::/64";
+  return ip;
+}
+
 const LOGIN_FAILS = 10; // per IP and per account, every 15 minutes
 const LOGIN_WINDOW = 15 * 60 * 1000;
+
+// Browsers that have signed in to an account before get a cookie naming it (an HMAC of the
+// account, so it can't be forged for someone else's). They skip that account's failed-login
+// counter, so a stranger guessing wrong on your username can't lock you out of it — only out
+// of their own IP. The key lives in memory: after a restart old cookies just stop counting
+// until the next sign-in.
+const KNOWN_COOKIE = "jpg_known";
+const KNOWN_MAX = 5;
+const knownKey = crypto.randomBytes(32);
+const knownMark = (acctKey) => crypto.createHmac("sha256", knownKey).update(acctKey).digest("hex").slice(0, 32);
+function knownMarks(req) {
+  const m = new RegExp(`(?:^|;\\s*)${KNOWN_COOKIE}=([a-f0-9.]+)(?:;|$)`).exec(req.headers.cookie || "");
+  return m ? m[1].split(".").filter(Boolean) : [];
+}
+function knownCookie(req, acctKey) {
+  const mark = knownMark(acctKey);
+  const marks = [mark, ...knownMarks(req).filter((x) => x !== mark)].slice(0, KNOWN_MAX);
+  const secure = req.socket.encrypted || req.headers["x-forwarded-proto"] === "https" ? "; Secure" : "";
+  return `${KNOWN_COOKIE}=${marks.join(".")}; Path=/; Max-Age=${COOKIE_MAX_AGE}; HttpOnly; SameSite=Lax${secure}`;
+}
 
 async function body(req, res, max) {
   try {
@@ -308,7 +350,7 @@ async function handleRequest(req, res, me) {
   if (cred.error) return sendJson(res, 400, { error: cred.error });
   if (accounts[cred.key]) return sendJson(res, 409, { error: "That username is taken — log in instead, or pick another." });
 
-  const ip = req.socket.remoteAddress || "";
+  const ip = clientIp(req);
   if (tooMany(`req:${ip}`, REQUESTS_PER_IP_PER_HOUR, 60 * 60 * 1000)) {
     return sendJson(res, 429, { error: "Too many requests. Please try again later." });
   }
@@ -332,14 +374,14 @@ async function handleRequest(req, res, me) {
   note(`req:${ip}`);
 
   console.log(`\x1b[33m● Access request\x1b[0m ${shortCode(id)} from "${cred.username}" — review at http://${ADMIN_HOST}:${ADMIN_PORT}`);
-  sendJson(res, 200, accessState(id), { "Set-Cookie": setCookie });
+  sendJson(res, 200, accessState(id), { "Set-Cookie": [setCookie, knownCookie(req, cred.key)] });
 }
 
 // New member: trade an invite code for a username and password with access, and sign this browser in.
 async function handleSignup(req, res, me) {
   const b = await body(req, res);
   if (!b) return;
-  const ip = req.socket.remoteAddress || "";
+  const ip = clientIp(req);
   if (tooMany(`invite:${ip}`, LOGIN_FAILS, LOGIN_WINDOW)) {
     return sendJson(res, 429, { error: "Too many failed attempts. Please wait 15 minutes." });
   }
@@ -369,30 +411,32 @@ async function handleSignup(req, res, me) {
   saveDb();
 
   console.log(`\x1b[32m● New member\x1b[0m ${cred.username}${who ? ` (invite: ${who})` : ""}`);
-  sendJson(res, 200, accessState(id), { "Set-Cookie": setCookie });
+  sendJson(res, 200, accessState(id), { "Set-Cookie": [setCookie, knownCookie(req, cred.key)] });
 }
 
 // Sign this browser in to an existing account (any status — pending and declined show as such).
 async function handleLogin(req, res, me) {
   const b = await body(req, res);
   if (!b) return;
-  const ip = req.socket.remoteAddress || "";
+  const ip = clientIp(req);
   const cred = readCredentials(b, false);
   const acct = cred.error ? null : accounts[cred.key];
-  if (tooMany(`login:${ip}`, LOGIN_FAILS, LOGIN_WINDOW) || (acct && tooMany(`login:@${cred.key}`, LOGIN_FAILS, LOGIN_WINDOW))) {
+  // The account's own counter only applies to browsers that have never signed in to it.
+  const guarded = acct && !knownMarks(req).includes(knownMark(cred.key));
+  if (tooMany(`login:${ip}`, LOGIN_FAILS, LOGIN_WINDOW) || (guarded && tooMany(`login:@${cred.key}`, LOGIN_FAILS, LOGIN_WINDOW))) {
     return sendJson(res, 429, { error: "Too many failed attempts. Please wait 15 minutes." });
   }
   // Always run one hash check so unknown usernames take as long as wrong passwords.
   const ok = await passwordMatches(cred.password || "", acct ? acct.password : DUMMY_HASH);
   if (!acct || !ok || !requests[acct.request]) {
     note(`login:${ip}`);
-    if (acct) note(`login:@${cred.key}`);
+    if (guarded) note(`login:@${cred.key}`);
     return sendJson(res, 401, { error: "Wrong username or password." });
   }
   if (me) delete sessions[me.sid];
   const setCookie = startSession(req, acct.request);
   saveDb();
-  sendJson(res, 200, accessState(acct.request), { "Set-Cookie": setCookie });
+  sendJson(res, 200, accessState(acct.request), { "Set-Cookie": [setCookie, knownCookie(req, cred.key)] });
 }
 
 function handleLogout(req, res, me) {
@@ -417,7 +461,7 @@ async function handleLink(req, res, me) {
   r.account = cred.key;
   saveDb();
   console.log(`  login created for ${shortCode(me.id)}: ${cred.username}`);
-  sendJson(res, 200, accessState(me.id));
+  sendJson(res, 200, accessState(me.id), { "Set-Cookie": knownCookie(req, cred.key) });
 }
 
 function touch(id) {
